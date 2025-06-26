@@ -1,0 +1,14 @@
+node_modules/
+.env
+.next/
+
+# Java
+*.class
+*.jar
+*.war
+target/
+.idea/
+*.iml
+.settings/
+.classpath
+.project
