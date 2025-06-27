@@ -31,4 +31,87 @@ public class Prediction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
+
+    public Prediction() {
+        this.predictionDate = new Timestamp(System.currentTimeMillis());
+    }
+
+    public Prediction(Long predictionId, Float confidence, Boolean direction, Timestamp expirationDate, Boolean actualResult, Company company) {
+        this();
+        this.predictionId = predictionId;
+        this.confidence = confidence;
+        this.direction = direction;
+        this.expirationDate = expirationDate;
+        this.actualResult = actualResult;
+        this.company = company;
+    }
+
+    public Long getPredictionId() {
+        return predictionId;
+    }
+
+    public void setPredictionId(Long predictionId) {
+        this.predictionId = predictionId;
+    }
+
+    public Timestamp getPredictionDate() {
+        return predictionDate;
+    }
+
+    public void setPredictionDate(Timestamp predictionDate) {
+        this.predictionDate = predictionDate;
+    }
+
+    public Float getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(Float confidence) {
+        this.confidence = confidence;
+    }
+
+    public Boolean getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Boolean direction) {
+        this.direction = direction;
+    }
+
+    public Timestamp getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Timestamp expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public Boolean getActualResult() {
+        return actualResult;
+    }
+
+    public void setActualResult(Boolean actualResult) {
+        this.actualResult = actualResult;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    @Override
+    public String toString() {
+        return "Prediction{" +
+                "predictionId=" + predictionId +
+                ", predictionDate=" + predictionDate +
+                ", confidence=" + confidence +
+                ", direction=" + direction +
+                ", expirationDate=" + expirationDate +
+                ", actualResult=" + actualResult +
+                ", company=" + company +
+                '}';
+    }
 }

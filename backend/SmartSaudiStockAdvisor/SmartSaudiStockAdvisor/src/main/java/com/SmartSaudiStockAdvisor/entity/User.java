@@ -36,5 +36,18 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WatchList> watchLists;
 
+    public User() {
+        this.joinDate = new Timestamp(System.currentTimeMillis());
+    }
 
+    public User(Long userId, String name, String username, String password, String email, BigDecimal investAmount, List<WatchList> watchLists) {
+        this();
+        this.userId = userId;
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.investAmount = investAmount;
+        this.watchLists = watchLists;
+    }
 }
