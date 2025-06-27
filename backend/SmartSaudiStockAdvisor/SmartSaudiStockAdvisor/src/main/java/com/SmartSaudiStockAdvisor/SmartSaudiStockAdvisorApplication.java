@@ -8,6 +8,7 @@ public class SmartSaudiStockAdvisorApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmartSaudiStockAdvisorApplication.class, args);
+		System.out.println("============ Success ============");
 	}
 
 }
