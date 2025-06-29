@@ -13,8 +13,11 @@ public class Company {
     @Column(name = "company_id")
     private Long companyId;
 
-    @Column(name = "company_name", nullable = false, length = 255)
-    private String companyName;
+    @Column(name = "company_arabic_name", nullable = false, length = 255)
+    private String companyArabicName;
+
+    @Column(name = "company_english_name", nullable = false, length = 255)
+    private String companyEnglishName;
 
     @Column(name = "company_logo", nullable = false, columnDefinition = "TEXT")
     private String companyLogo;
@@ -38,15 +41,16 @@ public class Company {
     public Company() {
     }
 
-    public Company(Long companyId, List<Prediction> predictions, Sector sector, List<HistoricalData> historicalData, List<WatchList> watchLists, String tickerName, String companyLogo, String companyName) {
+    public Company(Long companyId, String companyArabicName, String companyEnglishName, String companyLogo, String tickerName, List<WatchList> watchLists, List<HistoricalData> historicalData, Sector sector, List<Prediction> predictions) {
         this.companyId = companyId;
-        this.predictions = predictions;
-        this.sector = sector;
-        this.historicalData = historicalData;
-        this.watchLists = watchLists;
-        this.tickerName = tickerName;
+        this.companyArabicName = companyArabicName;
+        this.companyEnglishName = companyEnglishName;
         this.companyLogo = companyLogo;
-        this.companyName = companyName;
+        this.tickerName = tickerName;
+        this.watchLists = watchLists;
+        this.historicalData = historicalData;
+        this.sector = sector;
+        this.predictions = predictions;
     }
 
     public List<WatchList> getWatchLists() {
@@ -97,12 +101,20 @@ public class Company {
         this.companyLogo = companyLogo;
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public String getCompanyArabicName() {
+        return companyArabicName;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setCompanyArabicName(String companyArabicName) {
+        this.companyArabicName = companyArabicName;
+    }
+
+    public String getCompanyEnglishName() {
+        return companyEnglishName;
+    }
+
+    public void setCompanyEnglishName(String companyEnglishName) {
+        this.companyEnglishName = companyEnglishName;
     }
 
     public Long getCompanyId() {
@@ -117,7 +129,8 @@ public class Company {
     public String toString() {
         return "Company{" +
                 "companyId=" + companyId +
-                ", companyName='" + companyName + '\'' +
+                ", companyArabicName='" + companyArabicName + '\'' +
+                ", companyEnglishName='" + companyEnglishName + '\'' +
                 ", companyLogo='" + companyLogo + '\'' +
                 ", tickerName='" + tickerName + '\'' +
                 ", watchLists=" + watchLists +
