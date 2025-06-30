@@ -1,5 +1,5 @@
 USER = "postgres"
-HOST = "locallhost"
+HOST = "localhost"
 PORT = "5432"
 PASSWORD = "Afsd1423"
 DATABASE = "SmartSaudiStockAdvisor"
