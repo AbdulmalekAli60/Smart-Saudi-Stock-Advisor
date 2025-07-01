@@ -4,9 +4,10 @@ import pandas as pd
 from datetime import datetime
 import logging
 from config.databaseConnInfo import USER, DATABASE, HOST, PASSWORD, PORT
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from config.companies_list import companies
+logging.basicConfig(level=logging.INFO, filename="saving_data_from_yf.log", filemode="w", format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
 
 class SavingDataFromYf:
     def __init__(self):
@@ -51,74 +52,65 @@ class SavingDataFromYf:
         if not self.connect_to_database():
             return 
         
-        ticker = "7010.SR"
-        company_id = 4
+        # ticker = "8010.SR" #insurrance
+        # company_id = 16
         
         today_date = datetime.today().strftime('%Y-%m-%d')
-        logger.info(f"Fetching data from 2020-01-01 to {today_date}")
-        
+        logger.info(f"Fetching data today's data:  {today_date}")
+        inserted_tickers = []
+        falied_inserted_tickers = []
         try:
             logger.info(f"Processing ticker: {ticker}")
-                
-            stock_data = yf.download(
-                tickers=ticker,
-                interval="1d",
-                start="2020-01-01",
-                end=today_date, 
-                progress=False 
-            )
-                
-            self.dataFrame = stock_data
             
-            if stock_data.empty:
-                logger.warning(f"No data found for ticker: {ticker}")
-                return
-                 
-            records_to_insert = []
-            for index, row in self.dataFrame.iterrows():
-             
-                record = (
-                    float(row["Close"].iloc[0]) if hasattr(row["Close"], 'iloc') else float(row["Close"]),
-                    index.strftime('%Y-%m-%d'),
-                    float(row["High"].iloc[0]) if hasattr(row["High"], 'iloc') else float(row["High"]),
-                    float(row["Low"].iloc[0]) if hasattr(row["Low"], 'iloc') else float(row["Low"]),
-                    float(row["Open"].iloc[0]) if hasattr(row["Open"], 'iloc') else float(row["Open"]),
-                    int(row["Volume"].iloc[0]) if hasattr(row["Volume"], 'iloc') else int(row["Volume"]),
-                    company_id
+            for company_id, ticker in self.companies.items():
+                stock_data = yf.download(
+                    tickers=ticker,
+                    interval="1d",
+                    start=today_date, # jsut today data the new data
+                    # end=today_date, 
+                    progress=False 
                 )
-                records_to_insert.append(record)
                 
-            if records_to_insert:
+                self.dataFrame = stock_data
+            
+                if stock_data.empty:
+                    logger.warning(f"No data found for ticker: {ticker}")
+                    falied_inserted_tickers.append(ticker)
+                    continue
+            
+               
+                records_to_insert = []
+                for index, row in self.dataFrame.iterrows():
                 
-                existing_dates = set()
-                check_query = "SELECT data_date FROM historical_data WHERE company_id = %s"
-                self.cur.execute(check_query, (company_id,))
-                existing_dates = {row[0].strftime('%Y-%m-%d') for row in self.cur.fetchall()}
+                    record = (
+                        float(row["Close"].iloc[0]) if hasattr(row["Close"], 'iloc') else float(row["Close"]),
+                        index.strftime('%Y-%m-%d'),
+                        float(row["High"].iloc[0]) if hasattr(row["High"], 'iloc') else float(row["High"]),
+                        float(row["Low"].iloc[0]) if hasattr(row["Low"], 'iloc') else float(row["Low"]),
+                        float(row["Open"].iloc[0]) if hasattr(row["Open"], 'iloc') else float(row["Open"]),
+                        int(row["Volume"].iloc[0]) if hasattr(row["Volume"], 'iloc') else int(row["Volume"]),
+                        company_id
+                    )
+                    records_to_insert.append(record)
                 
-                new_records = []
-                for record in records_to_insert:
-                    date_str = record[1]  
-                    if date_str not in existing_dates:
-                        new_records.append(record)
-                
-                if new_records:
-                    query = """
-                        INSERT INTO historical_data (close, data_date, high, low, open, volume, company_id)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+            
+                query = """
+                    INSERT INTO historical_data (close, data_date, high, low, open, volume, company_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                     """
                     
-                    self.cur.executemany(query, new_records)
-                    self.conn.commit()
+                self.cur.executemany(query, records_to_insert)
+                self.conn.commit()
+                inserted_tickers.append(ticker)
+                logger.info(f"Successfully inserted ticker: {ticker}")
                     
-                    logger.info(f"Successfully inserted {len(new_records)} new records for {ticker}")
-                    logger.info(f"Skipped {len(records_to_insert) - len(new_records)} duplicate records")
-                else:
-                    logger.info(f"All {len(records_to_insert)} records already exist for {ticker}")
-                
         except Exception as e:
-            logger.error(f"Error processing ticker {ticker}: {str(e)}")
+            logger.exception(f"Error processing ticker {ticker}: {str(e)}")
+            falied_inserted_tickers.append(ticker)
             if self.conn:
                 self.conn.rollback()
+        
+        logger.info(f"Completed sucssfully: {len(inserted_tickers)}, failed: {len(falied_inserted_tickers)}")
                     
         try:
             if self.cur is not None:
@@ -127,7 +119,7 @@ class SavingDataFromYf:
                 self.conn.close()
             logger.info("Database connections closed")
         except Exception as e:
-            logger.error(f"Error closing connections: {str(e)}")
+            logger.exception(f"Error closing connections: {str(e)}")
 
 if __name__ == "__main__":
     saver = SavingDataFromYf()
