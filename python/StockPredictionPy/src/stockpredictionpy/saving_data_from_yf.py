@@ -60,6 +60,7 @@ class SavingDataFromYf:
             return 
         
         today_date = datetime.today().strftime('%Y-%m-%d')
+        tomorrow_date = (datetime.today() + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
         logger.info(f"Fetching today's data for date: {today_date}")
         
         inserted_tickers = []
@@ -74,6 +75,7 @@ class SavingDataFromYf:
                         tickers=ticker,
                         interval="1d",
                         start=today_date,
+                        end=tomorrow_date,
                         progress=False 
                     )
                     
@@ -102,7 +104,7 @@ class SavingDataFromYf:
                         query = """
                             INSERT INTO historical_data (close, data_date, high, low, open, volume, company_id)
                             VALUES (%s, %s, %s, %s, %s, %s, %s)
-                            ON CONFLICT (data_date, company_id) DO NOTHING
+
                         """
                         
                         self.cur.executemany(query, records_to_insert)
