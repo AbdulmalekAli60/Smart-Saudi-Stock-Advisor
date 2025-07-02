@@ -1,0 +1,87 @@
+2025-07-02 21:06:38,058 - INFO - ==================================================
+2025-07-02 21:06:38,058 - INFO - Starting Yahoo Finance data extraction
+2025-07-02 21:06:38,061 - INFO - ==================================================
+2025-07-02 21:06:38,061 - INFO - Starting data fetching process...
+2025-07-02 21:06:38,140 - INFO - Database connected successfully
+2025-07-02 21:06:38,141 - INFO - Fetching today's data for date: 2025-07-02
+2025-07-02 21:06:38,141 - INFO - Processing company_id: 2, ticker: 7203.SR
+2025-07-02 21:06:41,353 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:41,353 - ERROR - ['7203.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:41,355 - WARNING - No data found for ticker: 7203.SR
+2025-07-02 21:06:41,355 - INFO - Processing company_id: 3, ticker: 2223.SR
+2025-07-02 21:06:42,937 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:42,937 - ERROR - ['2223.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:42,937 - WARNING - No data found for ticker: 2223.SR
+2025-07-02 21:06:42,937 - INFO - Processing company_id: 4, ticker: 7010.SR
+2025-07-02 21:06:44,476 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:44,476 - ERROR - ['7010.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:44,476 - WARNING - No data found for ticker: 7010.SR
+2025-07-02 21:06:44,476 - INFO - Processing company_id: 5, ticker: 1180.SR
+2025-07-02 21:06:45,997 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:45,997 - ERROR - ['1180.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:45,997 - WARNING - No data found for ticker: 1180.SR
+2025-07-02 21:06:45,997 - INFO - Processing company_id: 6, ticker: 2020.SR
+2025-07-02 21:06:47,517 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:47,517 - ERROR - ['2020.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:47,519 - WARNING - No data found for ticker: 2020.SR
+2025-07-02 21:06:47,519 - INFO - Processing company_id: 7, ticker: 2280.SR
+2025-07-02 21:06:48,906 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:48,906 - ERROR - ['2280.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:48,906 - WARNING - No data found for ticker: 2280.SR
+2025-07-02 21:06:48,906 - INFO - Processing company_id: 8, ticker: 1120.SR
+2025-07-02 21:06:50,228 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:50,228 - ERROR - ['1120.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:50,231 - WARNING - No data found for ticker: 1120.SR
+2025-07-02 21:06:50,231 - INFO - Processing company_id: 9, ticker: 1010.SR
+2025-07-02 21:06:52,077 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:52,077 - ERROR - ['1010.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:52,080 - WARNING - No data found for ticker: 1010.SR
+2025-07-02 21:06:52,080 - INFO - Processing company_id: 10, ticker: 2082.SR
+2025-07-02 21:06:53,635 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:53,635 - ERROR - ['2082.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:53,639 - WARNING - No data found for ticker: 2082.SR
+2025-07-02 21:06:53,639 - INFO - Processing company_id: 11, ticker: 4280.SR
+2025-07-02 21:06:55,085 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:55,085 - ERROR - ['4280.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:55,085 - WARNING - No data found for ticker: 4280.SR
+2025-07-02 21:06:55,085 - INFO - Processing company_id: 12, ticker: 1111.SR
+2025-07-02 21:06:56,775 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:56,775 - ERROR - ['1111.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:56,778 - WARNING - No data found for ticker: 1111.SR
+2025-07-02 21:06:56,778 - INFO - Processing company_id: 13, ticker: 4013.SR
+2025-07-02 21:06:58,481 - ERROR - 
+1 Failed download:
+2025-07-02 21:06:58,481 - ERROR - ['4013.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:06:58,482 - WARNING - No data found for ticker: 4013.SR
+2025-07-02 21:06:58,482 - INFO - Processing company_id: 14, ticker: 1211.SR
+2025-07-02 21:07:00,053 - ERROR - 
+1 Failed download:
+2025-07-02 21:07:00,053 - ERROR - ['1211.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:07:00,053 - WARNING - No data found for ticker: 1211.SR
+2025-07-02 21:07:00,053 - INFO - Processing company_id: 15, ticker: 8210.SR
+2025-07-02 21:07:01,528 - ERROR - 
+1 Failed download:
+2025-07-02 21:07:01,528 - ERROR - ['8210.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:07:01,533 - WARNING - No data found for ticker: 8210.SR
+2025-07-02 21:07:01,534 - INFO - Processing company_id: 16, ticker: 8010.SR
+2025-07-02 21:07:03,108 - ERROR - 
+1 Failed download:
+2025-07-02 21:07:03,108 - ERROR - ['8010.SR']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2025-07-02 21:07:03,111 - WARNING - No data found for ticker: 8010.SR
+2025-07-02 21:07:03,111 - INFO - Database connections closed
+2025-07-02 21:07:03,111 - INFO - Process completed - Successfully processed: 0, Failed: 15
+2025-07-02 21:07:03,111 - INFO - Failed tickers: ['7203.SR', '2223.SR', '7010.SR', '1180.SR', '2020.SR', '2280.SR', '1120.SR', '1010.SR', '2082.SR', '4280.SR', '1111.SR', '4013.SR', '1211.SR', '8210.SR', '8010.SR']
+2025-07-02 21:07:03,111 - INFO - ==================================================
+2025-07-02 21:07:03,111 - INFO - Process finished
+2025-07-02 21:07:03,111 - INFO - ==================================================

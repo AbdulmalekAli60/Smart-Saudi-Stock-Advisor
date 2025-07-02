@@ -1,5 +1,6 @@
 import psycopg2
 import pandas as pd
+import stock_indicators
 from config.databaseConnInfo import DATABASE, HOST, PASSWORD, PORT, USER
 from config.companies_list import companies
 import logging
@@ -36,19 +37,30 @@ class ReadDataFromDB:
                     """
 
             self.dataframe = pd.read_sql(query, self.conn)
-            logger.info("Successfully read data and stored in data frame")
+            logger.info(f"Successfully read data and stored in data frame")
+            print(f"Data read successfully, shape: {self.dataframe.shape}")
             print(self.dataframe.head())
-        
+
         except Exception as e:
             logger.exception(f": failed to get data fro database {str(e)}")
-            return pd.DataFrame()
+            print(f"Exception occurred: {str(e)}")
+            self.dataframe = pd.DataFrame()
+            
         finally:
             if self.conn is not None:
                 self.conn.close()
-    
+                print("Database conncetion closed")
+
+        print(f"Returning dataframe with shape: {self.dataframe.shape}")
         return self.dataframe
     
+    # read_data_from_db.py
 if __name__ == "__main__":
+    print("=== Testing ReadDataFromDB ===")
     reader = ReadDataFromDB()
-    reader.read_data()
+    df = reader.read_data()
+    print(f"Direct call result shape: {df.shape}")
+    print("\n=== Testing StockIndicators ===")
+    stock_indicators = stock_indicators.StockIndicators()
+    stock_indicators.sma_5()
 
