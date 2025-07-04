@@ -8,49 +8,54 @@ class StockIndicators:
         
         data_reader = read_data_from_db.ReadDataFromDB()
         self.dataframe = data_reader.read_data()
-       
         self.companies_id = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
     # trend indicators
-    def sma_5(self):
+    def sma(self):
+        time_periods = [5, 10, 20, 50]
         
-        self.dataframe['sma_5'] = self.dataframe.groupby('company_id')['close'].rolling(window=5).mean().reset_index(0, drop=True)
-        logger.info("sma 5 done")
-        print("SMA 5 DONE")
-        print(self.dataframe.head(15))
-        return self.dataframe
-    
-    def sma_10(self):
-        
-        self.dataframe['sma_10'] = self.dataframe.groupby('company_id')['close'].rolling(window=10).mean().reset_index(0, drop=True)
-        logger.info("sma 10 done")
-        print("SMA 10 DONE")
-        print(self.dataframe.head(15))
-        return self.dataframe
-    
-    def sma_20(self):
-        
-        self.dataframe['sma_20'] = self.dataframe.groupby('company_id')['close'].rolling(window=20).mean().reset_index(0, drop=True)
-        logger.info("sma 20 done")
-        print("SMA 20 DONE")
-        print(self.dataframe.head(20))
-        return self.dataframe
-    
-    def sma_50(self):
-        
-        self.dataframe['sma_50'] = self.dataframe.groupby('company_id')['close'].rolling(window=50).mean().reset_index(0, drop=True)
-        logger.info("sma 5 done")
-        print("SMA 50 DONE")
+        for time_period in time_periods:
+            sma_col_names = f"sma_{time_period}"
+            self.dataframe[sma_col_names] = self.dataframe.groupby('company_id')['close'].rolling(window=time_period).mean().reset_index(0, drop=True)
+
+        logger.info("sma done")
+        print("SMA  DONE")
         print(self.dataframe.head(51))
         return self.dataframe
 
     # Exponential Moving Average (EMA) 
+    # https://www.strike.money/technical-analysis/ema
     def ema(self):
+        time_periods = [5, 10, 20, 50]
+        
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+        
+        for time_period in time_periods:
+            
+            self.dataframe[f'ema_{time_period}'] = float('nan')
+        
+            for company_id in self.dataframe['company_id'].unique():
+                
+                company_mask = self.dataframe['company_id'] == company_id
+                
+                company_ema = self.dataframe.loc[company_mask, 'close'].ewm(span=time_period, adjust=False).mean()
+                
+                self.dataframe.loc[company_mask, f'ema_{time_period}'] = company_ema.values
+        
+        logger.info("EMA done")
+        print(self.dataframe.head(51))
+        return self.dataframe
+    
+
+    #Moving Average Convergence Divergence (MACD) 
+    def macd(self):
         pass
+
+
+
 
 if __name__ == "__main__":
     excuter = StockIndicators()
-    excuter.sma_5()
-    excuter.sma_10()
-    excuter.sma_20()
-    excuter.sma_50()
+    excuter.sma()
+    excuter.ema()
+    

@@ -1,7 +1,7 @@
 import yfinance as yf
 import psycopg2 
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from config.databaseConnInfo import USER, DATABASE, HOST, PASSWORD, PORT
 from config.companies_list import companies
@@ -59,9 +59,13 @@ class SavingDataFromYf:
             logger.error("Could not connect to database. Exiting.")
             return 
         
-        today_date = datetime.today().strftime('%Y-%m-%d')
-        tomorrow_date = (datetime.today() + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+        today = pd.Timestamp.today().normalize()
+        today_date = today.strftime('%Y-%m-%d')
+        yesterday_date = (today - timedelta(days=1)).strftime('%Y-%m-%d')
+        tomorrow_date = (today + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+        
         logger.info(f"Fetching today's data for date: {today_date}")
+        logger.info(f"Fetching today's data for date: {today_date} tomowro: {tomorrow_date}")
         
         inserted_tickers = []
         failed_inserted_tickers = []
@@ -74,8 +78,8 @@ class SavingDataFromYf:
                     stock_data = yf.download(
                         tickers=ticker,
                         interval="1d",
-                        start=today_date,
-                        end=tomorrow_date,
+                        start= "2025-07-03",
+                        end= "2025-07-04",
                         progress=False 
                     )
                     

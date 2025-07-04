@@ -1,6 +1,4 @@
-2025-07-02 21:00:20,141 - INFO - Successfully connected to database
-2025-07-02 21:00:20,300 - INFO - Successfully read data and stored in data frame
-2025-07-02 21:00:20,329 - INFO - sma 5 done
-2025-07-02 21:00:20,352 - INFO - sma 10 done
-2025-07-02 21:00:20,379 - INFO - sma 20 done
-2025-07-02 21:00:20,413 - INFO - sma 5 done
+2025-07-04 20:57:43,014 - INFO - Successfully connected to database
+2025-07-04 20:57:43,116 - INFO - Successfully read data and stored in data frame
+2025-07-04 20:57:43,146 - INFO - sma done
+2025-07-04 20:57:43,183 - INFO - EMA done
