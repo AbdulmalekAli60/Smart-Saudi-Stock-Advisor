@@ -1,4 +1,6 @@
-2025-07-04 20:57:43,014 - INFO - Successfully connected to database
-2025-07-04 20:57:43,116 - INFO - Successfully read data and stored in data frame
-2025-07-04 20:57:43,146 - INFO - sma done
-2025-07-04 20:57:43,183 - INFO - EMA done
+2025-07-07 00:31:42,505 - INFO - Successfully connected to database
+2025-07-07 00:31:42,606 - INFO - Successfully read data and stored in data frame
+2025-07-07 00:31:42,649 - INFO - sma done
+2025-07-07 00:31:42,705 - INFO - EMA done
+2025-07-07 00:31:42,706 - INFO - MACD Line Done
+2025-07-07 00:31:42,718 - INFO - calc_ema_of_macd_line Done

@@ -78,8 +78,8 @@ class SavingDataFromYf:
                     stock_data = yf.download(
                         tickers=ticker,
                         interval="1d",
-                        start= "2025-07-03",
-                        end= "2025-07-04",
+                        start= "2025-07-06",
+                        end= "2025-07-07",
                         progress=False 
                     )
                     
