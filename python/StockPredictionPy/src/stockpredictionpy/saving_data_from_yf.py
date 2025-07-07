@@ -1,6 +1,7 @@
 import yfinance as yf
 import psycopg2 
 import pandas as pd
+from curl_cffi import requests
 from datetime import datetime, timedelta
 import logging
 from config.databaseConnInfo import USER, DATABASE, HOST, PASSWORD, PORT
@@ -59,6 +60,8 @@ class SavingDataFromYf:
             logger.error("Could not connect to database. Exiting.")
             return 
         
+        session = requests.Session(impersonate="chrome")
+        
         today = pd.Timestamp.today().normalize()
         today_date = today.strftime('%Y-%m-%d')
         yesterday_date = (today - timedelta(days=1)).strftime('%Y-%m-%d')
@@ -71,6 +74,7 @@ class SavingDataFromYf:
         failed_inserted_tickers = []
         
         try:
+            
             for company_id, ticker in self.companies.items():
                 logger.info(f"Processing company_id: {company_id}, ticker: {ticker}")
                 
@@ -78,9 +82,10 @@ class SavingDataFromYf:
                     stock_data = yf.download(
                         tickers=ticker,
                         interval="1d",
-                        start= "2025-07-06",
-                        end= "2025-07-07",
-                        progress=False 
+                        start= today,
+                        end= tomorrow_date,
+                        progress=False,
+                        session=session
                     )
                     
                     if stock_data.empty:
@@ -113,7 +118,9 @@ class SavingDataFromYf:
                         
                         self.cur.executemany(query, records_to_insert)
                         self.conn.commit()
+                        response = session.get('https://httpbin.org/get')
                         inserted_tickers.append(ticker)
+                        logger.info(f"session headers {response.json()}")
                         logger.info(f"Successfully inserted {len(records_to_insert)} records for ticker: {ticker}")
                     else:
                         logger.warning(f"No records to insert for ticker: {ticker}")
@@ -130,6 +137,9 @@ class SavingDataFromYf:
             
         finally:
             try:
+                if session:
+                    session.close()
+                    logger.info("Session Closed")
                 if self.cur is not None:
                     self.cur.close()
                 if self.conn is not None:

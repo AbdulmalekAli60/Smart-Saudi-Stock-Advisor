@@ -1,6 +1,7 @@
-2025-07-07 00:31:42,505 - INFO - Successfully connected to database
-2025-07-07 00:31:42,606 - INFO - Successfully read data and stored in data frame
-2025-07-07 00:31:42,649 - INFO - sma done
-2025-07-07 00:31:42,705 - INFO - EMA done
-2025-07-07 00:31:42,706 - INFO - MACD Line Done
-2025-07-07 00:31:42,718 - INFO - calc_ema_of_macd_line Done
+2025-07-07 23:18:07,759 - INFO - Successfully connected to database
+2025-07-07 23:18:07,844 - INFO - Successfully read data and stored in data frame
+2025-07-07 23:18:07,903 - INFO - sma done
+2025-07-07 23:18:07,942 - INFO - EMA done
+2025-07-07 23:18:07,960 - INFO - MACD Done
+2025-07-07 23:18:09,333 - INFO - ROC Done
+2025-07-07 23:18:16,467 - INFO - Excel file saved

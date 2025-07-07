@@ -6,8 +6,13 @@ authors = [
     {name = "AbdulmalekAli60",email = "ZxshxZ123@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13.5"
 dependencies = [
+    "openpyxl (>=3.1.5,<4.0.0)",
+    "curl-cffi (>=0.11.4,<0.12.0)",
+    "yfinance (>=0.2.65,<0.3.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "pandas (>=2.3.0,<3.0.0)"
 ]
 
 [tool.poetry]
