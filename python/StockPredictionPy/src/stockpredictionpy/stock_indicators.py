@@ -72,15 +72,17 @@ class StockIndicators:
     def roc(self):
         time_periods = [5, 10]
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
-    
-        for time_period in time_periods:
-            self.dataframe[f'roc_{time_period}'] = float("nan")
         
+        for time_period in time_periods:
+            
+            self.dataframe[f'roc_{time_period}'] = float("nan")
+            
             for company_id in self.dataframe['company_id'].unique():
                 company_mask = self.dataframe['company_id'] == company_id
-                company_indices = self.dataframe.index[company_mask].tolist()
-            
+                company_indices = self.dataframe.index[company_mask].to_list()
+        
                 for i, current_idx in enumerate(company_indices):
+                
                     if i - time_period < 0:
                         continue
                     
@@ -94,13 +96,38 @@ class StockIndicators:
     
         logger.info("ROC Done")
         print("ROC DOne")
-        print(self.dataframe.head(51))
+        # print(self.dataframe.head(51))
         return self.dataframe
 
     # Momentum Indicators (RSI)
-    def res(self):
-        pass
+    def rsi(self):
+
+        self.dataframe['rsi'] = float("nan")
+        self.dataframe['change'] = self.dataframe.groupby('company_id')['close'].diff()
+
+        time_period = 14 
+
+        self.dataframe['gain'] = self.dataframe['change'].where(self.dataframe['change'] > 0, other = 0)
+        self.dataframe['loss'] = self.dataframe['change'].where(self.dataframe['change'] < 0, other = 0).abs()
+
+        avg_gain = self.dataframe.groupby('company_id')['gain'].rolling(window=time_period).mean().reset_index(level=0, drop=True)
+        avg_loss = self.dataframe.groupby('company_id')['loss'].rolling(window=time_period).mean().reset_index(level=0, drop=True)
         
+        rs = avg_gain / avg_loss
+
+        rsi = 100 - (100 / (1 + rs))
+
+        self.dataframe['rsi'] = rsi
+
+        self.dataframe.drop('change', axis=1, inplace=True)
+        self.dataframe.drop('gain', axis=1, inplace=True)
+        self.dataframe.drop('loss', axis=1, inplace=True)
+
+        print("RSI Done")
+        print(self.dataframe.head(51))
+        logger.info("RSI Done")
+        return self.dataframe
+    
     # Save dataframe to excel file
     def save_df_to_excel(self):
         self.dataframe.to_excel('df.xlsx')
@@ -108,8 +135,9 @@ class StockIndicators:
 
 if __name__ == "__main__":
     excuter = StockIndicators()
-    excuter.sma()
-    excuter.ema()
-    excuter.macd()
-    excuter.roc()
+    # excuter.sma()
+    # excuter.ema()
+    # excuter.macd()
+    # excuter.roc()
+    excuter.rsi()
     excuter.save_df_to_excel()    

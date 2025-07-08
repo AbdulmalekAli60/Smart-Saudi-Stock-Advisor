@@ -38,7 +38,7 @@ class ReadDataFromDB:
 
             self.dataframe = pd.read_sql(query, self.conn)
             logger.info(f"Successfully read data and stored in data frame")
-            print(f"Data read successfully, shape: {self.dataframe.shape}")
+            # print(f"Data read successfully, shape: {self.dataframe.shape}")
             print(self.dataframe.head())
 
         except Exception as e:
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     print("=== Testing ReadDataFromDB ===")
     reader = ReadDataFromDB()
     df = reader.read_data()
-    print(f"Direct call result shape: {df.shape}")
+    # print(f"Direct call result shape: {df.shape}")
     print("\n=== Testing StockIndicators ===")
     stock_indicators = stock_indicators.StockIndicators()
     stock_indicators.sma_5()
