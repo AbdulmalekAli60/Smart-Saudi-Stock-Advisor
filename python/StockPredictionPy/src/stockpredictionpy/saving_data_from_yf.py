@@ -99,12 +99,19 @@ class SavingDataFromYf:
                     for date_index, row in stock_data.iterrows():
                         
                         record = (
-                            float(row["Close"]),
+                            # float(row["Close"]),
+                            # date_index.strftime('%Y-%m-%d'),
+                            # float(row["High"]),
+                            # float(row["Low"]),
+                            # float(row["Open"]),
+                            # int(row["Volume"]),
+                            # company_id
+                            row["Close"].item() if hasattr(row["Close"], 'item') else float(row["Close"]),
                             date_index.strftime('%Y-%m-%d'),
-                            float(row["High"]),
-                            float(row["Low"]),
-                            float(row["Open"]),
-                            int(row["Volume"]),
+                            row["High"].item() if hasattr(row["High"], 'item') else float(row["High"]),
+                            row["Low"].item() if hasattr(row["Low"], 'item') else float(row["Low"]),
+                            row["Open"].item() if hasattr(row["Open"], 'item') else float(row["Open"]),
+                            int(row["Volume"].item()) if hasattr(row["Volume"], 'item') else int(row["Volume"]),
                             company_id
                         )
                         records_to_insert.append(record)
@@ -118,9 +125,15 @@ class SavingDataFromYf:
                         
                         self.cur.executemany(query, records_to_insert)
                         self.conn.commit()
-                        response = session.get('https://httpbin.org/get')
+                        # response = session.get('https://httpbin.org/get')
                         inserted_tickers.append(ticker)
-                        logger.info(f"session headers {response.json()}")
+                        # logger.info(f"session headers {response.json()}")
+                        try:
+                            response = session.get('https://httpbin.org/get', timeout=5)
+                            logger.info(f"HTTP test request status: {response.status_code}")
+                        except Exception as e:
+                            logger.warning(f"HTTP test request failed: {e}")
+
                         logger.info(f"Successfully inserted {len(records_to_insert)} records for ticker: {ticker}")
                     else:
                         logger.warning(f"No records to insert for ticker: {ticker}")

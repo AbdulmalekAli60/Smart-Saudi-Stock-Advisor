@@ -127,6 +127,25 @@ class StockIndicators:
         print(self.dataframe.head(51))
         logger.info("RSI Done")
         return self.dataframe
+
+    #o	%K (Fast) = [(Current Close - Lowest Low of N periods) / (Highest High of N periods - Lowest Low of N periods)] × 100
+    # o	%D (Slow) = 3-day SMA of %K
+    # •	Standard period: 14 days for %K
+
+    def stochastic_oscillator(self):
+        time_period = 14
+        self.dataframe.sort_values('data_date')
+        print(self.dataframe.head(51))
+        
+            
+
+        k_fast = 0
+        d_slow = 0
+
+        print("Stochastic Oscillator Done")
+        logger.info("Stochastic Oscillator Done")
+        
+        return self.dataframe
     
     # Save dataframe to excel file
     def save_df_to_excel(self):
@@ -139,5 +158,6 @@ if __name__ == "__main__":
     # excuter.ema()
     # excuter.macd()
     # excuter.roc()
-    excuter.rsi()
+    # excuter.rsi()
+    excuter.stochastic_oscillator()
     excuter.save_df_to_excel()    
