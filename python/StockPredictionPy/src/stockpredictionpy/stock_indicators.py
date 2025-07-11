@@ -2,6 +2,7 @@ import pandas as pd
 import read_data_from_db
 import logging
 import openpyxl
+import numpy as np
 logging.basicConfig(level=logging.INFO, filename="stock_idicators.log", filemode="w", format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 class StockIndicators:
@@ -34,7 +35,7 @@ class StockIndicators:
         
         for time_period in time_periods:
             
-            self.dataframe[f'ema_{time_period}'] = float('nan')
+            self.dataframe[f'ema_{time_period}'] = np.nan
         
             for company_id in self.dataframe['company_id'].unique():
                 
@@ -52,7 +53,7 @@ class StockIndicators:
     #Moving Average Convergence Divergence (MACD) 
     def macd(self):
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
-        self.dataframe['signal_line'] = float('nan')
+        self.dataframe['signal_line'] = np.nan
         self.dataframe['macd_line'] = self.dataframe['ema_12'] - self.dataframe['ema_26']
 
         for company_id in self.dataframe['company_id'].unique():
@@ -75,7 +76,7 @@ class StockIndicators:
         
         for time_period in time_periods:
             
-            self.dataframe[f'roc_{time_period}'] = float("nan")
+            self.dataframe[f'roc_{time_period}'] = np.nan
             
             for company_id in self.dataframe['company_id'].unique():
                 company_mask = self.dataframe['company_id'] == company_id
@@ -102,7 +103,7 @@ class StockIndicators:
     # Momentum Indicators (RSI)
     def rsi(self):
 
-        self.dataframe['rsi'] = float("nan")
+        self.dataframe['rsi'] = np.nan
         self.dataframe['change'] = self.dataframe.groupby('company_id')['close'].diff()
 
         time_period = 14 
@@ -128,25 +129,39 @@ class StockIndicators:
         logger.info("RSI Done")
         return self.dataframe
 
-    #o	%K (Fast) = [(Current Close - Lowest Low of N periods) / (Highest High of N periods - Lowest Low of N periods)] × 100
-    # o	%D (Slow) = 3-day SMA of %K
-    # •	Standard period: 14 days for %K
-
+    # Momentum Indicators Stochastic Oscillator
     def stochastic_oscillator(self):
+   
         time_period = 14
-        self.dataframe.sort_values('data_date')
-        print(self.dataframe.head(51))
+
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+
+        self.dataframe['stochastic_oscillator_fast'] = np.nan
+        self.dataframe['stochastic_oscillator_slow'] = np.nan
+    
+        for company_id in self.dataframe['company_id'].unique():
+            company_mask = self.dataframe['company_id'] == company_id
+            company_data = self.dataframe[company_mask].copy()
         
-            
-
-        k_fast = 0
-        d_slow = 0
-
+            lowest_low = company_data['low'].rolling(window=time_period, min_periods=time_period).min()
+            highest_high = company_data['high'].rolling(window=time_period, min_periods=time_period).max()
+    
+            stochastic_k = ((company_data['close'] - lowest_low) / (highest_high - lowest_low)) * 100
+        
+            stochastic_d = stochastic_k.rolling(window=3, min_periods=3).mean()
+        
+            self.dataframe.loc[company_mask, 'stochastic_oscillator_fast'] = stochastic_k.values
+            self.dataframe.loc[company_mask, 'stochastic_oscillator_slow'] = stochastic_d.values
+    
         print("Stochastic Oscillator Done")
         logger.info("Stochastic Oscillator Done")
-        
+        print(self.dataframe.head(51))
         return self.dataframe
     
+    # Momentum Indicators Williams %R
+    def williams_R(self):
+        pass    
+
     # Save dataframe to excel file
     def save_df_to_excel(self):
         self.dataframe.to_excel('df.xlsx')
@@ -154,10 +169,10 @@ class StockIndicators:
 
 if __name__ == "__main__":
     excuter = StockIndicators()
-    # excuter.sma()
-    # excuter.ema()
-    # excuter.macd()
-    # excuter.roc()
-    # excuter.rsi()
+    excuter.sma()
+    excuter.ema()
+    excuter.macd()
+    excuter.roc()
+    excuter.rsi()
     excuter.stochastic_oscillator()
     excuter.save_df_to_excel()    

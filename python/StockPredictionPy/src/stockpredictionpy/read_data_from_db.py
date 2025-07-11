@@ -39,7 +39,7 @@ class ReadDataFromDB:
             self.dataframe = pd.read_sql(query, self.conn)
             logger.info(f"Successfully read data and stored in data frame")
             # print(f"Data read successfully, shape: {self.dataframe.shape}")
-            print(self.dataframe.head())
+            # print(self.dataframe.head())
 
         except Exception as e:
             logger.exception(f": failed to get data fro database {str(e)}")
