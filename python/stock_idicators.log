@@ -1,9 +1,10 @@
-2025-07-11 20:02:01,522 - INFO - Successfully connected to database
-2025-07-11 20:02:01,660 - INFO - Successfully read data and stored in data frame
-2025-07-11 20:02:01,736 - INFO - sma done
-2025-07-11 20:02:01,809 - INFO - EMA done
-2025-07-11 20:02:01,843 - INFO - MACD Done
-2025-07-11 20:02:04,224 - INFO - ROC Done
-2025-07-11 20:02:04,304 - INFO - RSI Done
-2025-07-11 20:02:04,358 - INFO - Stochastic Oscillator Done
-2025-07-11 20:02:15,246 - INFO - Excel file saved
+2025-07-12 23:19:02,931 - INFO - Successfully connected to database
+2025-07-12 23:19:03,074 - INFO - Successfully read data and stored in data frame
+2025-07-12 23:19:03,115 - INFO - EMA done
+2025-07-12 23:19:03,164 - INFO - sma done
+2025-07-12 23:19:03,188 - INFO - MACD Done
+2025-07-12 23:19:03,211 - INFO - ROC Done
+2025-07-12 23:19:03,246 - INFO - RSI Done
+2025-07-12 23:19:03,284 - INFO - Stochastic Oscillator Done
+2025-07-12 23:19:03,315 - INFO - Williams %R Done
+2025-07-12 23:19:15,127 - INFO - Excel file saved

@@ -1,7 +1,6 @@
 import pandas as pd
 import read_data_from_db
 import logging
-import openpyxl
 import numpy as np
 logging.basicConfig(level=logging.INFO, filename="stock_idicators.log", filemode="w", format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -11,22 +10,25 @@ class StockIndicators:
         data_reader = read_data_from_db.ReadDataFromDB()
         self.dataframe = data_reader.read_data()
 
-    # trend indicators
+    # Trend Indicators    
     def sma(self):
         time_periods = [10, 12, 20, 26, 50]
-        
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+
         for time_period in time_periods:
-            
-            for company_id in self.dataframe['company_id'].unique():
-                company_mask = self.dataframe['company_id'] == company_id
-                company_sma = self.dataframe.loc[company_mask, 'close'].rolling(window=time_period).mean()
-                self.dataframe.loc[company_mask, f'sma_{time_period}'] = company_sma.values
+            self.dataframe[f'SMA_{time_period}'] = (
+            self.dataframe
+            .groupby('company_id')['close']
+            .rolling(window=time_period, min_periods=time_period)
+            .mean()
+            .reset_index(level=0, drop=True)
+            )
 
         logger.info("sma done")
         print("SMA  DONE")
-        return self.dataframe
-
-    # Exponential Moving Average (EMA) 
+        return self.dataframe    
+    
+    # Exponential Moving Average (EMA)     
     def ema(self):
     
         time_periods = [5, 12, 26, 50]
@@ -34,37 +36,32 @@ class StockIndicators:
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
         
         for time_period in time_periods:
-            
-            self.dataframe[f'ema_{time_period}'] = np.nan
-        
-            for company_id in self.dataframe['company_id'].unique():
-                
-                company_mask = self.dataframe['company_id'] == company_id
-                
-                company_ema = self.dataframe.loc[company_mask, 'close'].ewm(span=time_period, adjust=False).mean()
-                
-                self.dataframe.loc[company_mask, f'ema_{time_period}'] = company_ema.values
-        
+            self.dataframe[f'EMA_{time_period}'] = (
+                self.dataframe.groupby('company_id')['close']
+                .ewm(span=time_period, adjust=False)
+                .mean()
+                .reset_index(level=0, drop=True)
+            )
+
         logger.info("EMA done")
         print("EMA done")
         return self.dataframe
     
-
     #Moving Average Convergence Divergence (MACD) 
     def macd(self):
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
-        self.dataframe['signal_line'] = np.nan
-        self.dataframe['macd_line'] = self.dataframe['ema_12'] - self.dataframe['ema_26']
+        self.dataframe['macd_line'] = self.dataframe['EMA_12'] - self.dataframe['EMA_26']
 
-        for company_id in self.dataframe['company_id'].unique():
-            company_mask = self.dataframe['company_id'] == company_id
-            company_signal = self.dataframe.loc[company_mask, 'macd_line'].ewm(span=9, adjust=False).mean()
-            self.dataframe.loc[company_mask, 'signal_line'] = company_signal.values
+        self.dataframe['signal_line'] = (
+            self.dataframe.groupby('company_id')['macd_line']
+            .ewm(span=9, adjust=False)
+            .mean()
+            .reset_index(level=0, drop=True)
+        )
         
-        self.dataframe['macd'] = self.dataframe['macd_line'] - self.dataframe['signal_line']
-        self.dataframe.drop('signal_line', axis=1, inplace= True)
-        self.dataframe.drop('macd_line', axis=1, inplace=True)
-    
+        self.dataframe['MACD'] = self.dataframe['macd_line'] - self.dataframe['signal_line']
+        self.dataframe.drop(['signal_line', 'macd_line'], axis=1, inplace= True)
+       
         logger.info("MACD Done")
         print("MACD Done")
         return self.dataframe
@@ -75,35 +72,21 @@ class StockIndicators:
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
         
         for time_period in time_periods:
-            
-            self.dataframe[f'roc_{time_period}'] = np.nan
-            
-            for company_id in self.dataframe['company_id'].unique():
-                company_mask = self.dataframe['company_id'] == company_id
-                company_indices = self.dataframe.index[company_mask].to_list()
+            self.dataframe[f'ROC_{time_period}'] = (
+                self.dataframe.groupby('company_id')['close']
+                .pct_change(periods=time_period)
+                .reset_index(level=0, drop=True)
+            ) * 100
         
-                for i, current_idx in enumerate(company_indices):
-                
-                    if i - time_period < 0:
-                        continue
-                    
-                    historical_idx = company_indices[i - time_period]
-                
-                    current_close = self.dataframe.at[current_idx, 'close']
-                    historical_close = self.dataframe.at[historical_idx, 'close']
-                
-                    roc = (current_close - historical_close) / historical_close * 100
-                    self.dataframe.at[current_idx, f'roc_{time_period}'] = roc
-    
         logger.info("ROC Done")
-        print("ROC DOne")
-        # print(self.dataframe.head(51))
+        print("ROC Done")
         return self.dataframe
 
     # Momentum Indicators (RSI)
     def rsi(self):
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
 
-        self.dataframe['rsi'] = np.nan
+        self.dataframe['RSI'] = np.nan
         self.dataframe['change'] = self.dataframe.groupby('company_id')['close'].diff()
 
         time_period = 14 
@@ -118,50 +101,86 @@ class StockIndicators:
 
         rsi = 100 - (100 / (1 + rs))
 
-        self.dataframe['rsi'] = rsi
+        self.dataframe['RSI'] = rsi
 
-        self.dataframe.drop('change', axis=1, inplace=True)
-        self.dataframe.drop('gain', axis=1, inplace=True)
-        self.dataframe.drop('loss', axis=1, inplace=True)
-
+        self.dataframe.drop(['change', 'gain', 'loss'], axis=1, inplace=True)
         print("RSI Done")
-        print(self.dataframe.head(51))
         logger.info("RSI Done")
         return self.dataframe
 
     # Momentum Indicators Stochastic Oscillator
     def stochastic_oscillator(self):
-   
         time_period = 14
-
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
 
-        self.dataframe['stochastic_oscillator_fast'] = np.nan
-        self.dataframe['stochastic_oscillator_slow'] = np.nan
+        self.dataframe['Stochastic_Oscillator_Fast'] = np.nan
+        self.dataframe['Stochastic_Oscillator_Slow'] = np.nan
     
-        for company_id in self.dataframe['company_id'].unique():
-            company_mask = self.dataframe['company_id'] == company_id
-            company_data = self.dataframe[company_mask].copy()
+        lowest_low = ( 
+             self.dataframe
+            .groupby('company_id')['low']
+            .rolling(window=time_period, min_periods=time_period)
+            .min()
+            .reset_index(level=0, drop=True)
+            )
         
-            lowest_low = company_data['low'].rolling(window=time_period, min_periods=time_period).min()
-            highest_high = company_data['high'].rolling(window=time_period, min_periods=time_period).max()
+        highest_high = (
+            self.dataframe
+            .groupby('company_id')['high']
+            .rolling(window=time_period, min_periods=time_period)
+            .max()
+            .reset_index(level=0, drop=True)  
+        )
     
-            stochastic_k = ((company_data['close'] - lowest_low) / (highest_high - lowest_low)) * 100
+        stochastic_k = ((self.dataframe['close'] - lowest_low) / (highest_high - lowest_low)) * 100
         
-            stochastic_d = stochastic_k.rolling(window=3, min_periods=3).mean()
+        stochastic_d = (
+            stochastic_k
+            .groupby(self.dataframe['company_id'])
+            .rolling(window=3, min_periods=3)
+            .mean()
+            .reset_index(level=0, drop=True)
+        )
         
-            self.dataframe.loc[company_mask, 'stochastic_oscillator_fast'] = stochastic_k.values
-            self.dataframe.loc[company_mask, 'stochastic_oscillator_slow'] = stochastic_d.values
+        self.dataframe['Stochastic_Oscillator_Fast'] = stochastic_k.values
+        self.dataframe['Stochastic_Oscillator_Slow'] = stochastic_d.values
     
         print("Stochastic Oscillator Done")
         logger.info("Stochastic Oscillator Done")
-        print(self.dataframe.head(51))
         return self.dataframe
     
     # Momentum Indicators Williams %R
     def williams_R(self):
-        pass    
+        time_period = 14
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
 
+        highest_high = (
+            self.dataframe
+            .groupby('company_id')['high']
+            .rolling(window=time_period, min_periods=time_period)
+            .max()
+            .reset_index(level=0, drop=True)
+         )
+
+        lowest_low = (
+            self.dataframe
+            .groupby('company_id')['low']
+            .rolling(window=time_period, min_periods=time_period)
+            .min()
+            .reset_index(level=0, drop=True))
+        
+        williams_r = ((highest_high - self.dataframe['close']) / (highest_high - lowest_low)) * -100
+
+        self.dataframe['Williams_R'] = williams_r
+        
+        logger.info("Williams %R Done")
+        print("Williams %R Done")
+        return self.dataframe
+    
+    # Volatility Indicators Bollinger Bands
+    def bollinger_bands(self):
+        pass
+    
     # Save dataframe to excel file
     def save_df_to_excel(self):
         self.dataframe.to_excel('df.xlsx')
@@ -169,10 +188,12 @@ class StockIndicators:
 
 if __name__ == "__main__":
     excuter = StockIndicators()
-    excuter.sma()
     excuter.ema()
+    excuter.sma()
     excuter.macd()
     excuter.roc()
     excuter.rsi()
     excuter.stochastic_oscillator()
+    excuter.williams_R()
+    excuter.bollinger_bands()
     excuter.save_df_to_excel()    
