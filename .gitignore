@@ -13,4 +13,5 @@ target/
 .classpath
 .project
 **/application-*.properties
-.xlsx
+*.xlsx
+*.log
