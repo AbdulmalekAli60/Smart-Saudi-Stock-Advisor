@@ -108,7 +108,7 @@ class StockIndicators:
         logger.info("RSI Done")
         return self.dataframe
 
-    # Momentum Indicators Stochastic Oscillator
+    # Momentum Indicators (Stochastic Oscillator)
     def stochastic_oscillator(self):
         time_period = 14
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
@@ -149,7 +149,7 @@ class StockIndicators:
         logger.info("Stochastic Oscillator Done")
         return self.dataframe
     
-    # Momentum Indicators Williams %R
+    # Momentum Indicators (Williams %R)
     def williams_R(self):
         time_period = 14
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
@@ -177,10 +177,75 @@ class StockIndicators:
         print("Williams %R Done")
         return self.dataframe
     
-    # Volatility Indicators Bollinger Bands
+    # Volatility Indicators (Bollinger Bands)
     def bollinger_bands(self):
-        pass
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+
+        self.dataframe['Middle_Band'] = self.dataframe['SMA_20']
+        
+        standard_deviation = (
+            self.dataframe.groupby('company_id')['close']
+            .rolling(window=20, min_periods=20)
+            .std()
+            .multiply(2)
+            .reset_index(level=0, drop=True)    
+        )
+
+        self.dataframe['Upper_Band'] = self.dataframe['SMA_20'] + standard_deviation
+
+        self.dataframe['Lower_Band'] = self.dataframe['SMA_20'] - standard_deviation
+        
+
+        self.dataframe['Band_Width'] = (
+            (self.dataframe['Upper_Band'] - self.dataframe['Lower_Band']) / 
+            self.dataframe['Middle_Band'].replace(0, np.nan)
+        )
+
+        self.dataframe['BB_Percent'] = (
+             (self.dataframe['close'] - self.dataframe['Lower_Band']) / 
+             (self.dataframe['Upper_Band'] - self.dataframe['Lower_Band']).replace(0, np.nan)
+            )
+
+        self.dataframe['Price_to_Upper'] = self.dataframe['close'] / self.dataframe['Upper_Band'].replace(0, np.nan)
+        self.dataframe['Price_to_Lower'] = self.dataframe['close'] / self.dataframe['Lower_Band'].replace(0, np.nan)
+
+        logger.info("Bollinger Bands Done")
+        print("Bollinger Bands Done")
+        return self.dataframe
     
+    # Average True Range (ATR)
+    def atr(self):
+        time_period = 14
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+
+        self.dataframe['Previous_Close'] = self.dataframe.groupby('company_id')['close'].shift(1)
+        
+        hml = (self.dataframe['high'] - self.dataframe['low'])
+
+        hmpc = (np.absolute(self.dataframe['high'] - self.dataframe['Previous_Close']))
+
+        lmpc = (np.absolute(self.dataframe['low'] - self.dataframe['Previous_Close']))
+
+        self.dataframe['true_range'] = np.maximum(hml, np.maximum(hmpc, lmpc))
+        
+        self.dataframe['ATR'] = (
+            self.dataframe.groupby('company_id')['true_range']
+            .rolling(window=time_period, min_periods=time_period)
+            .mean()
+            .reset_index(level=0, drop=True)
+        )
+
+        self.dataframe.drop(['Previous_Close', 'true_range'], axis=1, inplace=True)
+
+        logger.info("ATR Done")
+        print("ATR Done")
+        print(self.dataframe.head(51))
+        return self.dataframe
+
+    # Volume Indicators (On-Balance Volume (OBV))
+    def obv(self):
+        pass
+
     # Save dataframe to excel file
     def save_df_to_excel(self):
         self.dataframe.to_excel('df.xlsx')
@@ -196,4 +261,6 @@ if __name__ == "__main__":
     excuter.stochastic_oscillator()
     excuter.williams_R()
     excuter.bollinger_bands()
+    excuter.atr()
+    excuter.obv()
     excuter.save_df_to_excel()    
