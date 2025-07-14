@@ -244,8 +244,53 @@ class StockIndicators:
 
     # Volume Indicators (On-Balance Volume (OBV))
     def obv(self):
-        pass
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+        self.dataframe['OBV'] = np.nan 
+        self.dataframe.loc[self.dataframe.groupby('company_id').cumcount() == 0, 'OBV'] = 0 # make first OBV value of each group as 0
 
+        for company_id in self.dataframe['company_id'].unique():
+            company_mask = self.dataframe['company_id' ] == company_id
+            company_data = self.dataframe[company_mask]
+
+            for i in range(1, len(company_data)):
+                current_index = company_data.index[i]
+                previous_index = company_data.index[i - 1]
+
+                if self.dataframe.at[current_index, 'close'] > self.dataframe.at[previous_index, 'close']:
+                    self.dataframe.at[current_index, 'OBV'] = self.dataframe.at[previous_index, 'OBV'] + self.dataframe.at[current_index, 'volume']
+                
+                elif self.dataframe.at[current_index, 'close'] < self.dataframe.at[previous_index, 'close']:
+                    self.dataframe.at[current_index, 'OBV'] = self.dataframe.at[previous_index, 'OBV'] - self.dataframe.at[current_index, 'volume']
+                
+                else:
+                    self.dataframe.at[current_index, 'OBV'] = self.dataframe.at[previous_index, 'OBV']
+
+        logger.info("OBV Done")
+        print("OBV Done")
+        return self.dataframe
+
+    # Volume Indicators, Volume Moving Average
+    def volume_moving_avg(self):
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+        self.dataframe['Volume_Moving_Avg'] = np.nan
+        time_period = 10
+
+        self.dataframe['Volume_Moving_Avg'] = (
+
+            self.dataframe.groupby('company_id')['volume']
+            .rolling(window = time_period, min_periods = time_period)
+            .mean()
+            .reset_index(level = 0, drop = True)
+        )
+
+        logger.info("Volume Moving Average Done")
+        print("Volume Moving Average Done")
+        return self.dataframe 
+    
+    # Support/Resistance Indicators (Pivot Points)
+    def pivot_points(self):
+        pass
+    
     # Save dataframe to excel file
     def save_df_to_excel(self):
         self.dataframe.to_excel('df.xlsx')
@@ -263,4 +308,6 @@ if __name__ == "__main__":
     excuter.bollinger_bands()
     excuter.atr()
     excuter.obv()
+    excuter.volume_moving_avg()
+    excuter.pivot_points()
     excuter.save_df_to_excel()    
