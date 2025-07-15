@@ -6,13 +6,12 @@ logging.basicConfig(level=logging.INFO, filename="stock_idicators.log", filemode
 logger = logging.getLogger(__name__)
 class StockIndicators:
     def __init__(self):
-        
         data_reader = read_data_from_db.ReadDataFromDB()
         self.dataframe = data_reader.read_data()
 
     # Trend Indicators    
     def sma(self):
-        time_periods = [10, 12, 20, 26, 50]
+        time_periods = [5 ,10, 12, 20, 26, 50]
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
 
         for time_period in time_periods:
@@ -31,7 +30,7 @@ class StockIndicators:
     # Exponential Moving Average (EMA)     
     def ema(self):
     
-        time_periods = [5, 12, 26, 50]
+        time_periods = [5, 12, 20 ,26, 50]
         
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
         
@@ -289,8 +288,102 @@ class StockIndicators:
     
     # Support/Resistance Indicators (Pivot Points)
     def pivot_points(self):
-        pass
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+        
+        self.dataframe['Pivot_Point'] = np.nan
+        self.dataframe['Support_1'] = np.nan
+        self.dataframe['Support_2'] = np.nan
+        self.dataframe['Support_3'] = np.nan
+        self.dataframe['Resistance_1'] = np.nan
+        self.dataframe['Resistance_2'] = np.nan
+        self.dataframe['Resistance_3'] = np.nan
+        
+        self.dataframe['Pivot_Points'] = (
+            (self.dataframe['high'] + self.dataframe['low'] + self.dataframe['close']) / 3
+        )
+        
+        self.dataframe['Support_1'] = (
+            (2 * self.dataframe['Pivot_Points']) - self.dataframe['high']
+        )
+        
+        self.dataframe['Support_2'] = (
+            self.dataframe['Pivot_Points'] - (self.dataframe['high'] - self.dataframe['low'])
+        )
+        
+        self.dataframe['Support_3'] = (
+            self.dataframe['low'] - 2 * (self.dataframe['high'] - self.dataframe['Pivot_Points'])
+        )
+        
+        self.dataframe['Resistance_1'] = (
+            (2 * self.dataframe['Pivot_Points']) - self.dataframe['low']
+        )
+        
+        self.dataframe['Resistance_2'] = (
+            self.dataframe['Pivot_Points'] + (self.dataframe['high'] - self.dataframe['low'])
+        )
+        
+        self.dataframe['Resistance_3'] = (
+            self.dataframe['high'] + 2 * (self.dataframe['Pivot_Points'] - self.dataframe['low'])
+        )
+        
+        logger.info("Pivot Points Done")
+        print("Pivot Points Done")
+        return self.dataframe
     
+
+    # Custom Ratio Indicators (Price to MA Ratio)
+    def price_to_ma_ratio(self):
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+        self.dataframe['Price_to_MA_Ratio'] = np.nan
+
+        self.dataframe['Price_to_MA_Ratio'] = np.where(
+        self.dataframe['SMA_20'] == 0 | (self.dataframe['SMA_20'].isna()) | (self.dataframe['close'].isna()),
+        np.nan,
+        self.dataframe['close'] / self.dataframe['SMA_20']
+    )
+
+        logger.info("Price to MA Ratio Done")
+        print("Price to MA Ratio Done")
+        return self.dataframe
+    
+    # Custom Ratio Indicators (MA Crossovers)
+    def ma_crossover(self):
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+        self.dataframe['SMA5/SMA20_Ratio'] = np.nan
+        self.dataframe['EMA5/EMA20_Ratio'] = np.nan
+
+        self.dataframe['SMA5/SMA20_Ratio'] = np.where(
+            (self.dataframe['SMA_20'] == 0) | (self.dataframe['SMA_20'].isna()) | (self.dataframe['SMA_5'].isna()),
+            np.nan,
+            self.dataframe['SMA_5'] / self.dataframe['SMA_20']
+        )
+
+        self.dataframe['EMA5/EMA20_Ratio'] = np.where(
+            (self.dataframe['EMA_20'] == 0) | (self.dataframe['EMA_20'].isna()) | (self.dataframe['EMA_5'].isna()),
+            np.nan,
+            self.dataframe['EMA_5'] / self.dataframe['EMA_20']
+        )
+
+        logger.info("MA Crossover Done")
+        print("MA Crossover Done")
+        print(self.dataframe.head(51))
+        return self.dataframe
+
+    #Custom Ratio Indicators (High-Low Range Ratio)
+    def high_low_range_ratio(self):
+        self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
+        self.dataframe['High_Low_Range_Ratio'] = np.nan
+
+        self.dataframe['High_Low_Range_Ratio'] = np.where(
+            (self.dataframe['close'] == 0) | (self.dataframe['close'].isna()) | (self.dataframe['high'].isna()) | (self.dataframe['low'].isna()),
+            np.nan,
+            (self.dataframe['high'] - self.dataframe['low']) / self.dataframe['close']
+        )
+
+        logger.info("High-Low Range Ratio Done")
+        print("High-Low Range Ratio Done")
+        return self.dataframe
+
     # Save dataframe to excel file
     def save_df_to_excel(self):
         self.dataframe.to_excel('df.xlsx')
@@ -310,4 +403,9 @@ if __name__ == "__main__":
     excuter.obv()
     excuter.volume_moving_avg()
     excuter.pivot_points()
+    excuter.price_to_ma_ratio()
+    excuter.ma_crossover()
+    excuter.high_low_range_ratio()
     excuter.save_df_to_excel()    
+
+    # 15 + 10
