@@ -1,34 +1,28 @@
 import psycopg2
 import pandas as pd
 import stock_indicators
-from config.databaseConnInfo import DATABASE, HOST, PASSWORD, PORT, USER
-from config.companies_list import companies
+from config.connect_to_database import connect_to_database
 import logging
-logging.basicConfig(level=logging.INFO, filename="read_data_from_db.log", filemode="w", format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger('database_reader module')
+logger.setLevel(logging.INFO)
+
+file_handler = logging.FileHandler("read_data_from_db.log", mode="w")
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+if not logger.handlers:
+    logger.addHandler(file_handler)
+
 
 class ReadDataFromDB:
     def __init__(self):
         self.dataframe = pd.DataFrame()
-        self.conn = None
-        
-    def connect_to_database(self):
-        try:
-            self.conn = psycopg2.connect(
-                database=DATABASE,
-                user=USER,
-                host=HOST,
-                password=PASSWORD,
-                port=PORT
-            )
-            logger.info("Successfully connected to database")
-            return True
-        except Exception as e:
-            logger.exception(f"Failed to connect to database: {str(e)}")
-            return False
-    
+        self.conn = connect_to_database()
+            
     def read_data(self):
-        if not self.connect_to_database():
+        if not self.conn:
             return pd.DataFrame()   
 
         try:

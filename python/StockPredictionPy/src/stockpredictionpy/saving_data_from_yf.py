@@ -1,62 +1,41 @@
 import yfinance as yf
-import psycopg2 
 import pandas as pd
 from curl_cffi import requests
-from datetime import datetime, timedelta
+from datetime import  timedelta
 import logging
-from config.databaseConnInfo import USER, DATABASE, HOST, PASSWORD, PORT
 from config.companies_list import companies
+from config.connect_to_database import connect_to_database
 
-logging.basicConfig(
-    level=logging.INFO, 
-    filename="saving_data_from_yf.log", 
-    filemode="w", 
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('yfinance_saver module')
+logger.setLevel(logging.INFO)
+
+file_handler = logging.FileHandler("saving_data_from_yf.log", mode="w")
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+if not logger.handlers:
+    logger.addHandler(file_handler)
 
 class SavingDataFromYf:
     def __init__(self):
-        self.conn = None
+        self.conn = connect_to_database()
         self.cur = None
-        self.companies = {
-            2: "7203.SR", 
-            3: "2223.SR", 
-            4: "7010.SR", 
-            5: "1180.SR", 
-            6: "2020.SR", 
-            7: "2280.SR", 
-            8: "1120.SR", 
-            9: "1010.SR", 
-            10: "2082.SR", 
-            11: "4280.SR", 
-            12: "1111.SR", 
-            13: "4013.SR", 
-            14: "1211.SR", 
-            15: "8210.SR", 
-            16: "8010.SR"
-        }
-        
-    def connect_to_database(self):
-        try:
-            self.conn = psycopg2.connect(
-                database=DATABASE,
-                user=USER,
-                host=HOST,
-                password=PASSWORD,
-                port=PORT
-            )
-            self.cur = self.conn.cursor()
-            logger.info("Database connected successfully")
-            return True
-        except Exception as e:
-            logger.error(f"Failed to connect to database: {str(e)}")
-            return False
-                
+
+        if self.conn:
+            try:
+                self.cur = self.conn.cursor()
+                logger.info("Database connected and cursor created successfully")
+            except Exception as e:
+                logger.error(f"Failed to create cursor: {str(e)}")
+                self.conn = None
+        else:
+            logger.error("Failed to establish database connection")
+                        
     def saving_yf_data_in_db(self):
         logger.info("Starting data fetching process...")
         
-        if not self.connect_to_database():
+        if not self.conn:
             logger.error("Could not connect to database. Exiting.")
             return 
         
@@ -75,9 +54,8 @@ class SavingDataFromYf:
         
         try:
             
-            for company_id, ticker in self.companies.items():
-                logger.info(f"Processing company_id: {company_id}, ticker: {ticker}")
-                
+            for company_id, ticker in companies.items():
+               
                 try:
                     stock_data = yf.download(
                         tickers=ticker,
@@ -85,7 +63,8 @@ class SavingDataFromYf:
                         start= today,
                         end= tomorrow_date,
                         progress=False,
-                        session=session
+                        session=session,
+                        auto_adjust=True
                     )
                     
                     if stock_data.empty:
@@ -99,13 +78,6 @@ class SavingDataFromYf:
                     for date_index, row in stock_data.iterrows():
                         
                         record = (
-                            # float(row["Close"]),
-                            # date_index.strftime('%Y-%m-%d'),
-                            # float(row["High"]),
-                            # float(row["Low"]),
-                            # float(row["Open"]),
-                            # int(row["Volume"]),
-                            # company_id
                             row["Close"].item() if hasattr(row["Close"], 'item') else float(row["Close"]),
                             date_index.strftime('%Y-%m-%d'),
                             row["High"].item() if hasattr(row["High"], 'item') else float(row["High"]),
@@ -125,14 +97,8 @@ class SavingDataFromYf:
                         
                         self.cur.executemany(query, records_to_insert)
                         self.conn.commit()
-                        # response = session.get('https://httpbin.org/get')
+                        
                         inserted_tickers.append(ticker)
-                        # logger.info(f"session headers {response.json()}")
-                        try:
-                            response = session.get('https://httpbin.org/get', timeout=5)
-                            logger.info(f"HTTP test request status: {response.status_code}")
-                        except Exception as e:
-                            logger.warning(f"HTTP test request failed: {e}")
 
                         logger.info(f"Successfully inserted {len(records_to_insert)} records for ticker: {ticker}")
                     else:
@@ -176,6 +142,7 @@ if __name__ == "__main__":
         
         logger.info("=" * 50)
         logger.info("Process finished")
+        print("Process finished")
         logger.info("=" * 50)
         
     except Exception as e:

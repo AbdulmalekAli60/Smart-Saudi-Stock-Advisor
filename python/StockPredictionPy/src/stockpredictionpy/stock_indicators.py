@@ -1,17 +1,24 @@
 import read_data_from_db
 import logging
 import numpy as np
-logging.basicConfig(
-    level=logging.INFO,
-    filename="stock_idicators.log",
-    filemode="w",
-    format='%(asctime)s - %(levelname)s - %(message)s'
-    )
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger('stock_indicators module')
+
+logger.setLevel(logging.INFO)
+
+file_handler = logging.FileHandler('stock_indicators.log',mode="w")
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+if not logger.handlers:
+    logger.addHandler(file_handler)
+
 class StockIndicators:
     def __init__(self):
         data_reader = read_data_from_db.ReadDataFromDB()
         self.dataframe = data_reader.read_data()
+        self.dataframe = self.dataframe.set_index('data_id')
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
         logger.info("Data has been sorted")
         print("Data has been sorted")
@@ -385,9 +392,11 @@ class StockIndicators:
     def save_df_to_excel(self):
         self.dataframe.to_excel('df.xlsx', index=False)
         logger.info("Excel file saved")
+        print("Excel file saved")
 
     def calculate_all_indicators(self):
         try:
+            
             self.ema()
             self.sma()
             self.macd()
@@ -403,6 +412,10 @@ class StockIndicators:
             self.price_to_ma_ratio()
             self.ma_crossover()
             self.high_low_range_ratio()
+            
+            # self.dataframe = self.dataframe[self.dataframe['volume'] > 0]
+            return self.dataframe
+        
         except Exception as e:
             logger.error(f"Error happend while calculating the indicators: {str(e)}")
             print(f"Error happend while calculating the indicators: {str(e)}")
@@ -413,6 +426,6 @@ class StockIndicators:
         return self.dataframe    
 
 if __name__ == "__main__":
-    excuter = StockIndicators()
-    excuter.calculate_all_indicators()
-    excuter.save_df_to_excel()
+    stock_indicators = StockIndicators()
+    stock_indicators.calculate_all_indicators()
+    stock_indicators.save_df_to_excel()
