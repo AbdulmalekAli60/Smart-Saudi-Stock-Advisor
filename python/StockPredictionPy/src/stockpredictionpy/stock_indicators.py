@@ -25,7 +25,8 @@ class StockIndicators:
 
     # Trend Indicators    
     def sma(self):
-        time_periods = [5 ,10, 12, 20, 26, 50]
+        # time_periods = [5 ,10, 12, 20, 26, 50] original
+        time_periods = [5 ,15, 30]
 
         for time_period in time_periods:
             self.dataframe[f'SMA_{time_period}'] = (
@@ -42,7 +43,8 @@ class StockIndicators:
     
     # Exponential Moving Average (EMA)     
     def ema(self):
-        time_periods = [5, 12, 20 ,26, 50]      
+        # time_periods = [5, 12, 20 ,26, 50] original      
+        time_periods = [9, 12, 26]      
 
         for time_period in time_periods:
             self.dataframe[f'EMA_{time_period}'] = (
@@ -400,18 +402,18 @@ class StockIndicators:
             self.ema()
             self.sma()
             self.macd()
-            self.roc()
+            # self.roc()
             self.rsi()
-            self.stochastic_oscillator()
-            self.williams_R()
-            self.bollinger_bands()
-            self.atr()
-            self.obv()
-            self.volume_moving_avg()
-            self.pivot_points()
-            self.price_to_ma_ratio()
-            self.ma_crossover()
-            self.high_low_range_ratio()
+            # self.stochastic_oscillator()
+            # self.williams_R()
+            # self.bollinger_bands()
+            # self.atr()
+            # self.obv()
+            # self.volume_moving_avg()
+            # self.pivot_points()
+            # self.price_to_ma_ratio()
+            # self.ma_crossover()
+            # self.high_low_range_ratio()
             
             # self.dataframe = self.dataframe[self.dataframe['volume'] > 0]
             return self.dataframe
@@ -428,4 +430,4 @@ class StockIndicators:
 if __name__ == "__main__":
     stock_indicators = StockIndicators()
     stock_indicators.calculate_all_indicators()
-    stock_indicators.save_df_to_excel()
+    # stock_indicators.save_df_to_excel()
