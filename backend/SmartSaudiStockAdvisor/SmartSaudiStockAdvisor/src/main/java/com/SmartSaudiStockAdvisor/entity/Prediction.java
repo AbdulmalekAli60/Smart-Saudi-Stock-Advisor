@@ -16,8 +16,8 @@ public class Prediction {
     @Column(name = "prediction_date")
     private Timestamp predictionDate;
 
-    @Column(name = "confidence")
-    private Float confidence;
+    @Column(name = "prediction")
+    private Float prediction;
 
     @Column(name = "direction")
     private Boolean direction;
@@ -39,7 +39,7 @@ public class Prediction {
     public Prediction(Long predictionId, Float confidence, Boolean direction, Timestamp expirationDate, Boolean actualResult, Company company) {
         this();
         this.predictionId = predictionId;
-        this.confidence = confidence;
+        this.prediction = confidence;
         this.direction = direction;
         this.expirationDate = expirationDate;
         this.actualResult = actualResult;
@@ -62,12 +62,12 @@ public class Prediction {
         this.predictionDate = predictionDate;
     }
 
-    public Float getConfidence() {
-        return confidence;
+    public Float getPrediction() {
+        return prediction;
     }
 
-    public void setConfidence(Float confidence) {
-        this.confidence = confidence;
+    public void setPrediction(Float prediction) {
+        this.prediction = prediction;
     }
 
     public Boolean getDirection() {
@@ -107,7 +107,7 @@ public class Prediction {
         return "Prediction{" +
                 "predictionId=" + predictionId +
                 ", predictionDate=" + predictionDate +
-                ", confidence=" + confidence +
+                ", confidence=" + prediction +
                 ", direction=" + direction +
                 ", expirationDate=" + expirationDate +
                 ", actualResult=" + actualResult +
