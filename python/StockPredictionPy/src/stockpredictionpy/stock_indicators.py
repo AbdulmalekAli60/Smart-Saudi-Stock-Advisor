@@ -419,8 +419,8 @@ class StockIndicators:
             return self.dataframe
         
         except Exception as e:
-            logger.error(f"Error happend while calculating the indicators: {str(e)}")
-            print(f"Error happend while calculating the indicators: {str(e)}")
+            logger.error(f"Error happened while calculating the indicators: {str(e)}")
+            print(f"Error happened while calculating the indicators: {str(e)}")
             
 
         print("All indicators has been calculated")

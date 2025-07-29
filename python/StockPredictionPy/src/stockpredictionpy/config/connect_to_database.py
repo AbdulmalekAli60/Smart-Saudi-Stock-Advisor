@@ -14,13 +14,6 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-# logging.basicConfig(
-#       level=logging.INFO,
-#       filename="connect_to_db.log",
-#       filemode="w",
-#       format='%(asctime)s - %(levelname)s - %(message)s')
-# logger = logging.getLogger(__name__)
-
 def connect_to_database():
         try:
             conn = psycopg2.connect(

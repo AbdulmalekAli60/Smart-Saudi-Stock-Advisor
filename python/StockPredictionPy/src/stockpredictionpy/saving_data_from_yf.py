@@ -47,7 +47,7 @@ class SavingDataFromYf:
         tomorrow_date = (today + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
         
         logger.info(f"Fetching today's data for date: {today_date}")
-        logger.info(f"Fetching today's data for date: {today_date} tomowro: {tomorrow_date}")
+        logger.info(f"Fetching today's data for date: {today_date} tomorrow: {tomorrow_date}")
         
         inserted_tickers = []
         failed_inserted_tickers = []
