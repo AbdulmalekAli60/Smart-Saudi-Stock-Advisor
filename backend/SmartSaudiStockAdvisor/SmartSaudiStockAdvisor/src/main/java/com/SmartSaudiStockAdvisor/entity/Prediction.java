@@ -26,7 +26,7 @@ public class Prediction {
     private Timestamp expirationDate;
 
     @Column(name = "actual_result")
-    private Boolean actualResult;
+    private Float actualResult;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
@@ -36,10 +36,10 @@ public class Prediction {
         this.predictionDate = new Timestamp(System.currentTimeMillis());
     }
 
-    public Prediction(Long predictionId, Float confidence, Boolean direction, Timestamp expirationDate, Boolean actualResult, Company company) {
+    public Prediction(Long predictionId, Float prediction, Boolean direction, Timestamp expirationDate, Float actualResult, Company company) {
         this();
         this.predictionId = predictionId;
-        this.prediction = confidence;
+        this.prediction = prediction;
         this.direction = direction;
         this.expirationDate = expirationDate;
         this.actualResult = actualResult;
@@ -86,11 +86,11 @@ public class Prediction {
         this.expirationDate = expirationDate;
     }
 
-    public Boolean getActualResult() {
+    public Float getActualResult() {
         return actualResult;
     }
 
-    public void setActualResult(Boolean actualResult) {
+    public void setActualResult(Float actualResult) {
         this.actualResult = actualResult;
     }
 
