@@ -25,7 +25,7 @@ class StockIndicators:
 
     # Trend Indicators    
     def sma(self):
-        # time_periods = [5 ,10, 12, 20, 26, 50] original
+        #time_periods = [5 ,10, 12, 20, 26, 50] # original
         time_periods = [5 ,15, 30]
 
         for time_period in time_periods:
@@ -43,7 +43,7 @@ class StockIndicators:
     
     # Exponential Moving Average (EMA)     
     def ema(self):
-        # time_periods = [5, 12, 20 ,26, 50] original      
+        # time_periods = [5, 12, 20 ,26, 50] # original      
         time_periods = [9, 12, 26]      
 
         for time_period in time_periods:
@@ -400,9 +400,9 @@ class StockIndicators:
         try:
             
             self.ema()
-            self.sma()
+            # self.sma()
             self.macd()
-            # self.roc()
+            self.roc()
             self.rsi()
             # self.stochastic_oscillator()
             # self.williams_R()
@@ -410,8 +410,8 @@ class StockIndicators:
             # self.atr()
             # self.obv()
             # self.volume_moving_avg()
-            # self.pivot_points()
-            # self.price_to_ma_ratio()
+            self.pivot_points()
+            self.price_to_ma_ratio()
             # self.ma_crossover()
             # self.high_low_range_ratio()
             

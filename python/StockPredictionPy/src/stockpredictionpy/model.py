@@ -39,7 +39,7 @@ class XgBoostModel:
     def preprocessing_data(self):
         self.dataframe['tomorrow_close'] = self.dataframe.groupby('company_id')['close'].shift(-1)
         self.dataframe = self.dataframe.dropna(subset=['tomorrow_close'])
-        self.dataframe = self.dataframe[self.dataframe['volume'] > 0]
+        # self.dataframe = self.dataframe[self.dataframe['volume'] > 0]
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
 
     def connect_to_db(self):
@@ -88,6 +88,8 @@ class XgBoostModel:
         reg = None
         predictions_dict  = {}
         for company_id, company_set in companies_sets_dict.items():
+            # if company_id != 4:
+            #     continue
             train_data = company_set['train']
             validation_data = company_set['validation']
             test_data = company_set['test']
@@ -97,14 +99,14 @@ class XgBoostModel:
             x_test, y_test = test_data.iloc[:, :-1], test_data.iloc[:, -1]
             
             logger.info(f"Training for company: {company_id} Training with: {x_train.shape[1]} features and with {x_train.shape[0]} samples")
-
+            logger.info(f"Company: {company_id}")
             reg = XGBRegressor(    
-                n_estimators=50, 
+                n_estimators=75, 
                 learning_rate=0.1,     
-                max_depth=3,            
+                max_depth=4,            
                 min_child_weight=20,    
-                reg_alpha=10.0,         
-                reg_lambda=20.0,        
+                reg_alpha=20.0,         
+                reg_lambda=30.0,        
                 subsample=0.6,         
                 colsample_bytree=0.6,   
                 early_stopping_rounds=5,
@@ -123,6 +125,33 @@ class XgBoostModel:
             val_pred = reg.predict(x_validation)
             test_pred = reg.predict(x_test)
 
+            train_rmse = np.sqrt(mean_squared_error(y_train, train_pred))
+            train_mae = mean_absolute_error(y_train, train_pred)
+            train_r2 = r2_score(y_train, train_pred)
+
+            val_rmse = np.sqrt(mean_squared_error(y_validation, val_pred))
+            val_mae = mean_absolute_error(y_validation, val_pred)
+            val_r2 = r2_score(y_validation, val_pred)
+
+            test_rmse = np.sqrt(mean_squared_error(y_test, test_pred))
+            test_mae = mean_absolute_error(y_test, test_pred)
+            test_r2 = r2_score(y_test, test_pred)
+
+            logger.info("=" * 50)
+            logger.info(f"Model Performance:")
+            logger.info(f"Train RMSE: {train_rmse:.4f}")
+            logger.info(f"Train MAE: {train_mae:.4f}")
+            logger.info(f"Train R²: {train_r2:.4f}")
+            logger.info("=" * 50)
+            logger.info(f"Validation RMSE: {val_rmse:.4f}")
+            logger.info(f"Validation MAE: {val_mae:.4f}")
+            logger.info(f"Validation R²: {val_r2:.4f}")
+            logger.info("=" * 50)
+            logger.info(f"Test RMSE: {test_rmse:.4f}")
+            logger.info(f"Test MAE: {test_mae:.4f}")
+            logger.info(f"Test R²: {test_r2:.4f}")
+            logger.info("=" * 50)
+
             self.last_rows[company_id] = self.get_last_row(company_id=company_id)
             prediction_row = self.get_prediction_row(company_id=company_id, x_train_columns=x_train.columns)
             tomorrow_prediction = reg.predict(prediction_row)[0]
@@ -136,7 +165,7 @@ class XgBoostModel:
             }
                                     
             logger.info(f"XGBoost model training completed for company: {company_id}")
-             
+        
         return predictions_dict 
             
     def get_last_row(self, company_id):
