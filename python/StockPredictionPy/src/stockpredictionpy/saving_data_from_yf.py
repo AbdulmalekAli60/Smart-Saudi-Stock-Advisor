@@ -36,7 +36,7 @@ class SavingDataFromYf:
         logger.info("Starting data fetching process...")
         
         if not self.conn:
-            logger.error("Could not connect to database. Exiting.")
+            logger.error("Could not connect to database.")
             return 
         
         session = requests.Session(impersonate="chrome")

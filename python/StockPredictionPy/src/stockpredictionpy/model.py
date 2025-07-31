@@ -186,8 +186,13 @@ class XgBoostModel:
         today = pd.Timestamp.today().normalize()
         today_date = today.strftime('%Y-%m-%d')
         yesterday_date = (today - timedelta(days=1)).strftime('%Y-%m-%d')
-        tomorrow_date = (today + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
-        return today_date, yesterday_date, tomorrow_date
+        tomorrow_date = (today + timedelta(days=1)).strftime('%Y-%m-%d')
+        thursday_date = (today - timedelta(days=3)).strftime('%Y-%m-%d')  
+        sunday_date = (today + timedelta(days=3)).strftime('%Y-%m-%d')     
+        is_thursday = today.weekday() == 3 
+        is_sunday = today.weekday() == 6    
+    
+        return today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date
 
     def insert_prediction(self, predictions_dict):
         if not predictions_dict:
@@ -216,7 +221,7 @@ class XgBoostModel:
             self.handle_db_commit()
             
         except Exception as e:
-            logger.error(f"Transaction failed: {str(e)}")
+            logger.exception(f"Transaction failed: {str(e)}")
             self.conn.rollback()
         finally:
             self.close_db()
@@ -238,12 +243,12 @@ class XgBoostModel:
             logger.info("Transaction Done")
             return True
         except Exception as e:
-            logger.error(f"Transaction Failed: {str(e)}")
+            logger.exception(f"Transaction Failed: {str(e)}")
             self.conn.rollback()
             return False
 
     def handle_insert(self, company_id, pred_data):
-        today_date, yesterday_date, tomorrow_date = self.get_date()
+        today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date = self.get_date()
         insert_query = """
             INSERT INTO prediction 
             (actual_result, direction, expiration_date, prediction_date, company_id, prediction)
@@ -253,7 +258,7 @@ class XgBoostModel:
         insert_values = (
             None,
             bool(pred_data['direction']),
-            tomorrow_date,
+            sunday_date if is_thursday else tomorrow_date,
             today_date,
             int(company_id),
             float(pred_data['prediction'])
@@ -264,11 +269,11 @@ class XgBoostModel:
             logger.info(f"Successfully inserted prediction for company {company_id}")
             return True
         except Exception as e:
-            logger.error(f'Failed to insert prediction. Company id: {company_id} Error: {str(e)}')
+            logger.exception(f'Failed to insert prediction. Company id: {company_id} Error: {str(e)}')
             return False
 
     def handle_update(self, company_id):
-        today_date, yesterday_date, tomorrow_date = self.get_date()
+        today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date = self.get_date()
         update_query = """
             UPDATE prediction
             SET actual_result = %s
@@ -280,7 +285,7 @@ class XgBoostModel:
         
         update_values = (
             float(self.last_rows[company_id]['close'].iloc[0]),
-            yesterday_date,
+            thursday_date if is_sunday else yesterday_date,
             int(company_id),
             today_date
         )
@@ -294,7 +299,7 @@ class XgBoostModel:
                 logger.info(f"No previous prediction found to update for company {company_id}")
                 return True
         except Exception as e:
-            logger.error(f"Failed to update previous prediction for company: {company_id}")
+            logger.exception(f"Failed to update previous prediction for company: {company_id}")
             return False
     
     def save_sets_to_excel(self):
