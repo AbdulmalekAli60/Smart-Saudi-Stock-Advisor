@@ -4,6 +4,7 @@ from curl_cffi import requests
 from datetime import  timedelta
 import logging
 from config.companies_list import companies
+import psycopg2
 from config.connect_to_database import connect_to_database
 
 logger = logging.getLogger('yfinance_saver module')
@@ -20,7 +21,7 @@ if not logger.handlers:
 class SavingDataFromYf:
     def __init__(self):
         self.conn = connect_to_database()
-        self.cur = None
+        self.cur:psycopg2.extensions.cursor = None
 
         if self.conn:
             try:
@@ -31,8 +32,17 @@ class SavingDataFromYf:
                 self.conn = None
         else:
             logger.error("Failed to establish database connection")
-                        
-    def saving_yf_data_in_db(self):
+
+    def get_date(self) -> tuple[str, str, str]:
+        today:pd.Timestamp = pd.Timestamp.today().normalize()
+        today_date:str = today.strftime('%Y-%m-%d')
+        yesterday_date:str = (today - timedelta(days=1)).strftime('%Y-%m-%d')
+        tomorrow_date:str = (today + timedelta(days=1)).strftime('%Y-%m-%d')
+
+        return today_date, yesterday_date, tomorrow_date
+
+    def saving_yf_data_in_db(self) -> None:
+        today_date, yesterday_date, tomorrow_date = self.get_date()
         logger.info("Starting data fetching process...")
         
         if not self.conn:
@@ -41,26 +51,26 @@ class SavingDataFromYf:
         
         session = requests.Session(impersonate="chrome")
         
-        today = pd.Timestamp.today().normalize()
-        today_date = today.strftime('%Y-%m-%d')
-        yesterday_date = (today - timedelta(days=1)).strftime('%Y-%m-%d')
-        tomorrow_date = (today + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+        # today = pd.Timestamp.today().normalize()
+        # today_date = today.strftime('%Y-%m-%d')
+        # yesterday_date = (today - timedelta(days=1)).strftime('%Y-%m-%d')
+        # tomorrow_date = (today + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
         
         logger.info(f"Fetching today's data for date: {today_date}")
         logger.info(f"Fetching today's data for date: {today_date} tomorrow: {tomorrow_date}")
         
-        inserted_tickers = []
-        failed_inserted_tickers = []
+        inserted_tickers:list[str] = []
+        failed_inserted_tickers:list[str] = []
         
         try:
             
             for company_id, ticker in companies.items():
                
                 try:
-                    stock_data = yf.download(
+                    stock_data: pd.DataFrame = yf.download(
                         tickers=ticker,
                         interval="1d",
-                        start= today,
+                        start= today_date,
                         end= tomorrow_date,
                         progress=False,
                         session=session,
@@ -74,10 +84,10 @@ class SavingDataFromYf:
                     
                     logger.info(f"Found {len(stock_data)} records for {ticker}")
                     
-                    records_to_insert = []
+                    records_to_insert:list[tuple[float, str, float, float, float, int, int]] = []
                     for date_index, row in stock_data.iterrows():
                         
-                        record = (
+                        record: tuple[float, str, float, float, float, int, int] = (
                             row["Close"].item() if hasattr(row["Close"], 'item') else float(row["Close"]),
                             date_index.strftime('%Y-%m-%d'),
                             row["High"].item() if hasattr(row["High"], 'item') else float(row["High"]),
@@ -89,7 +99,7 @@ class SavingDataFromYf:
                         records_to_insert.append(record)
                     
                     if records_to_insert:
-                        query = """
+                        query:str = """
                             INSERT INTO historical_data (close, data_date, high, low, open, volume, company_id)
                             VALUES (%s, %s, %s, %s, %s, %s, %s)
 

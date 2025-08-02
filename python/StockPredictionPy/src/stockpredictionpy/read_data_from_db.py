@@ -1,6 +1,5 @@
 import psycopg2
 import pandas as pd
-import stock_indicators
 from config.connect_to_database import connect_to_database
 import logging
 
@@ -18,22 +17,20 @@ if not logger.handlers:
 
 class ReadDataFromDB:
     def __init__(self):
-        self.dataframe = pd.DataFrame()
-        self.conn = connect_to_database()
+        self.dataframe:pd.DataFrame = pd.DataFrame()
+        self.conn:psycopg2.extensions.connection = connect_to_database()
             
     def read_data(self):
         if not self.conn:
             return pd.DataFrame()   
 
         try:
-            query = """
+            query:str = """
                     Select * from historical_data
                     """
 
             self.dataframe = pd.read_sql(query, self.conn)
             logger.info(f"Successfully read data and stored in data frame")
-            # print(f"Data read successfully, shape: {self.dataframe.shape}")
-            # print(self.dataframe.head())
 
         except Exception as e:
             logger.exception(f": failed to get data fro database {str(e)}")
@@ -48,13 +45,12 @@ class ReadDataFromDB:
         print(f"Returning dataframe with shape: {self.dataframe.shape}")
         return self.dataframe
     
-    # read_data_from_db.py
 if __name__ == "__main__":
     print("=== Testing ReadDataFromDB ===")
     reader = ReadDataFromDB()
     df = reader.read_data()
-    # print(f"Direct call result shape: {df.shape}")
+
     print("\n=== Testing StockIndicators ===")
-    stock_indicators = stock_indicators.StockIndicators()
-    stock_indicators.sma_5()
+    # stock_indicators = stock_indicators.StockIndicators()
+    # stock_indicators.sma_5()
 

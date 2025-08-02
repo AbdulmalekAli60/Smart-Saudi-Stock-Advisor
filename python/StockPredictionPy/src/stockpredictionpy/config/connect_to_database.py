@@ -14,9 +14,9 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-def connect_to_database():
+def connect_to_database() -> psycopg2.extensions.connection | False:
         try:
-            conn = psycopg2.connect(
+            conn:psycopg2.extensions.connection = psycopg2.connect(
                 database=DATABASE,
                 user=USER,
                 host=HOST,

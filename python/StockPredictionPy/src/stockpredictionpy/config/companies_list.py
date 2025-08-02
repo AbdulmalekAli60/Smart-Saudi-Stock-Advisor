@@ -1,4 +1,4 @@
-companies = {
+companies:dict[int, str] = {
             2: "7203.SR", 
             3: "2223.SR", 
             4: "7010.SR", 

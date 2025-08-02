@@ -5,6 +5,7 @@ from xgboost import XGBRegressor
 from config.companies_list import companies
 import matplotlib.pyplot as plt
 from stock_indicators import StockIndicators
+import psycopg2
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from datetime import  timedelta
 from config.connect_to_database import connect_to_database
@@ -27,22 +28,22 @@ class XgBoostModel:
         data = stock_indicators.calculate_all_indicators()
         self.dataframe = data
         self.original_dataframe = data.copy()
-        self.last_rows = {}
+        self.last_rows:dict = {}
         
         self.conn = connect_to_database()
-        self.cur = None
+        self.cur:psycopg2.extensions.cursor = None
         self.connect_to_db()
         
         
         self.preprocessing_data()
 
-    def preprocessing_data(self):
+    def preprocessing_data(self) -> None:
         self.dataframe['tomorrow_close'] = self.dataframe.groupby('company_id')['close'].shift(-1)
         self.dataframe = self.dataframe.dropna(subset=['tomorrow_close'])
         # self.dataframe = self.dataframe[self.dataframe['volume'] > 0]
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
 
-    def connect_to_db(self):
+    def connect_to_db(self) -> None:
         if self.conn:
             try:
                 self.cur = self.conn.cursor()
@@ -53,21 +54,21 @@ class XgBoostModel:
         else:
             logger.error("Failed to establish database connection")
 
-    def data_split(self, train_percentage = 0.70, validation_percentage = 0.15, test_percentage = 0.15):
-        companies_sets = {}
+    def data_split(self, train_percentage:float = 0.70, validation_percentage:float = 0.15, test_percentage:float = 0.15) -> dict[int, dict[str,pd.DataFrame]]:
+        companies_sets:dict = {}
         for company_id in self.dataframe['company_id'].unique():
-            filtered_company_data = self.dataframe[self.dataframe['company_id'] == company_id].copy()
-            filtered_company_data = filtered_company_data.sort_values('data_date').reset_index(drop=True)
+            filtered_company_data:pd.DataFrame = self.dataframe[self.dataframe['company_id'] == company_id].copy()
+            filtered_company_data:pd.DataFrame  = filtered_company_data.sort_values('data_date').reset_index(drop=True)
             filtered_company_data['data_date'] = range(len(filtered_company_data))
-            total_data = len(filtered_company_data)
+            total_data:int = len(filtered_company_data)
             
-            train_end = int(total_data * train_percentage)
-            validation_end = int(total_data * (train_percentage + validation_percentage))
+            train_end:int = int(total_data * train_percentage)
+            validation_end:int = int(total_data * (train_percentage + validation_percentage))
 
-            train_set = filtered_company_data[:train_end]
-            validation_set = filtered_company_data[train_end:validation_end]
-            test_set = filtered_company_data[validation_end:]
-            
+            train_set:pd.DataFrame = filtered_company_data[:train_end]
+            validation_set:pd.DataFrame = filtered_company_data[train_end:validation_end]
+            test_set:pd.DataFrame = filtered_company_data[validation_end:]
+
             companies_sets[company_id] = {
                 "train":train_set,
                 "validation": validation_set,
@@ -83,16 +84,16 @@ class XgBoostModel:
         
         return companies_sets
            
-    def xgboost_model(self):
-        companies_sets_dict = self.data_split()
+    def xgboost_model(self) -> dict[int, dict[str, bool | float]]:
+        companies_sets_dict:dict[int, dict[str,pd.DataFrame]] = self.data_split()
         reg = None
-        predictions_dict  = {}
+        predictions_dict:dict[int, dict[str, bool | float]]  = {}
         for company_id, company_set in companies_sets_dict.items():
             # if company_id != 4:
             #     continue
-            train_data = company_set['train']
-            validation_data = company_set['validation']
-            test_data = company_set['test']
+            train_data:pd.DataFrame = company_set['train']
+            validation_data:pd.DataFrame = company_set['validation']
+            test_data:pd.DataFrame = company_set['test']
             
             x_train, y_train = train_data.iloc[:, :-1], train_data.iloc[:, -1]
             x_validation, y_validation = validation_data.iloc[:, :-1], validation_data.iloc[:, -1]
@@ -121,21 +122,21 @@ class XgBoostModel:
                 eval_set=[(x_validation, y_validation)]
             )
             
-            train_pred = reg.predict(x_train)
-            val_pred = reg.predict(x_validation)
-            test_pred = reg.predict(x_test)
+            train_pred:np.ndarray = reg.predict(x_train)
+            val_pred:np.ndarray = reg.predict(x_validation)
+            test_pred:np.ndarray = reg.predict(x_test)
 
-            train_rmse = np.sqrt(mean_squared_error(y_train, train_pred))
-            train_mae = mean_absolute_error(y_train, train_pred)
-            train_r2 = r2_score(y_train, train_pred)
+            train_rmse:float = np.sqrt(mean_squared_error(y_train, train_pred))
+            train_mae:float = mean_absolute_error(y_train, train_pred)
+            train_r2:float = r2_score(y_train, train_pred)
 
-            val_rmse = np.sqrt(mean_squared_error(y_validation, val_pred))
-            val_mae = mean_absolute_error(y_validation, val_pred)
-            val_r2 = r2_score(y_validation, val_pred)
+            val_rmse:float = np.sqrt(mean_squared_error(y_validation, val_pred))
+            val_mae:float = mean_absolute_error(y_validation, val_pred)
+            val_r2:float = r2_score(y_validation, val_pred)
 
-            test_rmse = np.sqrt(mean_squared_error(y_test, test_pred))
-            test_mae = mean_absolute_error(y_test, test_pred)
-            test_r2 = r2_score(y_test, test_pred)
+            test_rmse:float = np.sqrt(mean_squared_error(y_test, test_pred))
+            test_mae:float = mean_absolute_error(y_test, test_pred)
+            test_r2:float = r2_score(y_test, test_pred)
 
             logger.info("=" * 50)
             logger.info(f"Model Performance:")
@@ -153,12 +154,12 @@ class XgBoostModel:
             logger.info("=" * 50)
 
             self.last_rows[company_id] = self.get_last_row(company_id=company_id)
-            prediction_row = self.get_prediction_row(company_id=company_id, x_train_columns=x_train.columns)
-            tomorrow_prediction = reg.predict(prediction_row)[0]
+            prediction_row:pd.Series = self.get_prediction_row(company_id=company_id, x_train_columns=x_train.columns)
+            tomorrow_prediction:float = reg.predict(prediction_row)[0]
 
-            current_price = self.last_rows[company_id]['close'].iloc[0]
-            direction = tomorrow_prediction > current_price
-         
+            current_price:float = self.last_rows[company_id]['close'].iloc[0]
+            direction:bool = tomorrow_prediction > current_price
+    
             predictions_dict [company_id] = {
                 'direction': direction,
                 'prediction' : tomorrow_prediction
@@ -168,41 +169,41 @@ class XgBoostModel:
         
         return predictions_dict 
             
-    def get_last_row(self, company_id):
-        company_data = self.original_dataframe[self.original_dataframe['company_id'] == company_id]
-        last_row = company_data.iloc[-1:, :]
+    def get_last_row(self, company_id:int) -> pd.DataFrame:
+        company_data:pd.DataFrame = self.original_dataframe[self.original_dataframe['company_id'] == company_id]
+        last_row:pd.DataFrame = company_data.iloc[-1:, :]
         logger.info(f"Last row for database operations: {last_row.shape}")
         return last_row
     
-    def get_prediction_row(self, company_id, x_train_columns):
-        company_data = self.original_dataframe[self.original_dataframe['company_id'] == company_id]
-        last_row = company_data.iloc[-1:, :].copy()
+    def get_prediction_row(self, company_id: int, x_train_columns:pd.Index) -> pd.DataFrame:
+        company_data:pd.DataFrame = self.original_dataframe[self.original_dataframe['company_id'] == company_id]
+        last_row:pd.DataFrame = company_data.iloc[-1:, :].copy()
         last_row['data_date'] = 9999  
-        prediction_row = last_row[x_train_columns]
+        prediction_row:pd.DataFrame = last_row[x_train_columns]
         logger.info(f"Prediction row columns: {list(prediction_row.columns)}")
         return prediction_row
     
-    def get_date(self):
-        today = pd.Timestamp.today().normalize()
-        today_date = today.strftime('%Y-%m-%d')
-        yesterday_date = (today - timedelta(days=1)).strftime('%Y-%m-%d')
-        tomorrow_date = (today + timedelta(days=1)).strftime('%Y-%m-%d')
-        thursday_date = (today - timedelta(days=3)).strftime('%Y-%m-%d')  
-        sunday_date = (today + timedelta(days=3)).strftime('%Y-%m-%d')     
-        is_thursday = today.weekday() == 3 
-        is_sunday = today.weekday() == 6    
+    def get_date(self) -> tuple[str,str,str,str,bool,bool,str]:
+        today:pd.Timestamp = pd.Timestamp.today().normalize()
+        today_date:str = today.strftime('%Y-%m-%d')
+        yesterday_date:str = (today - timedelta(days=1)).strftime('%Y-%m-%d')
+        tomorrow_date:str = (today + timedelta(days=1)).strftime('%Y-%m-%d')
+        thursday_date:str = (today - timedelta(days=3)).strftime('%Y-%m-%d')  
+        sunday_date:str = (today + timedelta(days=3)).strftime('%Y-%m-%d')     
+        is_thursday:bool = today.weekday() == 3 
+        is_sunday:bool = today.weekday() == 6    
     
         return today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date
 
-    def insert_prediction(self, predictions_dict):
+    def insert_prediction(self, predictions_dict:dict[int, dict[str, bool | float]]):
         if not predictions_dict:
             logger.info("There is no prediction dict")
             return
         
-        successfully_inserted_predictions = []
-        failed_inserted_predictions = []
-        updated_predictions = []
-        failed_updates = []
+        successfully_inserted_predictions:list[int] = []
+        failed_inserted_predictions:list[int] = []
+        updated_predictions:list[int] = []
+        failed_updates:list[int] = []
         
         try:
             for company_id, prediction_set in predictions_dict.items():
@@ -229,7 +230,7 @@ class XgBoostModel:
         logger.info(f"Successfully inserted predictions: {len(successfully_inserted_predictions)}")
         logger.info(f"Failed to insert predictions: {len(failed_inserted_predictions)}")
 
-    def close_db(self):
+    def close_db(self) -> None:
         if self.cur is not None:
             self.cur.close()
             logger.info("Cursor is closed")
@@ -237,7 +238,7 @@ class XgBoostModel:
             self.conn.close()
             logger.info("Connection is closed")
 
-    def handle_db_commit(self):
+    def handle_db_commit(self) -> bool:
         try:
             self.conn.commit()
             logger.info("Transaction Done")
@@ -247,15 +248,15 @@ class XgBoostModel:
             self.conn.rollback()
             return False
 
-    def handle_insert(self, company_id, pred_data):
+    def handle_insert(self, company_id:int, pred_data:dict[str, bool | float]) -> bool:
         today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date = self.get_date()
-        insert_query = """
+        insert_query:str = """
             INSERT INTO prediction 
             (actual_result, direction, expiration_date, prediction_date, company_id, prediction)
             VALUES (%s, %s, %s, %s, %s, %s);
             """
         
-        insert_values = (
+        insert_values:tuple[None, bool, str, str, int, float] = (
             None,
             bool(pred_data['direction']),
             sunday_date if is_thursday else tomorrow_date,
@@ -272,9 +273,9 @@ class XgBoostModel:
             logger.exception(f'Failed to insert prediction. Company id: {company_id} Error: {str(e)}')
             return False
 
-    def handle_update(self, company_id):
+    def handle_update(self, company_id:int) -> bool:
         today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date = self.get_date()
-        update_query = """
+        update_query:str = """
             UPDATE prediction
             SET actual_result = %s
             WHERE prediction_date = %s 
@@ -283,7 +284,7 @@ class XgBoostModel:
             AND expiration_date = %s
             """
         
-        update_values = (
+        update_values:tuple[float, str, int, str] = (
             float(self.last_rows[company_id]['close'].iloc[0]),
             thursday_date if is_sunday else yesterday_date,
             int(company_id),
@@ -302,7 +303,7 @@ class XgBoostModel:
             logger.exception(f"Failed to update previous prediction for company: {company_id}")
             return False
     
-    def save_sets_to_excel(self):
+    def save_sets_to_excel(self) ->None:
         companies_sets_dict = self.data_split()
         
         for company_id, company_set in companies_sets_dict.items():

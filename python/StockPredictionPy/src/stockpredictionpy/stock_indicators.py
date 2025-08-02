@@ -1,7 +1,7 @@
 import read_data_from_db
 import logging
 import numpy as np
-
+import pandas as pd
 logger = logging.getLogger('stock_indicators module')
 
 logger.setLevel(logging.INFO)
@@ -24,9 +24,9 @@ class StockIndicators:
         print("Data has been sorted")
 
     # Trend Indicators    
-    def sma(self):
+    def sma(self) -> pd.DataFrame:
         #time_periods = [5 ,10, 12, 20, 26, 50] # original
-        time_periods = [5 ,15, 30]
+        time_periods:list[int] = [5 ,15, 30]
 
         for time_period in time_periods:
             self.dataframe[f'SMA_{time_period}'] = (
@@ -42,9 +42,9 @@ class StockIndicators:
         return self.dataframe    
     
     # Exponential Moving Average (EMA)     
-    def ema(self):
+    def ema(self) -> pd.DataFrame:
         # time_periods = [5, 12, 20 ,26, 50] # original      
-        time_periods = [9, 12, 26]      
+        time_periods:list[int] = [9, 12, 26]      
 
         for time_period in time_periods:
             self.dataframe[f'EMA_{time_period}'] = (
@@ -59,7 +59,7 @@ class StockIndicators:
         return self.dataframe
     
     #Moving Average Convergence Divergence (MACD) 
-    def macd(self):
+    def macd(self) -> pd.DataFrame:
         self.dataframe['macd_line'] = self.dataframe['EMA_12'] - self.dataframe['EMA_26']
 
         self.dataframe['signal_line'] = (
@@ -77,8 +77,8 @@ class StockIndicators:
         return self.dataframe
 
     # Price Rate of Change (ROC) 
-    def roc(self):
-        time_periods = [5, 10]
+    def roc(self) -> pd.DataFrame:
+        time_periods:list[int] = [5, 10]
         
         for time_period in time_periods:
             self.dataframe[f'ROC_{time_period}'] = (
@@ -92,11 +92,11 @@ class StockIndicators:
         return self.dataframe
 
     # Momentum Indicators (RSI)
-    def rsi(self):
+    def rsi(self) -> pd.DataFrame:
         self.dataframe['RSI'] = np.nan
         self.dataframe['change'] = self.dataframe.groupby('company_id')['close'].diff()
 
-        time_period = 14 
+        time_period:int = 14 
 
         self.dataframe['gain'] = self.dataframe['change'].where(self.dataframe['change'] > 0, other = 0)
         self.dataframe['loss'] = self.dataframe['change'].where(self.dataframe['change'] < 0, other = 0).abs()
@@ -126,8 +126,8 @@ class StockIndicators:
         return self.dataframe
 
     # Momentum Indicators (Stochastic Oscillator)
-    def stochastic_oscillator(self):
-        time_period = 14
+    def stochastic_oscillator(self) -> pd.DataFrame:
+        time_period:int = 14
 
         self.dataframe['Stochastic_Oscillator_Fast'] = np.nan
         self.dataframe['Stochastic_Oscillator_Slow'] = np.nan
@@ -166,8 +166,8 @@ class StockIndicators:
         return self.dataframe
     
     # Momentum Indicators (Williams %R)
-    def williams_R(self):
-        time_period = 14
+    def williams_R(self) -> pd.DataFrame:
+        time_period:int = 14
 
         highest_high = (
             self.dataframe
@@ -193,7 +193,7 @@ class StockIndicators:
         return self.dataframe
     
     # Volatility Indicators (Bollinger Bands)
-    def bollinger_bands(self):
+    def bollinger_bands(self) -> pd.DataFrame:
 
         self.dataframe['Middle_Band'] = self.dataframe['SMA_20']
         
@@ -228,8 +228,8 @@ class StockIndicators:
         return self.dataframe
     
     # Average True Range (ATR)
-    def atr(self):
-        time_period = 14
+    def atr(self) -> pd.DataFrame:
+        time_period:int = 14
 
         self.dataframe['Previous_Close'] = self.dataframe.groupby('company_id')['close'].shift(1)
         
@@ -255,7 +255,7 @@ class StockIndicators:
         return self.dataframe
 
     # Volume Indicators (On-Balance Volume (OBV))
-    def obv(self):
+    def obv(self) -> pd.DataFrame:
         self.dataframe['OBV'] = np.nan 
         self.dataframe.loc[self.dataframe.groupby('company_id').cumcount() == 0, 'OBV'] = 0 # make first OBV value of each group as 0
 
@@ -281,9 +281,9 @@ class StockIndicators:
         return self.dataframe
 
     # Volume Indicators, Volume Moving Average
-    def volume_moving_avg(self):
+    def volume_moving_avg(self) -> pd.DataFrame:
         self.dataframe['Volume_Moving_Avg'] = np.nan
-        time_period = 10
+        time_period:int = 10
 
         self.dataframe['Volume_Moving_Avg'] = (
 
@@ -298,7 +298,7 @@ class StockIndicators:
         return self.dataframe 
     
     # Support/Resistance Indicators (Pivot Points)
-    def pivot_points(self):
+    def pivot_points(self) -> pd.DataFrame:
         
         self.dataframe['Pivot_Point'] = np.nan
         self.dataframe['Support_1'] = np.nan
@@ -342,7 +342,7 @@ class StockIndicators:
     
 
     # Custom Ratio Indicators (Price to MA Ratio)
-    def price_to_ma_ratio(self):
+    def price_to_ma_ratio(self) -> pd.DataFrame:
         self.dataframe['Price_to_MA_Ratio'] = np.nan
 
         self.dataframe['Price_to_MA_Ratio'] = np.where(
@@ -356,7 +356,7 @@ class StockIndicators:
         return self.dataframe
     
     # Custom Ratio Indicators (MA Crossovers)
-    def ma_crossover(self):
+    def ma_crossover(self) -> pd.DataFrame:
         self.dataframe['SMA5_SMA20_Ratio'] = np.nan
         self.dataframe['EMA5_EMA20_Ratio'] = np.nan
 
@@ -377,7 +377,7 @@ class StockIndicators:
         return self.dataframe
 
     #Custom Ratio Indicators (High-Low Range Ratio)
-    def high_low_range_ratio(self):
+    def high_low_range_ratio(self)-> pd.DataFrame:
         self.dataframe['High_Low_Range_Ratio'] = np.nan
 
         self.dataframe['High_Low_Range_Ratio'] = np.where(
@@ -391,12 +391,12 @@ class StockIndicators:
         return self.dataframe
 
     # Save dataframe to excel file
-    def save_df_to_excel(self):
+    def save_df_to_excel(self) -> None:
         self.dataframe.to_excel('df.xlsx', index=False)
         logger.info("Excel file saved")
         print("Excel file saved")
 
-    def calculate_all_indicators(self):
+    def calculate_all_indicators(self) ->  pd.DataFrame:
         try:
             
             self.ema()
