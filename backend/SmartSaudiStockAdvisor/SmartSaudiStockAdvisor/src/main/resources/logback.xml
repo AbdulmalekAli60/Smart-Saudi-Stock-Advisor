@@ -2,7 +2,10 @@
 
     <!--date and time. thread from where the logger was used. specify the level logger name, the actual message and new line-->
     <property name="log_pattern" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n" />
-    <property name="log_file_location" value="./logs/application-log.log"/>
+
+    <property name="my_app_log_file" value="./logs/application-logs.log"/>
+    <property name="framework_log_file" value="./logs/framework-logs.log"/>
+
     <!--
     appender is responsible for publishing the logs to diff destinations.
     while the loggers are responsible for collecting the messages themselves.
@@ -19,29 +22,43 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${log_file_location}</file>
+        <file>${framework_log_file}</file>
 
         <encoder>
             <pattern>${log_pattern}</pattern>
         </encoder>
 
         <append>false</append>
+
+        <immediateFlush>true</immediateFlush>
     </appender>
 
+    <appender name="MY_APP_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${my_app_log_file}</file>
+
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+        </encoder>
+
+        <append>false</append>
+
+        <immediateFlush>true</immediateFlush>
+    </appender>
 
     <!--After we create the appender, we need to add or assign it to a logger.
      By default, we have a root logger that everything logs to.
-     If we assign the console appender to the root, all loggers will print in its this appender and have the same format-->
+     If we assign the console appender to the root, all loggers will print in its this appender and have the same format
+    -->
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
 
-<!--  Tells Logback which classes/packages this logger applies to-->
-    <logger name="SmartSaudiStockAdvisor" level="DEBUG" additivity="false">
+<!--  create a new logger and tell Logback which classes/packages this logger applies to-->
+    <logger name="com.SmartSaudiStockAdvisor" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="MY_APP_FILE"/>
     </logger>
 
     <logger name="org.springframework" level="WARN"/>
