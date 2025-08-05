@@ -137,7 +137,7 @@ class XgBoostModel:
             test_rmse:float = np.sqrt(mean_squared_error(y_test, test_pred))
             test_mae:float = mean_absolute_error(y_test, test_pred)
             test_r2:float = r2_score(y_test, test_pred)
-
+        
             logger.info("=" * 50)
             logger.info(f"Model Performance:")
             logger.info(f"Train RMSE: {train_rmse:.4f}")
@@ -195,15 +195,15 @@ class XgBoostModel:
     
         return today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date
 
-    def insert_prediction(self, predictions_dict:dict[int, dict[str, bool | float]]):
+    def insert_prediction(self, predictions_dict:dict[int, dict[str, bool | float]]) -> None:
         if not predictions_dict:
             logger.info("There is no prediction dict")
             return
         
         successfully_inserted_predictions:list[int] = []
         failed_inserted_predictions:list[int] = []
-        updated_predictions:list[int] = []
-        failed_updates:list[int] = []
+        successfully_updated_predictions:list[int] = []
+        failed_updates_predictions:list[int] = []
         
         try:
             for company_id, prediction_set in predictions_dict.items():
@@ -215,9 +215,9 @@ class XgBoostModel:
                 
                 update_success = self.handle_update(company_id)
                 if update_success:
-                    updated_predictions.append(company_id)
+                    successfully_updated_predictions.append(company_id)
                 else:
-                    failed_updates.append(company_id)
+                    failed_updates_predictions.append(company_id)
             
             self.handle_db_commit()
             
@@ -229,6 +229,9 @@ class XgBoostModel:
 
         logger.info(f"Successfully inserted predictions: {len(successfully_inserted_predictions)}")
         logger.info(f"Failed to insert predictions: {len(failed_inserted_predictions)}")
+        logger.info(f"Successfully updated predictions: {len(successfully_updated_predictions)}")
+        logger.info(f"Failed to update predictions: {len(failed_updates_predictions)}")
+
 
     def close_db(self) -> None:
         if self.cur is not None:
@@ -302,6 +305,7 @@ class XgBoostModel:
         except Exception as e:
             logger.exception(f"Failed to update previous prediction for company: {company_id}")
             return False
+        
     
     def save_sets_to_excel(self) ->None:
         companies_sets_dict = self.data_split()

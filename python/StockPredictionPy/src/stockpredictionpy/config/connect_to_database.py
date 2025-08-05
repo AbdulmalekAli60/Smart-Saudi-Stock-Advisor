@@ -14,7 +14,7 @@ file_handler.setFormatter(formatter)
 if not logger.handlers:
     logger.addHandler(file_handler)
 
-def connect_to_database() -> psycopg2.extensions.connection | False:
+def connect_to_database() -> psycopg2.extensions.connection | None:
         try:
             conn:psycopg2.extensions.connection = psycopg2.connect(
                 database=DATABASE,
@@ -27,4 +27,4 @@ def connect_to_database() -> psycopg2.extensions.connection | False:
             return conn
         except Exception as e:
             logger.exception(f"Failed to connect to database: {str(e)}")
-            return False
+            return None
