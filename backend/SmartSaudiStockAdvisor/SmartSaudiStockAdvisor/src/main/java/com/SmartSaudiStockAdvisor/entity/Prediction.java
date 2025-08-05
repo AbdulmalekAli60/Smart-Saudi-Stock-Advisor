@@ -33,14 +33,11 @@ public class Prediction {
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @Column(name = "prediction_error", precision = 10, scale = 4)
-    private BigDecimal predictionError;
-
     public Prediction() {
         this.predictionDate = new Timestamp(System.currentTimeMillis());
     }
 
-    public Prediction(Long predictionId, Float prediction, Boolean direction, Timestamp expirationDate, Float actualResult, Company company, BigDecimal predictionError) {
+    public Prediction(Long predictionId, Float prediction, Boolean direction, Timestamp expirationDate, Float actualResult, Company company) {
         this();
         this.predictionId = predictionId;
         this.prediction = prediction;
@@ -48,16 +45,6 @@ public class Prediction {
         this.expirationDate = expirationDate;
         this.actualResult = actualResult;
         this.company = company;
-        this.predictionError = predictionError;
-    }
-
-    public BigDecimal getPredictionError() {
-        return predictionError;
-
-    }
-
-    public void setPredictionError(BigDecimal predictionError) {
-        this.predictionError = predictionError;
     }
 
     public Long getPredictionId() {
