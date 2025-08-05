@@ -53,6 +53,7 @@ public class Prediction {
 
     public BigDecimal getPredictionError() {
         return predictionError;
+
     }
 
     public void setPredictionError(BigDecimal predictionError) {

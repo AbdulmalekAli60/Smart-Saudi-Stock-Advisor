@@ -1,0 +1,79 @@
+<configuration>
+
+    <!--date and time. thread from where the logger was used. specify the level logger name, the actual message and new line-->
+    <property name="log_pattern" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n" />
+    <property name="log_file_location" value="./logs/application-log.log"/>
+    <!--
+    appender is responsible for publishing the logs to diff destinations.
+    while the loggers are responsible for collecting the messages themselves.
+    class specify the type of appender
+    -->
+
+    <appender name = "CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- configure this appender by saying: How the message in the output should look like? -->
+        <encoder>
+            <pattern>
+                ${log_pattern}
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${log_file_location}</file>
+
+        <encoder>
+            <pattern>${log_pattern}</pattern>
+        </encoder>
+
+        <append>false</append>
+    </appender>
+
+
+    <!--After we create the appender, we need to add or assign it to a logger.
+     By default, we have a root logger that everything logs to.
+     If we assign the console appender to the root, all loggers will print in its this appender and have the same format-->
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+<!--  Tells Logback which classes/packages this logger applies to-->
+    <logger name="SmartSaudiStockAdvisor" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+
+    <!--    <appender name = "ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--        -->
+    <!--        &lt;!&ndash; Specify where to save the log folder. currently: In the root of the project in a folder named log&ndash;&gt;-->
+    <!--        <file>./logs/application.log</file>-->
+
+    <!--        <encoder>-->
+    <!--            <pattern>${log_pattern}</pattern>-->
+    <!--        </encoder>-->
+
+    <!--        &lt;!&ndash; when to roll the file, and where to archive if we want &ndash;&gt;-->
+    <!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFileNamingAndTriggeringPolicy">-->
+    <!--            <FileNamePattern>-->
+    <!--                &lt;!&ndash;By specifying the day, we say that we want to archive the last log file of the day.-->
+    <!--                 and start logging to a new file. -->
+    <!--                 But we want to archive based on size what if we reach the max size before the day finish?-->
+    <!--                 then we need to have extra information that identify which archive if this day is this file? -->
+    <!--                 because if we reach the max size it will reset and start a new folder. which is the incremental i.-->
+    <!--                 &ndash;&gt;-->
+    <!--                ./logs/archive/application-%d{yyyy-MM-dd}-%i.log.zip-->
+    <!--            </FileNamePattern>-->
+    <!--            &lt;!&ndash;When max is reached, it will be archived and start a new log file&ndash;&gt;-->
+    <!--            <maxFileSize>10MB</maxFileSize>-->
+    <!--            &lt;!&ndash;If number of log files reach 100, it will start deleting, doing the cleaning for us&ndash;&gt;-->
+    <!--            <maxHistory>100</maxHistory>-->
+    <!--        </rollingPolicy>-->
+    <!--    </appender>-->
+
+</configuration>
