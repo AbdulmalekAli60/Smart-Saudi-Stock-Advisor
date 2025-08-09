@@ -18,19 +18,19 @@ public class User {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "username", nullable = false, length = 255)
+    @Column(name = "username", nullable = false, length = 255, unique = true, columnDefinition = "CITEXT")
     private String username;
 
     @Column(name = "join_date")
     private Timestamp joinDate; // make the initialization in def constructor
 
-    @Column(name = "password", nullable = false, length = 255, unique = true, columnDefinition = "CITEXT")
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
     @Column(name = "email", nullable = false, length = 255, unique = true, columnDefinition = "CITEXT")
     private String email;
 
-    @Column(name = "invest_amount", nullable = false, precision = 10, scale = 2)
+    @Column(name = "invest_amount",  precision = 10, scale = 2)
     private BigDecimal investAmount;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -41,7 +41,7 @@ public class User {
     }
 
     public User(Long userId, String name, String username, String password, String email, BigDecimal investAmount, List<WatchList> watchLists) {
-        this();
+//        this();
         this.userId = userId;
         this.name = name;
         this.username = username;
@@ -49,6 +49,14 @@ public class User {
         this.email = email;
         this.investAmount = investAmount;
         this.watchLists = watchLists;
+        this.joinDate = new Timestamp(System.currentTimeMillis());
+    }
+
+    public User(String name, String username, String password, String email) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.email = email;
         this.joinDate = new Timestamp(System.currentTimeMillis());
     }
 

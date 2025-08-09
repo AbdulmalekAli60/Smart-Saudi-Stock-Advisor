@@ -61,10 +61,10 @@
         <appender-ref ref="MY_APP_FILE"/>
     </logger>
 
-    <logger name="org.springframework" level="WARN"/>
-    <logger name="org.hibernate" level="WARN"/>
-    <logger name="com.zaxxer.hikari" level="WARN"/>
-    <logger name="org.apache" level="WARN"/>
+<!--    <logger name="org.springframework" level="WARN"/>-->
+<!--    <logger name="org.hibernate" level="WARN"/>-->
+<!--    <logger name="com.zaxxer.hikari" level="WARN"/>-->
+<!--    <logger name="org.apache" level="WARN"/>-->
 
     <!--    <appender name = "ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
     <!--        -->
