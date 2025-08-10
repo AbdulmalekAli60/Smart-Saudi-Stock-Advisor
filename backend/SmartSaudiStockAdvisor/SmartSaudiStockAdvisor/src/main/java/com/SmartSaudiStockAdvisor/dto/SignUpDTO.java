@@ -28,9 +28,9 @@ public class SignUpDTO {
     private String name;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 12, message = "Password must be between 8 and 12")
+    @Size(min = 8, max = 16, message = "Password must be between 8 and 16")
     @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
             message = "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"
     )
     private String password;
@@ -46,23 +46,12 @@ public class SignUpDTO {
     public SignUpDTO() {
     }
 
-    public SignUpDTO(Long user_id, String email, float investAmount, Timestamp joinDate, String name, String password, String username) {
-//        this.user_id = user_id;
+    public SignUpDTO( String email, String name, String password, String username) {
         this.email = email;
-//        this.investAmount = investAmount;
-//        this.joinDate = new Timestamp(System.currentTimeMillis());
         this.name = name;
         this.password = password;
         this.username = username;
     }
-//
-//    public Long getUser_id() {
-//        return user_id;
-//    }
-//
-//    public void setUser_id(Long user_id) {
-//        this.user_id = user_id;
-//    }
 
     public String getEmail() {
         return email;
@@ -71,22 +60,6 @@ public class SignUpDTO {
     public void setEmail(String email) {
         this.email = email;
     }
-
-//    public float getInvestAmount() {
-//        return investAmount;
-//    }
-//
-//    public void setInvestAmount(float investAmount) {
-//        this.investAmount = investAmount;
-//    }
-
-//    public Timestamp getJoinDate() {
-//        return joinDate;
-//    }
-//
-//    public void setJoinDate(Timestamp joinDate) {
-//        this.joinDate = joinDate;
-//    }
 
     public String getName() {
         return name;
@@ -115,9 +88,7 @@ public class SignUpDTO {
     @Override
     public String toString() {
         return "SignUpDTO{" +
-//                "user_id=" + user_id +
                 ", email='" + email + '\'' +
-//                ", joinDate=" + joinDate +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 ", username='" + username + '\'' +

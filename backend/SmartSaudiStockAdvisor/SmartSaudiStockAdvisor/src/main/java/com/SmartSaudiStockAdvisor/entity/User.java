@@ -37,11 +37,10 @@ public class User {
     private List<WatchList> watchLists;
 
     public User() {
-//        this.joinDate = new Timestamp(System.currentTimeMillis());
+
     }
 
     public User(Long userId, String name, String username, String password, String email, BigDecimal investAmount, List<WatchList> watchLists) {
-//        this();
         this.userId = userId;
         this.name = name;
         this.username = username;

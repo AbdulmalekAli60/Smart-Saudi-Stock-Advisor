@@ -1,15 +1,20 @@
 package com.SmartSaudiStockAdvisor.service.ServiceImpl;
 
+import com.SmartSaudiStockAdvisor.dto.LogInDTO;
 import com.SmartSaudiStockAdvisor.dto.SignUpDTO;
 import com.SmartSaudiStockAdvisor.dto.UserResponseDTO;
 import com.SmartSaudiStockAdvisor.entity.User;
 import com.SmartSaudiStockAdvisor.exception.UserAlreadyExists;
+import com.SmartSaudiStockAdvisor.exception.UserNotFound;
 import com.SmartSaudiStockAdvisor.repo.UserRepo;
 import com.SmartSaudiStockAdvisor.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -47,6 +52,25 @@ public class AuthServiceImpl implements AuthService {
         User savedUser = userRepo.save(newUser);
         log.info("User successfully joined with id: {}", savedUser.getUserId());
 
-        return new  UserResponseDTO(savedUser);
+        return new  UserResponseDTO(savedUser, "User Registered Successfully ");
+    }
+
+    @Override
+    public UserResponseDTO logIn(LogInDTO logInDTO) {
+
+        Optional<User> loggedInUser = userRepo.findByEmail(logInDTO.getEmail());
+
+        if(loggedInUser.isPresent()){
+            User user = loggedInUser.get();
+            boolean isPasswordValid = passwordEncoder.matches(logInDTO.getPassword(), loggedInUser.get().getPassword());
+
+            if (isPasswordValid) {
+                log.info("User logged in successfully. Email: {}", logInDTO.getEmail());
+                return new UserResponseDTO(user, "Logged in successfully");
+            }
+        }
+
+        log.warn("User with these credentials dose not exists. Email: {}", logInDTO.getEmail());
+        throw new UserNotFound("User with these credentials dose not exists");
     }
 }

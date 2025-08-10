@@ -13,7 +13,7 @@ public class SmartSaudiStockAdvisorApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmartSaudiStockAdvisorApplication.class, args);
-		log.info("Hi form lombok sl4j");
+		log.info("============ Success ============");
 		System.out.println("============ Success ============");
 	}
 

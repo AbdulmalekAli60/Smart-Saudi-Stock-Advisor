@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleExceptions(RuntimeException ex){
 
         HttpStatus httpStatus = ex.getClass().getAnnotation(ResponseStatus.class).value();
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), httpStatus);
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), httpStatus.toString());
 
         return new ResponseEntity<>(errorResponse, httpStatus);
     }

@@ -6,10 +6,11 @@ import java.sql.Timestamp;
 
 public class ErrorResponse {
     private  String errorMessage;
-    private HttpStatus statusCode;
+//    private HttpStatus statusCode;
+    private String statusCode;
     private Timestamp time;
 
-    public ErrorResponse(String errorMessage, HttpStatus statusCode) {
+    public ErrorResponse(String errorMessage, String statusCode) {
         this.errorMessage = errorMessage;
         this.statusCode = statusCode;
         this.time = new Timestamp(System.currentTimeMillis());
@@ -23,11 +24,11 @@ public class ErrorResponse {
         this.errorMessage = errorMessage;
     }
 
-    public HttpStatus getStatusCode() {
+    public String getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(HttpStatus statusCode) {
+    public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
     }
 

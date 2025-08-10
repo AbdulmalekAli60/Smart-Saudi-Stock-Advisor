@@ -6,16 +6,18 @@ import java.sql.Timestamp;
 
 public class UserResponseDTO {
 
+    private String message;
     private String name;
     private String username;
     private String email;
     private Timestamp joinDate;
 
-    public UserResponseDTO(User newUser) {
-        this.name = newUser.getName();
-        this.username = newUser.getUsername();
-        this.email = newUser.getEmail();
-        this.joinDate = newUser.getJoinDate();
+    public UserResponseDTO(User user, String message) {
+        this.message = message;
+        this.name = user.getName();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.joinDate = user.getJoinDate();
     }
 
     public String getName() {
@@ -48,5 +50,13 @@ public class UserResponseDTO {
 
     public void setJoinDate(Timestamp joinDate) {
         this.joinDate = joinDate;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
