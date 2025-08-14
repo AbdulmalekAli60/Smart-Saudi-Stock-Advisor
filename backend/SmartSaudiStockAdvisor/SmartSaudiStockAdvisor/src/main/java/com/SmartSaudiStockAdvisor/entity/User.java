@@ -57,6 +57,7 @@ public class User {
         this.password = password;
         this.email = email;
         this.joinDate = new Timestamp(System.currentTimeMillis());
+        this.investAmount = new BigDecimal(0);
     }
 
     public Long getUserId() {

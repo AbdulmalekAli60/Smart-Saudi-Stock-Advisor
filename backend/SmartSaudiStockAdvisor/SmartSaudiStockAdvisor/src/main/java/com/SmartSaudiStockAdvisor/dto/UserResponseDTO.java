@@ -11,6 +11,7 @@ public class UserResponseDTO {
     private String username;
     private String email;
     private Timestamp joinDate;
+    private Long userId;
 
     public UserResponseDTO(User user, String message) {
         this.message = message;
@@ -18,6 +19,7 @@ public class UserResponseDTO {
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.joinDate = user.getJoinDate();
+        this.userId = user.getUserId();
     }
 
     public String getName() {
@@ -58,5 +60,13 @@ public class UserResponseDTO {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Long getId() {
+        return userId;
+    }
+
+    public void setId(Long id) {
+        this.userId = id;
     }
 }
