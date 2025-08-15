@@ -31,7 +31,7 @@ public class Company {
     @OneToMany(mappedBy = "company" , cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HistoricalData> historicalData;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sector_id", nullable = false)
     private Sector sector;
 

@@ -12,8 +12,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
@@ -28,17 +26,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public String updateInvestAmount(Long userId, InvestAmountDTO investAmountDTO) {
-        Optional<User> user = userRepo.findById(userId);
-
-        if(user.isEmpty()){
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> {
             log.info("User was not found to update invest amount. passed Id: {}", userId);
             throw new UserNotFound("User was not found to update invest amount.");
-        }
+        });
 
         try {
-            user.get().setInvestAmount(investAmountDTO.getInvestAmount());
+            user.setInvestAmount(investAmountDTO.getInvestAmount());
             log.info("Invest amount has been updated to {}, for user: {}", investAmountDTO.getInvestAmount(), userId);
-            userRepo.save(user.get());
+            userRepo.save(user);
             return "Invest Amount has been updated Successfully";
         }catch (DataAccessException e){
             log.error("Database error during updating investment amount for user: {}", userId, e);

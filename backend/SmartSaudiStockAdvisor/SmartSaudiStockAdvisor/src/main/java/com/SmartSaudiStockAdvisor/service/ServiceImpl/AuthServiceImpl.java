@@ -6,6 +6,7 @@ import com.SmartSaudiStockAdvisor.dto.UserResponseDTO;
 import com.SmartSaudiStockAdvisor.entity.User;
 import com.SmartSaudiStockAdvisor.exception.UserAlreadyExists;
 import com.SmartSaudiStockAdvisor.exception.UserNotFound;
+import com.SmartSaudiStockAdvisor.exception.UserRegistrationException;
 import com.SmartSaudiStockAdvisor.repo.UserRepo;
 import com.SmartSaudiStockAdvisor.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,16 +35,14 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserResponseDTO signUp(SignUpDTO signUpDTO) {
 
-        if (userRepo.existsByEmailOrUsername(signUpDTO.getEmail(), signUpDTO.getUsername())){
+        Optional<User> existingUser = userRepo.findByEmailOrUsername(signUpDTO.getEmail(), signUpDTO.getUsername());
 
-            if(userRepo.existsByEmail(signUpDTO.getEmail())){
-            log.warn("Email is Already used, email: {}", signUpDTO.getEmail());
-            throw new UserAlreadyExists("Email is Already used");
-            }
-
-            if (userRepo.existsByUsername(signUpDTO.getUsername())){
-                log.warn("Username is Already used, username: {}", signUpDTO.getUsername());
-                throw new UserAlreadyExists("Username is Already used");
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            if (user.getEmail().equals(signUpDTO.getEmail())) {
+                throw new UserAlreadyExists("Email is already used");
+            } else {
+                throw new UserAlreadyExists("Username is already used");
             }
         }
 
@@ -61,9 +60,8 @@ public class AuthServiceImpl implements AuthService {
             return new  UserResponseDTO(savedUser, "User Registered Successfully ");
         }catch (DataAccessException e){
             log.error("Database error during signup for email: {}", signUpDTO.getEmail(), e);
-            throw new RuntimeException("Failed to create an account, please try again");
+            throw new UserRegistrationException("Failed to create account, please try again");
         }
-
     }
 
     @Override
