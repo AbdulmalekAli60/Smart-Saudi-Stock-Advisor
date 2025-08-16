@@ -13,8 +13,11 @@ public class Sector {
     @Column(name = "sector_id")
     private Long sectorId;
 
-    @Column(name = "sector_name", nullable = false, length = 255)
-    private String sectorName;
+    @Column(name = "sector_Arabic_name", nullable = false, length = 255)
+    private String sectorArabicName;
+
+    @Column(name = "sector_english_name", nullable = false, length = 255)
+    private String sectorEnglishName;
 
     @OneToMany(mappedBy = "sector", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Company> companies;
@@ -22,10 +25,11 @@ public class Sector {
     public Sector() {
     }
 
-    public Sector(Long sectorId, List<Company> companies, String sectorName) {
+    public Sector(Long sectorId, String sectorArabicName, String sectorEnglishName, List<Company> companies) {
         this.sectorId = sectorId;
+        this.sectorArabicName = sectorArabicName;
+        this.sectorEnglishName = sectorEnglishName;
         this.companies = companies;
-        this.sectorName = sectorName;
     }
 
     public Long getSectorId() {
@@ -36,12 +40,20 @@ public class Sector {
         this.sectorId = sectorId;
     }
 
-    public String getSectorName() {
-        return sectorName;
+    public String getSectorArabicName() {
+        return sectorArabicName;
     }
 
-    public void setSectorName(String sectorName) {
-        this.sectorName = sectorName;
+    public void setSectorArabicName(String sectorArabicName) {
+        this.sectorArabicName = sectorArabicName;
+    }
+
+    public String getSectorEnglishName() {
+        return sectorEnglishName;
+    }
+
+    public void setSectorEnglishName(String sectorEnglishName) {
+        this.sectorEnglishName = sectorEnglishName;
     }
 
     public List<Company> getCompanies() {
@@ -56,7 +68,8 @@ public class Sector {
     public String toString() {
         return "Sector{" +
                 "sectorId=" + sectorId +
-                ", sectorName='" + sectorName + '\'' +
+                ", sectorArabicName='" + sectorArabicName + '\'' +
+                ", sectorEnglishName='" + sectorEnglishName + '\'' +
                 ", companies=" + companies +
                 '}';
     }

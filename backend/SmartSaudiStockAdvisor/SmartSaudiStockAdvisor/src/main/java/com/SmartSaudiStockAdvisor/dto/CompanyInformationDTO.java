@@ -7,10 +7,10 @@ public class CompanyInformationDTO {
     private String companyLogo;
     private String tickerName;
     private Long sectorId;
-    private String sectorName;
+    private String sectorArabicName;
     private String companyArabicName;
     private String getCompanyEnglishName;
-    private int numberOfCompanies;
+    private String sectorEnglishName;
 
     public CompanyInformationDTO (Company company) {
         if (company == null) {
@@ -21,10 +21,10 @@ public class CompanyInformationDTO {
         this.companyLogo = company.getCompanyLogo();
         this.tickerName = company.getTickerName();
         this.sectorId = company.getSector().getSectorId();
-        this.sectorName = company.getSector().getSectorName();
+        this.sectorArabicName = company.getSector().getSectorArabicName();
         this.companyArabicName = company.getCompanyArabicName();
         this.getCompanyEnglishName = company.getCompanyEnglishName();
-//        this.numberOfCompanies = co;
+        this.sectorEnglishName = company.getSector().getSectorEnglishName();
     }
 
     public Long getCompanyId() {
@@ -59,12 +59,12 @@ public class CompanyInformationDTO {
         this.sectorId = sectorId;
     }
 
-    public String getSectorName() {
-        return sectorName;
+    public String getSectorArabicName() {
+        return sectorArabicName;
     }
 
-    public void setSectorName(String sectorName) {
-        this.sectorName = sectorName;
+    public void setSectorArabicName(String sectorArabicName) {
+        this.sectorArabicName = sectorArabicName;
     }
 
     public String getCompanyArabicName() {
@@ -83,11 +83,11 @@ public class CompanyInformationDTO {
         this.getCompanyEnglishName = getCompanyEnglishName;
     }
 
-    public int getNumberOfCompanies() {
-        return numberOfCompanies;
+    public String getSectorEnglishName() {
+        return sectorEnglishName;
     }
 
-    public void setNumberOfCompanies(int numberOfCompanies) {
-        this.numberOfCompanies = numberOfCompanies;
+    public void setSectorEnglishName(String sectorEnglishName) {
+        this.sectorEnglishName = sectorEnglishName;
     }
 }
