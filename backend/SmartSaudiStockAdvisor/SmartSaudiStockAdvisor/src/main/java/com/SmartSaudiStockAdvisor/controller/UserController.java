@@ -25,7 +25,6 @@ public class UserController {
 
     @PatchMapping(value = "investment-amount/{id}")
     public ResponseEntity<String> updateInvestAmount(@PathVariable(name = "id") Long userId, @Valid @RequestBody InvestAmountDTO investAmountDTO){
-        String message = userService.updateInvestAmount(userId, investAmountDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(message);
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateInvestAmount(userId, investAmountDTO));
     }
 }

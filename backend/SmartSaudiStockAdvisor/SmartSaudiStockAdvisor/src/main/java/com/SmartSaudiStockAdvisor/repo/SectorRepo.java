@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SectorRepo extends JpaRepository<Sector, Long> {
+//    boolean existsBySectorArabicNameOrSectorEnglishName(String arName, String enName);
 }

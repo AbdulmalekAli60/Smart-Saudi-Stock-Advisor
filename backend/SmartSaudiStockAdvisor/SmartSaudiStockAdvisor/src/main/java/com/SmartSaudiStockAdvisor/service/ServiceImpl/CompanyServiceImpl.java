@@ -28,4 +28,6 @@ public class CompanyServiceImpl implements CompanyService {
                 .map(CompanyInformationDTO::new)
                 .toList();
     }
+
+
 }
