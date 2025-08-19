@@ -6,6 +6,9 @@ public class CompaniesResponseDTO {
     private List<CompanyInformationDTO> companyInformationDTOS;
     private int totalNumberOfCompanies;
 
+    public CompaniesResponseDTO() {
+    }
+
     public CompaniesResponseDTO(int totalNumberOfCompanies, List<CompanyInformationDTO> companyInformationDTOS) {
         this.totalNumberOfCompanies = totalNumberOfCompanies;
         this.companyInformationDTOS = companyInformationDTOS;

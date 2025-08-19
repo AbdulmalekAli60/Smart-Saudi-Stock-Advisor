@@ -16,7 +16,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = {UserNotFound.class, UserAlreadyExists.class, UpdateInvestmentAmountException.class, UserRegistrationException.class})
+    @ExceptionHandler(value = {UserNotFound.class, UserAlreadyExists.class, UpdateInvestmentAmountException.class, UserRegistrationException.class, PredictionNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleExceptions(RuntimeException ex){
 
         HttpStatus httpStatus = ex.getClass().getAnnotation(ResponseStatus.class).value();

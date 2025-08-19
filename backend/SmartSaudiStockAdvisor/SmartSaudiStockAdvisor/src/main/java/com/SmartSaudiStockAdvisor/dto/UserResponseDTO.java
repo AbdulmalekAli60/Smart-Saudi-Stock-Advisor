@@ -13,6 +13,9 @@ public class UserResponseDTO {
     private Timestamp joinDate;
     private Long userId;
 
+    public UserResponseDTO() {
+    }
+
     public UserResponseDTO(User user, String message) {
         this.message = message;
         this.name = user.getName();
@@ -60,6 +63,14 @@ public class UserResponseDTO {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Long getId() {

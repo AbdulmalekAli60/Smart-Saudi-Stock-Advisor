@@ -20,7 +20,7 @@ public class HistoricalDataServiceImp implements HistoricalDataService {
 
     @Override
     public List<HistoricalDataDTO> getHistoricalDataByCompanyId(Long companyId) {
-        return historicalDataRepo.findHistoricalDataByCompanyId(companyId)
+        return historicalDataRepo.findHistoricalDataByCompanyCompanyIdOrderByDataDateAsc(companyId)
                 .stream()
                 .map(HistoricalDataDTO::new)
                 .toList();

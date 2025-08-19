@@ -12,6 +12,9 @@ public class CompanyInformationDTO {
     private String getCompanyEnglishName;
     private String sectorEnglishName;
 
+    public CompanyInformationDTO() {
+    }
+
     public CompanyInformationDTO (Company company) {
         if (company == null) {
             throw new IllegalArgumentException("Company cannot be null");

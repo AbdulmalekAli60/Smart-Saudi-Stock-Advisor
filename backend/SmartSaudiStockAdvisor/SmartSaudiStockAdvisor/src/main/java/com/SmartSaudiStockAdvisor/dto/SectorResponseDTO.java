@@ -7,6 +7,9 @@ public class SectorResponseDTO {
     private String sectorArabicName;
     private String sectorEnglishName;
 
+    public SectorResponseDTO() {
+    }
+
     public SectorResponseDTO(Sector sector) {
         this.sectorId = sector.getSectorId();
         this.sectorArabicName = sector.getSectorArabicName();

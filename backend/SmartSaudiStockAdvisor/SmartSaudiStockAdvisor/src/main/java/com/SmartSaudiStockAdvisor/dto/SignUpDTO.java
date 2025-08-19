@@ -5,19 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import java.sql.Timestamp;
-
 public class SignUpDTO {
-
-//    private Long user_id;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email is not valid")
     private String email;
-
-//    private float investAmount; Not specified during registering
-
-//    private Timestamp joinDate;
 
     @NotBlank(message = "Name is required")
     @Size(min = 3, max = 24, message = "Name should be between 3 and 24")

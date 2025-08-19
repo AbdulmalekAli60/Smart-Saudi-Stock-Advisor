@@ -15,6 +15,9 @@ public class HistoricalDataDTO {
     private Timestamp dataDate;
     private Long companyId;
 
+    public HistoricalDataDTO() {
+    }
+
     public HistoricalDataDTO(HistoricalData historicalData) {
         this.dataId = historicalData.getDataId();
         this.open = historicalData.getOpen();

@@ -20,6 +20,9 @@ public class LogInDTO {
     )
     private String password;
 
+    public LogInDTO() {
+    }
+
     public LogInDTO(String email, String password) {
         this.email = email;
         this.password = password;
