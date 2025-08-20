@@ -25,6 +25,14 @@ public class UserResponseDTO {
         this.userId = user.getUserId();
     }
 
+    public UserResponseDTO(User user) {
+        this.name = user.getName();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.joinDate = user.getJoinDate();
+        this.userId = user.getUserId();
+    }
+
     public String getName() {
         return name;
     }

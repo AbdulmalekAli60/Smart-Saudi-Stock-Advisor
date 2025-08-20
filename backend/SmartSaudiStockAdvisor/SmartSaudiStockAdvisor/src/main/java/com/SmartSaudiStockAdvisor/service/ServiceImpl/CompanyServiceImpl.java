@@ -1,10 +1,19 @@
 package com.SmartSaudiStockAdvisor.service.ServiceImpl;
 
 import com.SmartSaudiStockAdvisor.dto.CompanyInformationDTO;
+import com.SmartSaudiStockAdvisor.dto.CreateCompanyDTO;
+import com.SmartSaudiStockAdvisor.entity.Company;
+import com.SmartSaudiStockAdvisor.entity.Sector;
+import com.SmartSaudiStockAdvisor.exception.AlreadyExistsException;
+import com.SmartSaudiStockAdvisor.exception.OperationFailedException;
 import com.SmartSaudiStockAdvisor.repo.CompanyRepo;
+import com.SmartSaudiStockAdvisor.repo.SectorRepo;
 import com.SmartSaudiStockAdvisor.service.CompanyService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +23,12 @@ import java.util.List;
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepo companyRepo;
+    private final SectorRepo sectorRepo;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepo companyRepo) {
+    public CompanyServiceImpl(CompanyRepo companyRepo, SectorRepo sectorRepo) {
         this.companyRepo = companyRepo;
+        this.sectorRepo = sectorRepo;
     }
 
     @Override
@@ -29,5 +40,44 @@ public class CompanyServiceImpl implements CompanyService {
                 .toList();
     }
 
+    @Override
+    public CompanyInformationDTO createCompany(CreateCompanyDTO createCompanyDTO) { // for admin
 
+        if (companyRepo.existsByTickerName(createCompanyDTO.getTickerName())) {
+            throw new AlreadyExistsException("Company with ticker '" +
+                    createCompanyDTO.getTickerName() + "' already exists");
+        }
+
+        Sector sector = sectorRepo.findById(createCompanyDTO.getSectorId())
+                .orElseThrow(() -> new EntityNotFoundException("Sector with ID " +
+                        createCompanyDTO.getSectorId() + " not found"));
+
+            Company newCompany = new Company();
+            newCompany.setCompanyLogo(createCompanyDTO.getCompanyLogo());
+            newCompany.setCompanyArabicName(createCompanyDTO.getCompanyArabicName());
+            newCompany.setCompanyEnglishName(createCompanyDTO.getCompanyEnglishName());
+            newCompany.setTickerName(createCompanyDTO.getTickerName());
+            newCompany.setSector(sector);
+
+            Company savedNewCompany = companyRepo.save(newCompany);
+            log.info("New Company has been Added with Id: {}", savedNewCompany.getCompanyId());
+            return new CompanyInformationDTO(savedNewCompany);
+        }
+
+    @Override
+    @Transactional
+    public String deleteCompany(Long companyId) { // for admin
+        Company company = companyRepo.findById(companyId)
+                .orElseThrow(() -> new EntityNotFoundException("Company with ID " + companyId + " does not exist"));
+
+        try {
+            companyRepo.delete(company);
+            log.info("Company {} with ID: {} has been deleted", company.getCompanyEnglishName(), companyId);
+            return "Company: " + company.getCompanyEnglishName() + " with ID: " + companyId + " has been deleted";
+        } catch (DataIntegrityViolationException e) {
+            throw new OperationFailedException("Cannot delete company '" + company.getCompanyEnglishName() +
+                    "' because it has associated records" + e);
+        }
+    }
 }
+

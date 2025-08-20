@@ -4,8 +4,8 @@ import com.SmartSaudiStockAdvisor.dto.LogInDTO;
 import com.SmartSaudiStockAdvisor.dto.SignUpDTO;
 import com.SmartSaudiStockAdvisor.dto.UserResponseDTO;
 import com.SmartSaudiStockAdvisor.entity.User;
-import com.SmartSaudiStockAdvisor.exception.UserAlreadyExists;
-import com.SmartSaudiStockAdvisor.exception.UserNotFound;
+import com.SmartSaudiStockAdvisor.exception.AlreadyExistsException;
+import com.SmartSaudiStockAdvisor.exception.EntryNotFoundException;
 import com.SmartSaudiStockAdvisor.exception.UserRegistrationException;
 import com.SmartSaudiStockAdvisor.repo.UserRepo;
 import com.SmartSaudiStockAdvisor.service.AuthService;
@@ -40,9 +40,9 @@ public class AuthServiceImpl implements AuthService {
         if (existingUser.isPresent()) {
             User user = existingUser.get();
             if (user.getEmail().equals(signUpDTO.getEmail())) {
-                throw new UserAlreadyExists("Email is already used");
+                throw new AlreadyExistsException("Email is already used");
             } else {
-                throw new UserAlreadyExists("Username is already used");
+                throw new AlreadyExistsException("Username is already used");
             }
         }
 
@@ -80,6 +80,6 @@ public class AuthServiceImpl implements AuthService {
         }
 
         log.error("User with these credentials dose not exists. Email: {}", logInDTO.getEmail());
-        throw new UserNotFound("User with these credentials dose not exists");
+        throw new EntryNotFoundException("User with these credentials dose not exists");
     }
 }
