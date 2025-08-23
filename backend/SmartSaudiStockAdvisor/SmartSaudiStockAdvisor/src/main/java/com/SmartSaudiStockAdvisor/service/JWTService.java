@@ -4,13 +4,13 @@ import io.jsonwebtoken.Claims;
 
 public interface JWTService {
 
-    String generateToken(String userId);
+    String generateToken(String email);
 
-    String extractUserId(String token);
+    String extractEmail(String token);
 
     boolean isTokenValid(String token);
 
-    boolean isTokenExpired(String token);
+//    boolean isTokenExpired(String token);
 
     Claims extractClaims(String token);
 
