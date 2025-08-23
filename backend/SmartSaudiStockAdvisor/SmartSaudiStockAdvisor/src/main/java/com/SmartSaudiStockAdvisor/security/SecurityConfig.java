@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/auth/**").permitAll()
-                                .anyRequest().authenticated())
+                        .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(customUserDetailsService);
@@ -44,16 +44,17 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
         log.info("Bcrypt encoder has been created");
         return new BCryptPasswordEncoder(12);
     }
 
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         log.info("AuthenticationManager bean created");
-
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
