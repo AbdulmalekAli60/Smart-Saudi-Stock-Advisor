@@ -27,6 +27,9 @@ public class JWTServiceImpl implements JWTService {
         Date currentDate = new Date();
         Date expirationDate = new Date(currentDate.getTime() + expiration);
         return Jwts.builder()
+                .header()
+                .add("typ", "JWT")
+                .and()
                 .subject(email)
                 .issuedAt(currentDate)
                 .expiration(expirationDate)

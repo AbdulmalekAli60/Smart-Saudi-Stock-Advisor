@@ -9,6 +9,7 @@ import com.SmartSaudiStockAdvisor.exception.EntryNotFoundException;
 import com.SmartSaudiStockAdvisor.exception.UserRegistrationException;
 import com.SmartSaudiStockAdvisor.repo.UserRepo;
 import com.SmartSaudiStockAdvisor.service.AuthService;
+import com.SmartSaudiStockAdvisor.service.JWTService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -26,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthServiceImpl(final UserRepo userRepo, final BCryptPasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(UserRepo userRepo, BCryptPasswordEncoder passwordEncoder, JWTService jwtService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
     }
@@ -71,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
 
         if(loggedInUser.isPresent()){
             User user = loggedInUser.get();
-            boolean isPasswordValid = passwordEncoder.matches(logInDTO.getPassword(), loggedInUser.get().getPassword());
+            boolean isPasswordValid = passwordEncoder.matches(logInDTO.getPassword(), user.getPassword());
 
             if (isPasswordValid) {
                 log.info("User logged in successfully. Email: {}", logInDTO.getEmail());

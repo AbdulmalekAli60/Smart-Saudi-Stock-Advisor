@@ -1,14 +1,15 @@
 package com.SmartSaudiStockAdvisor.security;
 
-import com.SmartSaudiStockAdvisor.exception.TokenIsNotValidException;
 import com.SmartSaudiStockAdvisor.service.JWTService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,20 +22,24 @@ import java.io.IOException;
 @Component
 public class JWTFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
-//    private final ApplicationContext applicationContext;
     private final CustomUserDetailsService customUserDetailsService;
+
     @Autowired
-    public JWTFilter(JWTService jwtService, ApplicationContext applicationContext, CustomUserDetailsService customUserDetailsService) {
+    public JWTFilter(JWTService jwtService, CustomUserDetailsService customUserDetailsService) {
         this.jwtService = jwtService;
-//        this.applicationContext = applicationContext;
         this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
       try {
-          String authHeader =  request.getHeader("Authorization");
-          String extractedToken = extractTokenFromHeader(authHeader);
+
+          if (shouldNotFilter(request)) {
+              filterChain.doFilter(request, response);
+              return;
+          }
+
+          String extractedToken = extractTokenFromCookie(request.getCookies());
 
           if(extractedToken == null){
               filterChain.doFilter(request, response);
@@ -65,16 +70,36 @@ public class JWTFilter extends OncePerRequestFilter {
           }
 
           filterChain.doFilter(request, response);
-      }catch (Exception e){
-          throw new TokenIsNotValidException("Failed to Extract token and setting the context");
+
+      }catch (ExpiredJwtException e) {
+        log.error("JWT token is expired: ", e);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      } catch (JwtException e) {
+        log.error("JWT token is invalid: ", e);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      } catch (Exception e) {
+        log.error("JWT Filter error: ", e);
+        filterChain.doFilter(request, response);
       }
     }
 
-    private String extractTokenFromHeader(String authHeader){
-        if(authHeader != null && authHeader.startsWith("Bearer ")){
-            return authHeader.substring(7);
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        return path.startsWith("/auth/");
+    }
+
+
+    private String extractTokenFromCookie(Cookie[] cookies){
+        if(cookies != null){
+            for (Cookie cookie : cookies){
+                if("JWT-TOKEN".equals(cookie.getName())){
+                    log.info("Token found in cookie");
+                    return cookie.getValue();
+                }
+            }
         }
-        log.error("Failed to Extract token from header");
+        log.debug("Failed to Extract token from cookie");
         return null;
     }
 }
