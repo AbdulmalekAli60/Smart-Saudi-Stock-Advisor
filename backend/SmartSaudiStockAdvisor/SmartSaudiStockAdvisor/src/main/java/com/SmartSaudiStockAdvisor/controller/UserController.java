@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final ETagService eTagService;
+//    private final ETagService eTagService;
 
     @Autowired
     public UserController(UserService userService, ETagService eTagService) {
         this.userService = userService;
-        this.eTagService = eTagService;
+//        this.eTagService = eTagService;
     }
 
     @PatchMapping(value = "investment-amount/{id}")

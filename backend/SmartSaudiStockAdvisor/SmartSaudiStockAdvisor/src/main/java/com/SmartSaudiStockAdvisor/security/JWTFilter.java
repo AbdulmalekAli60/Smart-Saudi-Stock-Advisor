@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -77,9 +78,9 @@ public class JWTFilter extends OncePerRequestFilter {
       } catch (JwtException e) {
         log.error("JWT token is invalid: ", e);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      } catch (Exception e) {
-        log.error("JWT Filter error: ", e);
-        filterChain.doFilter(request, response);
+      }catch (UsernameNotFoundException e) {
+          log.error("User not found during JWT authentication: ", e);
+          response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       }
     }
 

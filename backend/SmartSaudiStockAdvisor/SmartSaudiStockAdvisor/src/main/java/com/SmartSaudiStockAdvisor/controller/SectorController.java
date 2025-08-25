@@ -39,7 +39,7 @@ public class SectorController {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
         return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
+                .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS).mustRevalidate())
                 .eTag(currentETag)
                 .body(sectors);
     }

@@ -40,7 +40,7 @@ public class PredictionController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                .cacheControl(CacheControl.maxAge(24, TimeUnit.HOURS).mustRevalidate())
                 .eTag(currentETag)
                 .body(predictions);
     }
@@ -57,7 +57,7 @@ public class PredictionController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                .cacheControl(CacheControl.maxAge(24, TimeUnit.HOURS).mustRevalidate())
                 .eTag(currentETag)
                 .body(responseDTO);
     }

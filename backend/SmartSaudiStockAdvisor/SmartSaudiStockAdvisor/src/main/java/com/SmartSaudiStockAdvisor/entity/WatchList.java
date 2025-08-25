@@ -29,6 +29,11 @@ public class WatchList {
         this.company = company;
     }
 
+    public WatchList(User user, Company company) {
+        this.user = user;
+        this.company = company;
+    }
+
     public Long getWatchListId() {
         return watchListId;
     }

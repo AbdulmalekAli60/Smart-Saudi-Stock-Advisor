@@ -41,7 +41,7 @@ public class HistoricalDataController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .cacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                .cacheControl(CacheControl.maxAge(24, TimeUnit.HOURS).mustRevalidate())
                 .eTag(currentETag)
                 .body(data);
     }
