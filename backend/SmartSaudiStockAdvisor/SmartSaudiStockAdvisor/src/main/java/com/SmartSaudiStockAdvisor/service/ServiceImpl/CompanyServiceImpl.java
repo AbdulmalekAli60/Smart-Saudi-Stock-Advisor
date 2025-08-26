@@ -2,9 +2,11 @@ package com.SmartSaudiStockAdvisor.service.ServiceImpl;
 
 import com.SmartSaudiStockAdvisor.dto.CompanyInformationDTO;
 import com.SmartSaudiStockAdvisor.dto.CreateCompanyDTO;
+import com.SmartSaudiStockAdvisor.dto.SearchResponseDTO;
 import com.SmartSaudiStockAdvisor.entity.Company;
 import com.SmartSaudiStockAdvisor.entity.Sector;
 import com.SmartSaudiStockAdvisor.exception.AlreadyExistsException;
+import com.SmartSaudiStockAdvisor.exception.EntryNotFoundException;
 import com.SmartSaudiStockAdvisor.exception.OperationFailedException;
 import com.SmartSaudiStockAdvisor.repo.CompanyRepo;
 import com.SmartSaudiStockAdvisor.repo.SectorRepo;
@@ -78,6 +80,21 @@ public class CompanyServiceImpl implements CompanyService {
             throw new OperationFailedException("Cannot delete company '" + company.getCompanyEnglishName() +
                     "' because it has associated records" + e);
         }
+    }
+
+    @Override
+    public List<SearchResponseDTO> searchCompany(String keyword) {
+        return companyRepo.searchCompanies(keyword)
+                .stream()
+                .map(SearchResponseDTO::new)
+                .toList();
+    }
+
+    @Override
+    public CompanyInformationDTO getCompanyById(Long companyId) {
+        Company company = companyRepo.findById(companyId)
+                .orElseThrow(() -> new EntryNotFoundException("Company Dose not exists. Id: " + companyId));
+        return new CompanyInformationDTO(company);
     }
 }
 
