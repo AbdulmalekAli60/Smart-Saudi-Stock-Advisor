@@ -1,6 +1,7 @@
 package com.SmartSaudiStockAdvisor.service;
 
 import com.SmartSaudiStockAdvisor.dto.InvestAmountDTO;
+import com.SmartSaudiStockAdvisor.dto.UpdateAccountDetailsDTO;
 import com.SmartSaudiStockAdvisor.dto.UserResponseDTO;
 import org.springframework.stereotype.Service;
 
@@ -14,4 +15,6 @@ public interface UserService {
     List<UserResponseDTO> getAllUsers();
 
     String deleteUser(Long userId);
+
+    UserResponseDTO updateUserInformation(UpdateAccountDetailsDTO updateAccountDetailsDTO);
 }

@@ -1,6 +1,8 @@
 package com.SmartSaudiStockAdvisor.controller;
 
 import com.SmartSaudiStockAdvisor.dto.InvestAmountDTO;
+import com.SmartSaudiStockAdvisor.dto.UpdateAccountDetailsDTO;
+import com.SmartSaudiStockAdvisor.dto.UserResponseDTO;
 import com.SmartSaudiStockAdvisor.service.ETagService;
 import com.SmartSaudiStockAdvisor.service.UserService;
 import jakarta.validation.Valid;
@@ -28,4 +30,11 @@ public class UserController {
     public ResponseEntity<String> updateInvestAmount(@PathVariable(name = "id") Long userId, @Valid @RequestBody InvestAmountDTO investAmountDTO){
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateInvestAmount(userId, investAmountDTO));
     }
+
+    @PatchMapping(value = "/update")
+    public ResponseEntity<UserResponseDTO> updateAccountInfo(@Valid @RequestBody UpdateAccountDetailsDTO updateAccountDetailsDTO){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.updateUserInformation(updateAccountDetailsDTO));
+    }
+
 }

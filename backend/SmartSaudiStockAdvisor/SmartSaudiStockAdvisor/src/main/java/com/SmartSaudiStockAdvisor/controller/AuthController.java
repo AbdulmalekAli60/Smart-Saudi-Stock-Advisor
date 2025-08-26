@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -54,6 +55,22 @@ public class AuthController {
                 .body(responseDTO);
     }
 
+    @PostMapping(value = "/logout")
+    public ResponseEntity<?> logout() {
+        ResponseCookie cookie = ResponseCookie.from("JWT-TOKEN", "")
+                .httpOnly(true)
+                .secure(false) // change it in prod
+                .sameSite("Strict")
+                .maxAge(0)
+                .path("/")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(Map.of("message", "Logged out successfully"));
+    }
+
+
     private String constructCookie(String token){
         ResponseCookie cookie = ResponseCookie.from("JWT-TOKEN", token)
                 .httpOnly(true)
@@ -65,19 +82,4 @@ public class AuthController {
 
         return cookie.toString();
     }
-
-//    @PostMapping(value = "/logout")
-//    public ResponseEntity<?> logout() {
-//        ResponseCookie cookie = ResponseCookie.from("JWT-TOKEN", "")
-//                .httpOnly(true)
-//                .secure(false)
-//                .sameSite("Strict")
-//                .maxAge(0) // Expire immediately
-//                .path("/")
-//                .build();
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-//                .body(Map.of("message", "Logged out successfully"));
-//    }
 }

@@ -1,17 +1,21 @@
 package com.SmartSaudiStockAdvisor.service.ServiceImpl;
 
 import com.SmartSaudiStockAdvisor.dto.InvestAmountDTO;
+import com.SmartSaudiStockAdvisor.dto.UpdateAccountDetailsDTO;
 import com.SmartSaudiStockAdvisor.dto.UserResponseDTO;
 import com.SmartSaudiStockAdvisor.entity.User;
+import com.SmartSaudiStockAdvisor.exception.AlreadyExistsException;
+import com.SmartSaudiStockAdvisor.exception.EntryNotFoundException;
 import com.SmartSaudiStockAdvisor.exception.OperationFailedException;
 import com.SmartSaudiStockAdvisor.exception.UpdateInvestmentAmountException;
-import com.SmartSaudiStockAdvisor.exception.EntryNotFoundException;
 import com.SmartSaudiStockAdvisor.repo.UserRepo;
 import com.SmartSaudiStockAdvisor.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +26,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepo repo) {
+    public UserServiceImpl(UserRepo repo, BCryptPasswordEncoder passwordEncoder) {
         this.userRepo = repo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -69,6 +75,51 @@ public class UserServiceImpl implements UserService {
         } catch (DataIntegrityViolationException e) {
             throw new OperationFailedException("Cannot delete user '" + currentUser.getName() +
                     "' because it has associated records" + e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public UserResponseDTO updateUserInformation(UpdateAccountDetailsDTO updateAccountDetailsDTO) {
+        String username  = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = userRepo.findByUsername(username)
+                .orElseThrow(() -> new EntryNotFoundException("User Not Found. Username: " + updateAccountDetailsDTO.getUsername()));
+
+        try{
+            if(updateAccountDetailsDTO.getName() != null){
+                currentUser.setName(updateAccountDetailsDTO.getName());
+            }
+
+            if(updateAccountDetailsDTO.getUsername() != null){
+                if(!updateAccountDetailsDTO.getUsername().equals(currentUser.getUsername())) {
+                    boolean isUsernameUsed = userRepo.existsByUsername(updateAccountDetailsDTO.getUsername());
+                    if(isUsernameUsed){
+                        throw new AlreadyExistsException("Username is Already Taken");
+                    }
+                }
+                currentUser.setUsername(updateAccountDetailsDTO.getUsername());
+            }
+
+            if (updateAccountDetailsDTO.getEmail() != null){
+                if(!updateAccountDetailsDTO.getEmail().equals(currentUser.getEmail())){
+                    boolean isEmailUsed = userRepo.existsByEmail(updateAccountDetailsDTO.getEmail());
+                    if(isEmailUsed){
+                        throw new AlreadyExistsException("Email is Already Taken");
+                    }
+                }
+                currentUser.setEmail(updateAccountDetailsDTO.getEmail());
+            }
+
+            if(updateAccountDetailsDTO.getPassword() != null){
+                currentUser.setPassword(passwordEncoder.encode(updateAccountDetailsDTO.getPassword()));
+            }
+
+            User updatedUser = userRepo.save(currentUser);
+            log.info("User has been updated");
+            return new UserResponseDTO(updatedUser, "Account Info Has been updated.");
+        }catch (DataAccessException e){
+            throw new OperationFailedException("Failed to update Account Information, Please try Again later." + e.getMessage());
         }
     }
 }
