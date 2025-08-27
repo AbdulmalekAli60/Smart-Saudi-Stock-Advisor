@@ -51,7 +51,8 @@ public class AuthServiceImpl implements AuthService {
                 signUpDTO.getName(),
                 signUpDTO.getUsername(),
                 passwordEncoder.encode(signUpDTO.getPassword()),
-                signUpDTO.getEmail()
+                signUpDTO.getEmail(),
+                "USER" // by default all have the role user
         );
 
         try{
@@ -67,20 +68,26 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponseDTO logIn(LogInDTO logInDTO) {
+        String email = logInDTO.getEmail();
 
-        Optional<User> loggedInUser = userRepo.findByEmail(logInDTO.getEmail());
+        Optional<User> loggedInUser = userRepo.findByEmailIgnoreCase(email);
 
-        if(loggedInUser.isPresent()){
+        if (loggedInUser.isPresent()) {
             User user = loggedInUser.get();
+            log.info("User found with email: '{}'", user.getEmail());
+
             boolean isPasswordValid = passwordEncoder.matches(logInDTO.getPassword(), user.getPassword());
 
             if (isPasswordValid) {
-                log.info("User logged in successfully. Email: {}", logInDTO.getEmail());
+                log.info("User logged in successfully. Email: {}", email);
                 return new UserResponseDTO(user, "Logged in successfully");
+            } else {
+                log.warn("Invalid password for email: '{}'", email);
+                throw new EntryNotFoundException("Invalid credentials");
             }
+        } else {
+            log.error("No user found with email: '{}'", email);
+            throw new EntryNotFoundException("User with these credentials does not exist");
         }
-
-        log.error("User with these credentials dose not exists. Email: {}", logInDTO.getEmail());
-        throw new EntryNotFoundException("User with these credentials dose not exists");
     }
 }

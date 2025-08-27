@@ -37,7 +37,7 @@ public class AuthController {
     @PostMapping(value = "/sign-up")
     public ResponseEntity<UserResponseDTO> signUp(@RequestBody @Valid SignUpDTO signUpDTO){
         UserResponseDTO responseDTO = authService.signUp(signUpDTO);
-        String token = jwtService.generateToken(responseDTO.getEmail());
+        String token = jwtService.generateToken(responseDTO.getEmail(), responseDTO.getRole());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE, constructCookie(token))
@@ -48,7 +48,7 @@ public class AuthController {
     public ResponseEntity<UserResponseDTO> login(@RequestBody @Valid  LogInDTO logInDTO){
         UserResponseDTO responseDTO = authService.logIn(logInDTO);
 
-        String token = jwtService.generateToken(responseDTO.getEmail());
+        String token = jwtService.generateToken(responseDTO.getEmail(), responseDTO.getRole());
 
         return  ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, constructCookie(token))

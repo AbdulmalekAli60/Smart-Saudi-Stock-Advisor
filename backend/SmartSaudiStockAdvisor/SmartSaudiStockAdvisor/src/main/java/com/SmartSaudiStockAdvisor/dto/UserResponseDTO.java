@@ -12,6 +12,7 @@ public class UserResponseDTO {
     private String email;
     private Timestamp joinDate;
     private Long userId;
+    private String role;
 
     public UserResponseDTO() {
     }
@@ -23,6 +24,7 @@ public class UserResponseDTO {
         this.email = user.getEmail();
         this.joinDate = user.getJoinDate();
         this.userId = user.getUserId();
+        this.role = user.getRole();
     }
 
     public UserResponseDTO(User user) {
@@ -79,5 +81,13 @@ public class UserResponseDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

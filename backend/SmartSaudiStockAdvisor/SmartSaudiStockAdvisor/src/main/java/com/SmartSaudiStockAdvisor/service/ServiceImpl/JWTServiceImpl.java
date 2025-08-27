@@ -23,7 +23,7 @@ public class JWTServiceImpl implements JWTService {
     private Long expiration;
 
     @Override
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
         Date currentDate = new Date();
         Date expirationDate = new Date(currentDate.getTime() + expiration);
         return Jwts.builder()
@@ -33,7 +33,7 @@ public class JWTServiceImpl implements JWTService {
                 .subject(email)
                 .issuedAt(currentDate)
                 .expiration(expirationDate)
-//                .claim() here will add the role
+                .claim("role", role)
                 .signWith(getSignKey())
                 .compact();
     }
@@ -68,21 +68,6 @@ public class JWTServiceImpl implements JWTService {
         }
     }
 
-//    @Override
-//    public boolean isTokenExpired(String token) {
-//        try {
-//            Claims claims = extractClaims(token);
-//            if (claims == null) {
-//                return true;
-//            }
-//            Date tokenExpirationDate = claims.getExpiration();
-//            return tokenExpirationDate == null || tokenExpirationDate.before(new Date()); // if expiration date is before current, token is expired, it will return true
-//        }catch (Exception e){
-//            log.error("Error while checking token expiration: {}", e.getMessage());
-//            return true;
-//        }
-//    }
-
     @Override
     public Claims extractClaims(String token) {
         try {
@@ -95,6 +80,12 @@ public class JWTServiceImpl implements JWTService {
             log.error("Error extracting claims from token: {}", e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public String extractUserRoleFromToken(String token) {
+        Claims claims = extractClaims(token);
+        return claims.get("role", String.class);
     }
 
     private SecretKey getSignKey() {

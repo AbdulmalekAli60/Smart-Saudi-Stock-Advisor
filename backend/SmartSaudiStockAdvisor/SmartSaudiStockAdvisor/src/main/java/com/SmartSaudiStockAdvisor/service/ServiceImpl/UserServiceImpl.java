@@ -122,4 +122,9 @@ public class UserServiceImpl implements UserService {
             throw new OperationFailedException("Failed to update Account Information, Please try Again later." + e.getMessage());
         }
     }
+
+    @Override
+    public String deleteAccount() {
+        return "";
+    }
 }

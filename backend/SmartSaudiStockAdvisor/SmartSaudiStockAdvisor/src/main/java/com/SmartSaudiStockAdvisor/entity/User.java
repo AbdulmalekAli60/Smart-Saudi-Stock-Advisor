@@ -30,6 +30,9 @@ public class User {
     @Column(name = "email", nullable = false, length = 255, unique = true, columnDefinition = "CITEXT")
     private String email;
 
+    @Column(name = "user_role", nullable = false, length = 20, unique = false)
+    private String role;
+
     @Column(name = "invest_amount",  precision = 10, scale = 2)
     private BigDecimal investAmount;
 
@@ -51,13 +54,14 @@ public class User {
         this.joinDate = new Timestamp(System.currentTimeMillis());
     }
 
-    public User(String name, String username, String password, String email) {
+    public User(String name, String username, String password, String email,  String role) {
         this.name = name;
         this.username = username;
         this.password = password;
         this.email = email;
         this.joinDate = new Timestamp(System.currentTimeMillis());
         this.investAmount = new BigDecimal(0);
+        this.role = role;
     }
 
     public Long getUserId() {
@@ -124,6 +128,14 @@ public class User {
         this.watchLists = watchLists;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -133,6 +145,7 @@ public class User {
                 ", joinDate=" + joinDate +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
                 ", investAmount=" + investAmount +
                 ", watchLists=" + watchLists +
                 '}';
