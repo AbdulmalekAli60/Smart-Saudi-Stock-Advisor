@@ -6,22 +6,22 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
 public class CreateCompanyDTO {
-    @NotBlank(message = "Please Enter Company Logo")
+    @NotBlank(message = "{validation.not-blank.company.logo}")
     private String companyLogo;
 
-    @NotBlank(message = "Please Enter Company Ticker")
+    @NotBlank(message = "{validation.not-blank.company.ticker}")
     private String tickerName;
 
-    @NotNull(message = "Please select a sector")
-    @Positive(message = "Sector ID must be a positive number")
+    @NotNull(message = "{validation.not-null.company.sector}")
+    @Positive(message = "{validation.positive.company.sector}")
     private Long sectorId;
 
-    @NotBlank(message = "Please Enter Company Arabic Name")
-    @Pattern(regexp = "^[\\u0600-\\u06FF\\s]+$", message = "Please Enter Arabic Name with Arabic Letters")
+    @NotBlank(message = "{validation.not-blank.company.arabic-name}")
+    @Pattern(regexp = "^[\\u0600-\\u06FF\\s]+$", message = "{validation.pattern.company.arabic-name}")
     private String companyArabicName;
 
-    @NotBlank(message = "Please Enter Company English Name")
-    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Please Enter English Name with English Letters")
+    @NotBlank(message = "{validation.not-blank.company.english-name}")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "{validation.pattern.company.english-name}")
     private String companyEnglishName;
 
     public CreateCompanyDTO() {
