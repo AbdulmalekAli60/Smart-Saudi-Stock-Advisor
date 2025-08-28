@@ -10,14 +10,16 @@ import com.SmartSaudiStockAdvisor.exception.OperationFailedException;
 import com.SmartSaudiStockAdvisor.repo.CompanyRepo;
 import com.SmartSaudiStockAdvisor.repo.UserRepo;
 import com.SmartSaudiStockAdvisor.repo.WatchListRepo;
+import com.SmartSaudiStockAdvisor.security.UserPrincipal;
 import com.SmartSaudiStockAdvisor.service.WatchListService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -57,22 +59,29 @@ public class WatchListServiceImpl implements WatchListService {
     }
 
     @Override
+    @Transactional
     public String removeFromWatchList(Long watchListId) {
-        boolean isWatchListExist = watchListRepo.existsById(watchListId);
 
-        if(!isWatchListExist){
-            throw new EntryNotFoundException("The WatchList dose not Exists, Id: " + watchListId);
+        WatchList watchList = watchListRepo.findById(watchListId)
+                .orElseThrow(() -> new EntryNotFoundException("WatchList not found, Id: " + watchListId));
+
+        Long currentUserId = getCurrentUserId();
+
+        if (!Objects.equals(currentUserId, watchList.getUser().getUserId())) {
+            throw new OperationFailedException("Access denied: You can only delete your own watchlists");
         }
 
-        try{
-            watchListRepo.deleteById(watchListId);
-            log.info("WatchList Deleted Successfully. Id: {}", watchListId);
-            return "WatchList Deleted Successfully";
-        }catch (DataAccessException e){
-            log.info("Could not delete watch list. Id: {}", watchListId);
-            throw new OperationFailedException("Failed to delete watch list: " + e.getMessage());
-        }
+        watchListRepo.deleteById(watchListId);
+        log.info("WatchList deleted successfully. Id: {}", watchListId);
+        return "WatchList deleted successfully. Id: " + watchListId;
+    }
 
+    private Long getCurrentUserId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserPrincipal) {
+            return ((UserPrincipal) principal).getUserId();
+        }
+        throw new OperationFailedException("User not authenticated");
     }
 
     @Override
