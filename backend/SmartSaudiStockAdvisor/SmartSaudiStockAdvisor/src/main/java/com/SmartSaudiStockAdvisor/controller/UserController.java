@@ -8,22 +8,22 @@ import com.SmartSaudiStockAdvisor.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/user")
 public class UserController {
 
     private final UserService userService;
-//    private final ETagService eTagService;
 
     @Autowired
     public UserController(UserService userService, ETagService eTagService) {
         this.userService = userService;
-//        this.eTagService = eTagService;
     }
 
     @PatchMapping(value = "investment-amount/{id}")
@@ -37,4 +37,18 @@ public class UserController {
                 .body(userService.updateUserInformation(updateAccountDetailsDTO));
     }
 
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity<String> deleteUserAccount(){
+        ResponseCookie cookie = ResponseCookie.from("JWT-TOKEN", "")
+                .httpOnly(true)
+                .secure(false) // change it in prod
+                .sameSite("Strict")
+                .maxAge(0)
+                .path("/")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(userService.deleteAccount());
+    }
 }

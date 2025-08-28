@@ -6,9 +6,4 @@ import org.springframework.stereotype.Service;
 public interface ETagService {
 
     String generateETag(Object data);
-
-//    @Service
-//    interface HistoricalDataService {
-//        List<HistoricalDataDTO> getHistoricalData();
-//    }
 }

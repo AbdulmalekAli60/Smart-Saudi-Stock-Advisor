@@ -9,6 +9,7 @@ import com.SmartSaudiStockAdvisor.exception.EntryNotFoundException;
 import com.SmartSaudiStockAdvisor.exception.OperationFailedException;
 import com.SmartSaudiStockAdvisor.exception.UpdateInvestmentAmountException;
 import com.SmartSaudiStockAdvisor.repo.UserRepo;
+import com.SmartSaudiStockAdvisor.security.UserPrincipal;
 import com.SmartSaudiStockAdvisor.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> {
             log.info("User was not found to update invest amount. passed Id: {}", userId);
-            throw new EntryNotFoundException("User was not found to update invest amount.");
+                    return new EntryNotFoundException("User was not found to update invest amount.");
         });
 
         try {
@@ -124,7 +125,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String deleteAccount() {
-        return "";
+    @Transactional
+    public String deleteAccount() { // for user
+        Object userPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(userPrincipal instanceof UserPrincipal){
+            Long userId = ((UserPrincipal) userPrincipal).getUserId();
+
+                userRepo.deleteById(userId);
+                return "Account Deleted";
+        }
+        throw new OperationFailedException("Failed to delete Account");
     }
 }

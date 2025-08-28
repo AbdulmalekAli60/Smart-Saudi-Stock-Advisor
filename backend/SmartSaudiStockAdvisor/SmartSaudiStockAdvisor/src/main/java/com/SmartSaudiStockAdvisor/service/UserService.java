@@ -21,5 +21,6 @@ public interface UserService {
 
     UserResponseDTO updateUserInformation(UpdateAccountDetailsDTO updateAccountDetailsDTO);
 
+    @PreAuthorize(value = "hasRole('USER') and !hasRole('ADMIN')")
     String deleteAccount();
 }

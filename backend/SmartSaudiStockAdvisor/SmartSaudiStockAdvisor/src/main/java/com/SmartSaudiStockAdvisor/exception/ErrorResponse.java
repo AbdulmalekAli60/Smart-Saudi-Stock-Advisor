@@ -1,12 +1,10 @@
 package com.SmartSaudiStockAdvisor.exception;
 
-import org.springframework.http.HttpStatus;
 
 import java.sql.Timestamp;
 
 public class ErrorResponse {
     private  String errorMessage;
-//    private HttpStatus statusCode;
     private String statusCode;
     private Timestamp time;
 
