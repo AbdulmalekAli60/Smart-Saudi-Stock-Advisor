@@ -7,16 +7,16 @@ import jakarta.validation.constraints.Size;
 
 public class LogInDTO {
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email is not valid")
+    @NotBlank(message = "{validation.log-in.email.not-blank}")
+    @Email(message = "{validation.log-in.email.email}")
     private String email;
 
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 16, message = "Password must be between 8 and 16")
+    @NotBlank(message = "{validation.log-in.password.not-blank}")
+    @Size(min = 8, max = 16, message = "{validation.log-in.password.size}")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
-            message = "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"
+            message = "{validation.log-in.password.pattern}"
     )
     private String password;
 

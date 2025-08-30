@@ -11,5 +11,5 @@ public interface WatchListService {
 
     String removeFromWatchList(Long watchListId);
 
-    List<WatchListResponseDTO> getWatchListsByUserId(Long userId);
+    List<WatchListResponseDTO> WatchListsForCurrentUser();
 }

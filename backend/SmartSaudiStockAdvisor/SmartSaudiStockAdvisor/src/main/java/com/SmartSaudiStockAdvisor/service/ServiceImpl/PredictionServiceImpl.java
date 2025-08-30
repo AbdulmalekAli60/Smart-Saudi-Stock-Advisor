@@ -7,6 +7,8 @@ import com.SmartSaudiStockAdvisor.repo.PredictionRepo;
 import com.SmartSaudiStockAdvisor.service.PredictionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +18,12 @@ import java.util.List;
 public class PredictionServiceImpl implements PredictionService {
 
     private final PredictionRepo predictionRepo;
+    private final MessageSource messageSource;
 
     @Autowired
-    public PredictionServiceImpl(PredictionRepo predictionRepo) {
+    public PredictionServiceImpl(PredictionRepo predictionRepo, MessageSource source) {
         this.predictionRepo = predictionRepo;
+        this.messageSource = source;
     }
 
     @Override
@@ -37,8 +41,12 @@ public class PredictionServiceImpl implements PredictionService {
         if(prediction != null){
             return new PredictionResponseDTO(prediction);
         }
-
+        Long[] param = {companyId};
         log.error("Prediction was not Found for Company: {}", companyId);
-        throw new PredictionNotFoundException("Prediction was not Found for Company: ", companyId);
+        throw new PredictionNotFoundException(getMessage("prediction-service.company.not-found-message", param));
+    }
+
+    private String getMessage(String key, Object[] params){
+        return messageSource.getMessage(key, params, LocaleContextHolder.getLocale());
     }
 }

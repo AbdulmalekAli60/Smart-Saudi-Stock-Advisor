@@ -6,28 +6,28 @@ import jakarta.validation.constraints.Size;
 
 public class UpdateAccountDetailsDTO {
 
-    @Size(min = 3, max = 24, message = "Name should be between 3 and 24")
+    @Size(min = 3, max = 24, message = "{validation.update-account.name.size}")
     @Pattern(
             regexp = "^[a-zA-Z\\s'-]+$",
-            message = "Name can only contain letters, spaces, hyphens, and apostrophes"
+            message = "{validation.update-account.name.pattern}"
     )
     private String name;
 
-    @Size(min = 3, max = 24, message = "Username should be between 3 and 24")
+    @Size(min = 3, max = 24, message = "{validation.update-account.username.size}")
     @Pattern(
             regexp = "^[a-zA-Z0-9_-]+$",
-            message = "Username can only contain letters, numbers, underscores, and hyphens"
+            message = "{validation.update-account.username.pattern}"
     )
     private String username;
 
-    @Size(min = 8, max = 16, message = "Password must be between 8 and 16")
+    @Size(min = 8, max = 16, message = "{validation.update-account.password.size}")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
-            message = "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"
+            message = "{validation.update-account.password.pattern}"
     )
     private String password;
 
-    @Email(message = "Email is not valid")
+    @Email(message = "{validation.update-account.email.email}")
     private String email;
 
     public UpdateAccountDetailsDTO() {

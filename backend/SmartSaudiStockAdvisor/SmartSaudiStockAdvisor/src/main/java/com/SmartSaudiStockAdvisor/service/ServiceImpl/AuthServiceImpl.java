@@ -9,9 +9,10 @@ import com.SmartSaudiStockAdvisor.exception.EntryNotFoundException;
 import com.SmartSaudiStockAdvisor.exception.UserRegistrationException;
 import com.SmartSaudiStockAdvisor.repo.UserRepo;
 import com.SmartSaudiStockAdvisor.service.AuthService;
-import com.SmartSaudiStockAdvisor.service.JWTService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,11 +26,13 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepo userRepo;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final MessageSource messageSource;
 
     @Autowired
-    public AuthServiceImpl(UserRepo userRepo, BCryptPasswordEncoder passwordEncoder, JWTService jwtService) {
+    public AuthServiceImpl(UserRepo userRepo, BCryptPasswordEncoder passwordEncoder,MessageSource source) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.messageSource = source;
     }
 
     @Override
@@ -41,9 +44,9 @@ public class AuthServiceImpl implements AuthService {
         if (existingUser.isPresent()) {
             User user = existingUser.get();
             if (user.getEmail().equals(signUpDTO.getEmail())) {
-                throw new AlreadyExistsException("Email is already used");
+                throw new AlreadyExistsException(getMessage("auth-service.email.already-used"));
             } else {
-                throw new AlreadyExistsException("Username is already used");
+                throw new AlreadyExistsException(getMessage("auth-service.username.already-used"));
             }
         }
 
@@ -59,10 +62,10 @@ public class AuthServiceImpl implements AuthService {
             User savedUser = userRepo.save(newUser);
             log.info("User successfully joined with id: {}", savedUser.getUserId());
 
-            return new  UserResponseDTO(savedUser, "User Registered Successfully ");
+            return new  UserResponseDTO(savedUser, getMessage("auth-service.register-successfully.message"));
         }catch (DataAccessException e){
             log.error("Database error during signup for email: {}", signUpDTO.getEmail(), e);
-            throw new UserRegistrationException("Failed to create account, please try again");
+            throw new UserRegistrationException(getMessage("auth-service.register-failed.message"));
         }
     }
 
@@ -80,14 +83,18 @@ public class AuthServiceImpl implements AuthService {
 
             if (isPasswordValid) {
                 log.info("User logged in successfully. Email: {}", email);
-                return new UserResponseDTO(user, "Logged in successfully");
+                return new UserResponseDTO(user, getMessage("auth-service.log-in.successfully.message"));
             } else {
                 log.warn("Invalid password for email: '{}'", email);
-                throw new EntryNotFoundException("Invalid credentials");
+                throw new EntryNotFoundException(getMessage("auth-service.log-in.invalid.cred.message"));
             }
         } else {
             log.error("No user found with email: '{}'", email);
-            throw new EntryNotFoundException("User with these credentials does not exist");
+            throw new EntryNotFoundException(getMessage("auth-service.log-in.cred.not-exist.message"));
         }
+    }
+
+    private String getMessage(String key){
+        return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
     }
 }

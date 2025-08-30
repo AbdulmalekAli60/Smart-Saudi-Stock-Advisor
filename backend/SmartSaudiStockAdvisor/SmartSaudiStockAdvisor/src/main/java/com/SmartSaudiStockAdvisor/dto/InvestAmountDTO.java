@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 
 public class InvestAmountDTO {
 
-    @NotNull(message = "Investment amount is required")
-    @DecimalMax(value = "99999999.99", message = "Investment amount cannot exceed 99,999,999.99")
-    @DecimalMin(value = "0", message = "Minimum investment amount is 0")
+    @NotNull(message = "{validation.not-null.invest-amount}")
+    @DecimalMax(value = "99999999.99", message = "{validation.max-decimal.invest-amount}")
+    @DecimalMin(value = "0", message = "{validation.min-decimal.invest-amount}")
     private BigDecimal investAmount;
 
     public InvestAmountDTO() {

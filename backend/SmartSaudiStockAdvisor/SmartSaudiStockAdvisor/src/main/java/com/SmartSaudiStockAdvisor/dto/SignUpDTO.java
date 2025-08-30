@@ -7,31 +7,31 @@ import jakarta.validation.constraints.Size;
 
 public class SignUpDTO {
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email is not valid")
+    @NotBlank(message = "{validation.sign-up.email.not-blank}")
+    @Email(message = "{validation.sign-up.email.email}")
     private String email;
 
-    @NotBlank(message = "Name is required")
-    @Size(min = 3, max = 24, message = "Name should be between 3 and 24")
+    @NotBlank(message = "{validation.sign-up.name.not-blank}")
+    @Size(min = 3, max = 24, message = "{validation.sign-up.name.size}")
     @Pattern(
             regexp = "^[a-zA-Z\\s'-]+$",
-            message = "Name can only contain letters, spaces, hyphens, and apostrophes"
+            message = "{validation.sign-up.name.pattern}"
     )
     private String name;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 16, message = "Password must be between 8 and 16")
+    @NotBlank(message = "{validation.sign-up.password.not-blank}")
+    @Size(min = 8, max = 16, message = "{validation.sign-up.password.size}")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
-            message = "Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"
+            message = "{validation.sign-up.password.pattern}"
     )
     private String password;
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 24, message = "Username should be between 3 and 24")
+    @NotBlank(message = "{validation.sign-up.username.not-blank}")
+    @Size(min = 3, max = 24, message = "{validation.sign-up.username.size}")
     @Pattern(
             regexp = "^[a-zA-Z0-9_-]+$",
-            message = "Username can only contain letters, numbers, underscores, and hyphens"
+            message = "{validation.sign-up.username.pattern}"
     )
     private String username;
 

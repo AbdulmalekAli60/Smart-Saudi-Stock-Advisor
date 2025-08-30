@@ -15,6 +15,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +28,13 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepo companyRepo;
     private final SectorRepo sectorRepo;
+    private final MessageSource messageSource;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepo companyRepo, SectorRepo sectorRepo) {
+    public CompanyServiceImpl(CompanyRepo companyRepo, SectorRepo sectorRepo, MessageSource source) {
         this.companyRepo = companyRepo;
         this.sectorRepo = sectorRepo;
+        this.messageSource = source;
     }
 
     @Override
@@ -46,13 +50,13 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyInformationDTO createCompany(CreateCompanyDTO createCompanyDTO) { // for admin
 
         if (companyRepo.existsByTickerName(createCompanyDTO.getTickerName())) {
-            throw new AlreadyExistsException("Company with ticker '" +
-                    createCompanyDTO.getTickerName() + "' already exists");
+            String[] params = {createCompanyDTO.getTickerName()};
+            throw new AlreadyExistsException(getMessage("company-service.ticker-already-exist", params));
         }
 
+        Long[] params = {createCompanyDTO.getSectorId()};
         Sector sector = sectorRepo.findById(createCompanyDTO.getSectorId())
-                .orElseThrow(() -> new EntityNotFoundException("Sector with ID " +
-                        createCompanyDTO.getSectorId() + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException(getMessage("company-service.sector.not-found", params)));
 
             Company newCompany = new Company();
             newCompany.setCompanyLogo(createCompanyDTO.getCompanyLogo());
@@ -69,16 +73,18 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public String deleteCompany(Long companyId) { // for admin
+        Long[] param = {companyId};
         Company company = companyRepo.findById(companyId)
-                .orElseThrow(() -> new EntityNotFoundException("Company with ID " + companyId + " does not exist"));
+                .orElseThrow(() -> new EntityNotFoundException(getMessage("company-service.delete.company.not-found", param)));
 
         try {
             companyRepo.delete(company);
+            Object[] params = {company.getCompanyArabicName(), company.getCompanyId()};
             log.info("Company {} with ID: {} has been deleted", company.getCompanyEnglishName(), companyId);
-            return "Company: " + company.getCompanyEnglishName() + " with ID: " + companyId + " has been deleted";
+            return getMessage("company-service.delete.success-message", params);
         } catch (DataIntegrityViolationException e) {
-            throw new OperationFailedException("Cannot delete company '" + company.getCompanyEnglishName() +
-                    "' because it has associated records" + e);
+            Object[] errorParams = {company.getCompanyEnglishName(), e};
+            throw new OperationFailedException(getMessage("company-service.delete.failed-message", errorParams));
         }
     }
 
@@ -92,9 +98,14 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyInformationDTO getCompanyById(Long companyId) {
+        Long[] param = {companyId};
         Company company = companyRepo.findById(companyId)
-                .orElseThrow(() -> new EntryNotFoundException("Company Dose not exists. Id: " + companyId));
+                .orElseThrow(() -> new EntryNotFoundException(getMessage("company-service.get-all-companies.not-found-message", param)));
         return new CompanyInformationDTO(company);
+    }
+
+    private String getMessage(String key, Object[] params){
+        return messageSource.getMessage(key, params, LocaleContextHolder.getLocale());
     }
 }
 
