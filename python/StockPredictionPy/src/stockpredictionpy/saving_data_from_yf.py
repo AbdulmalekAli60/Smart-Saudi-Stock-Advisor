@@ -51,11 +51,6 @@ class SavingDataFromYf:
         
         session = requests.Session(impersonate="chrome")
         
-        # today = pd.Timestamp.today().normalize()
-        # today_date = today.strftime('%Y-%m-%d')
-        # yesterday_date = (today - timedelta(days=1)).strftime('%Y-%m-%d')
-        # tomorrow_date = (today + pd.Timedelta(days=1)).strftime('%Y-%m-%d')
-        
         logger.info(f"Fetching today's data for date: {today_date}")
         logger.info(f"Fetching today's data for date: {today_date} tomorrow: {tomorrow_date}")
         
