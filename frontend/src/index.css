@@ -1,2 +1,35 @@
+@font-face {
+  font-family: Noto-Sans-regular;
+  src: url("./assets/fonts/NotoSansArabic-Regular.ttf");
+}
+
+@font-face {
+  font-family: Noto-Sans-light;
+  src: url("./assets/fonts/NotoSansArabic-Light.ttf");
+}
+
+@font-face {
+  font-family: Noto-Sans-bold;
+  src: url("./assets/fonts/NotoSansArabic-Bold.ttf");
+}
+
 @import "tailwindcss";
 
+@theme {
+  --font-primary-regular: Noto-Sans-regular, "sans-serif";
+  --font-primary-thin: Noto-Sans-light, "sans-serif";
+  --font-primary-bold: Noto-Sans-bold, "sans-serif";
+
+  --color-primary: #1b4332;
+  --color-primary-light: #2d5a3d;
+  --color-secondary: #d4af37;
+  --color-background: #fafafa;
+  --color-accent: #6b7280;
+  --color-text-primary: #050316;
+  --color-text-secondary: #6b7280; 
+  --color-success: #059669; 
+  --color-warning: #f59e0b;
+  --color-fail: #dc2626;
+  --color-border: #e5e7eb; 
+  --color-white: #ffffff; 
+}
