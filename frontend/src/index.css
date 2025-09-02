@@ -1,3 +1,10 @@
+* {
+  direction: rtl;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+}
+
 @font-face {
   font-family: Noto-Sans-regular;
   src: url("./assets/fonts/NotoSansArabic-Regular.ttf");
