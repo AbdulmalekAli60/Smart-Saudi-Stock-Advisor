@@ -5,23 +5,21 @@ interface ButtonProps {
 
 export default function Button({ color, children }: ButtonProps) {
   return (
-      <button
-        className={
-        `bg-${color}
+    <button
+      className={`bg-${color}
         hover:bg-primary-light
          text-white
-         font-primary-thin 
+         font-p
          cursor-pointer 
          rounded-3xl 
          p-1.5 
          w-28 
-         border
-         border-solid 
-         border-border
-         whitespace-nowrap`
-        }
-      >
-        {children}
-      </button>
+         whitespace-nowrap`}
+    >
+      {children}
+    </button>
   );
 }
+//  border
+//  border-solid
+//  border-border

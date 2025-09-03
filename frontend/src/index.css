@@ -3,6 +3,7 @@
   scrollbar-width: thin;
   scroll-behavior: smooth;
   box-sizing: border-box;
+  
 }
 
 @font-face {
@@ -32,11 +33,14 @@
   --color-secondary: #d4af37;
   --color-background: #fafafa;
   --color-accent: #6b7280;
+
   --color-text-primary: #050316;
   --color-text-secondary: #6b7280; 
+  
   --color-success: #059669; 
   --color-warning: #f59e0b;
   --color-fail: #dc2626;
   --color-border: #e5e7eb; 
   --color-white: #ffffff; 
+  --gradient-hero: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
 }
