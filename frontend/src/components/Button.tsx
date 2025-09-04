@@ -6,7 +6,7 @@ interface ButtonProps {
 export default function Button({ color, children }: ButtonProps) {
   return (
     <button
-      className={`bg-${color}
+      className={`
         hover:bg-primary-light
          text-white
          font-p
@@ -15,6 +15,7 @@ export default function Button({ color, children }: ButtonProps) {
          p-1.5 
          w-28 
          whitespace-nowrap`}
+      style={{ background: `var(--color-${color})` }}
     >
       {children}
     </button>
