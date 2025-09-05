@@ -40,25 +40,29 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section
-        className="min-h-[500px] md:min-h-[600px] lg:min-h-[700px] xl:h-screen relative flex flex-col justify-center items-center px-4 md:px-6 lg:px-8"
+        className="grid grid-cols-3"
         style={{ background: "var(--gradient-hero)" }}
       >
-        <div className="text-center max-w-4xl mx-auto space-y-6 md:space-y-8 lg:space-y-10">
-          <h1 className="font-primary-bold text-white text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight">
-            تنبؤات الأسهم بالذكاء الاصطناعي
-          </h1>
-          <p className="font-primary-regular text-accent text-base md:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
-            احصل على تنبؤات دقيقة لحركة الأسهم باستخدام أحدث تقنيات الذكاء
-            الاصطناعي
-          </p>
+        <div className="min-h-[400px] col-span-2 md:min-h-[500px] lg:min-h-[600px] xl:min-h-[700px] relative flex flex-col justify-center items-center px-4 md:px-6 lg:px-8">
+          <div className="text-center max-w-4xl mx-auto space-y-4 md:space-y-6 lg:space-y-8">
+            <h1 className="font-primary-bold text-white text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight">
+              تنبؤات الأسهم بالذكاء الاصطناعي
+            </h1>
+            <p className="font-primary-regular text-accent text-base md:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
+              احصل على تنبؤات دقيقة لحركة الأسهم باستخدام أحدث تقنيات الذكاء
+              الاصطناعي
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-around h-full">
           <LandingPageAnimation />
         </div>
 
-        <div className="text-center mt-8 md:mt-12 lg:mt-16 space-y-4 md:space-y-6">
+        <div className="col-span-3 text-center -mt-4 md:-mt-6 lg:-mt-8 pb-6 md:pb-8 lg:pb-10 space-y-4 md:space-y-5">
           <p className="font-primary-bold text-secondary text-2xl md:text-3xl lg:text-4xl">
             إبدأ الان
           </p>
-
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 lg:gap-6">
             <Button color="text-primary">إنشاء حساب</Button>
             <Button color="text-primary">تسجيل الدخول</Button>
@@ -67,12 +71,12 @@ export default function LandingPage() {
       </section>
 
       {/* About Us Section */}
-      <section className="py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-8 bg-white min-h-[400px] md:min-h-[500px] flex items-center">
+      <section className=" py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-8 bg-white min-h-[400px] md:min-h-[500px] flex items-center">
         <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 lg:space-y-10">
           <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-primary-bold text-gray-800">
             كيف نعمل؟
           </h2>
-          <div className="bg-accent rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8">
+          <div className="bg-accent shadow-xl/30 rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8">
             <p className="text-white text-justify text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed">
               نقوم بجمع البيانات التاريخية الشاملة للشركات المختارة من مصادر
               موثوقة, ثم نستخدم نموذج XGBoost المتقدم في التعلم الآلي لتحليل هذه
