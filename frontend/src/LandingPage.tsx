@@ -2,6 +2,8 @@ import Button from "./components/Button";
 import Card from "./components/Card";
 import LandingPageAnimation from "./components/LandingPageAnimation";
 import Logo from "./components/Logo";
+import { useRef } from "react";
+import useAnimations from "./hooks/useAnimation";
 
 export default function LandingPage() {
   const cardsContent = [
@@ -22,6 +24,11 @@ export default function LandingPage() {
     },
   ];
 
+  const heroSectionRef = useRef<HTMLDivElement>(null);
+  const aboutUsSectionRef = useRef<HTMLDivElement>(null);
+  const cardsSectionRef = useRef<HTMLDivElement>(null);
+
+  useAnimations({ heroSectionRef, aboutUsSectionRef, cardsSectionRef });
   return (
     <>
       {/* Navigation */}
@@ -43,8 +50,11 @@ export default function LandingPage() {
         className="grid grid-cols-3"
         style={{ background: "var(--gradient-hero)" }}
       >
-        <div className="min-h-[400px] col-span-2 md:min-h-[500px] lg:min-h-[600px] xl:min-h-[700px] relative flex flex-col justify-center items-center px-4 md:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto space-y-4 md:space-y-6 lg:space-y-8">
+        <div className="min-h-[400px] col-span-2 sm:h-dvh md:min-h-[500px] lg:min-h-[600px] xl:min-h-[700px] relative flex flex-col justify-center items-center px-4 md:px-6 lg:px-8">
+          <div
+            ref={heroSectionRef}
+            className="text-center max-w-4xl mx-auto space-y-4 md:space-y-6 lg:space-y-8"
+          >
             <h1 className="font-primary-bold text-white text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight">
               تنبؤات الأسهم بالذكاء الاصطناعي
             </h1>
@@ -59,7 +69,7 @@ export default function LandingPage() {
           <LandingPageAnimation />
         </div>
 
-        <div className="col-span-3 text-center -mt-4 md:-mt-6 lg:-mt-8 pb-6 md:pb-8 lg:pb-10 space-y-4 md:space-y-5">
+        <div className="col-span-3 text-center mt-2 md:-mt-6 lg:-mt-8 pb-6 md:pb-8 lg:pb-10 space-y-4 md:space-y-5">
           <p className="font-primary-bold text-secondary text-2xl md:text-3xl lg:text-4xl">
             إبدأ الان
           </p>
@@ -71,8 +81,11 @@ export default function LandingPage() {
       </section>
 
       {/* About Us Section */}
-      <section className=" py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-8 bg-white min-h-[400px] md:min-h-[500px] flex items-center">
-        <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 lg:space-y-10">
+      <section className="border-t-2 py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-8 bg-white min-h-[400px] md:min-h-[500px] flex items-center">
+        <div
+          ref={aboutUsSectionRef}
+          className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 lg:space-y-10"
+        >
           <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-primary-bold text-gray-800">
             كيف نعمل؟
           </h2>
@@ -90,11 +103,14 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-8 md:py-12 lg:py-16 px-4 md:px-6 lg:px-8 bg-amber-500 min-h-[600px]">
+      <section className="py-8 md:py-12 lg:py-16 px-4 md:px-6 lg:px-8 border-t-2 min-h-[600px]">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+          <div
+            ref={cardsSectionRef}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8"
+          >
             {cardsContent.map((cardContent) => (
-              <div key={cardContent.id} className="flex">
+              <div key={cardContent.id}>
                 <Card title={cardContent.title} desc={cardContent.desc} />
               </div>
             ))}
