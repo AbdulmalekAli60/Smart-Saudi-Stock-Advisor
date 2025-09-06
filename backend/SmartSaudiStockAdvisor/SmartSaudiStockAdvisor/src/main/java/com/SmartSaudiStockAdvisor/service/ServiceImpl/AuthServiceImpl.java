@@ -51,10 +51,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User newUser = new User(
-                signUpDTO.getName(),
-                signUpDTO.getUsername(),
+                signUpDTO.getName().trim(),
+                signUpDTO.getUsername().trim(),
                 passwordEncoder.encode(signUpDTO.getPassword()),
-                signUpDTO.getEmail(),
+                signUpDTO.getEmail().trim(),
                 "USER" // by default all have the role user
         );
 
@@ -71,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponseDTO logIn(LogInDTO logInDTO) {
-        String email = logInDTO.getEmail();
+        String email = logInDTO.getEmail().trim();
 
         Optional<User> loggedInUser = userRepo.findByEmailIgnoreCase(email);
 
