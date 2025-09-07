@@ -1,9 +1,10 @@
-import Button from "./components/Button";
-import Card from "./components/Card";
-import LandingPageAnimation from "./components/LandingPageAnimation";
-import Logo from "./components/Logo";
+import Button from "../components/Button";
+import Card from "../components/Card";
+import LandingPageAnimation from "../components/LandingPageAnimation";
+import Logo from "../components/Logo";
 import { useRef } from "react";
-import useAnimations from "./hooks/useAnimation";
+import useAnimations from "../hooks/useAnimation";
+import { Link } from "react-router-dom";
 
 export default function LandingPage() {
   const cardsContent = [
@@ -32,16 +33,20 @@ export default function LandingPage() {
   return (
     <>
       {/* Navigation */}
-      <nav className="h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 shadow-xl flex items-center justify-between rounded-bl-xl rounded-br-xl md:rounded-bl-2xl md:rounded-br-2xl bg-white">
-        {/* Logo */}
+      <nav style={{background:"var(--gradient-hero)"}} className=" w-4/5 fixed left-1/2 z-50 -translate-x-1/2 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 shadow-lg flex items-center justify-between rounded-bl-xl rounded-br-xl md:rounded-bl-2xl md:rounded-br-2xl">
         <div className="flex items-center">
           <Logo />
         </div>
 
         {/* Navigation Buttons */}
         <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
-          <Button color="primary">إنشاء حساب</Button>
-          <Button color="primary">تسجيل الدخول</Button>
+          <Link to={"/sign-up"}>
+            <Button color="primary">إنشاء حساب</Button>
+          </Link>
+
+          <Link to={"/log-in"}>
+            <Button color="primary">تسجيل الدخول</Button>
+          </Link>
         </div>
       </nav>
 
@@ -74,8 +79,13 @@ export default function LandingPage() {
             إبدأ الان
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 lg:gap-6">
-            <Button color="text-primary">إنشاء حساب</Button>
-            <Button color="text-primary">تسجيل الدخول</Button>
+            <Link to={"/sign-up"}>
+              <Button color="text-primary">إنشاء حساب</Button>
+            </Link>
+
+            <Link to={"/log-in"}>
+              <Button color="text-primary">تسجيل الدخول</Button>
+            </Link>
           </div>
         </div>
       </section>

@@ -1,11 +1,15 @@
-import { DotLottieReact } from "@lottiefiles/dotlottie-react"
-export default function LandingPageAnimation() {
+import { Player } from "@lottiefiles/react-lottie-player"
+import animationData from "../assets/Money Investment.json"
+const LandingPageAnimation = () => {
   return (
-    <DotLottieReact
-      src="/Money Investment.lottie"  
+    <Player
+      src={JSON.parse(JSON.stringify(animationData))} 
       loop
       autoplay
       style={{ height: '300px', width: '300px' }}
     />
-  )
-}
+  );
+};
+
+export default LandingPageAnimation
+

@@ -70,6 +70,7 @@ function useAnimations({heroSectionRef, aboutUsSectionRef, cardsSectionRef}: Ani
         }
       );
     }
+    
   }, []);
 }
 
