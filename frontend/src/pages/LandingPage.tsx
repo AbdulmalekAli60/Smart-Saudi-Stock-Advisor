@@ -1,6 +1,6 @@
 import Button from "../components/Button";
 import Card from "../components/Card";
-import LandingPageAnimation from "../components/LandingPageAnimation";
+import LandingPageAnimation from "../animations/LandingPageAnimation";
 import Logo from "../components/Logo";
 import { useRef } from "react";
 import useAnimations from "../hooks/useAnimation";

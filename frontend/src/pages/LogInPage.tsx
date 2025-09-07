@@ -1,13 +1,17 @@
+import LogInAnimation from "../animations/LogInAnimation";
 
 export default function LogInPage() {
   return (
-    <main className="grid grid-cols-2">
-      <section className="flex items-center align-middle">
-          <form action="" method="">
-
-          </form>
+    <main className="grid grid-cols-3">
+      <section className="col-span-2">
+        <form></form>
       </section>
-      <section className="h-screen" style={{background:"var(--gradient-hero)"}}></section>
+      <section
+        className="h-screen w-full grid place-content-center"
+        style={{ background: "var(--gradient-hero)" }}
+      >
+        <LogInAnimation />
+      </section>
     </main>
-  )
+  );
 }

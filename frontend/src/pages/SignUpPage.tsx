@@ -1,13 +1,17 @@
+import SignUpAnimation from "../animations/SignUpAnimation";
 
 export default function SignUpPage() {
   return (
-    <main className="grid grid-cols-2">
-      <section className="flex items-center align-middle">
-          <form action="" method="">
-
-          </form>
+    <main className="grid grid-cols-3 place-items-center">
+      <section className="col-span-2">
+        <form></form>
       </section>
-      <section className="h-screen" style={{background:"var(--gradient-hero)"}}></section>
+      <section
+        className="h-screen w-full grid place-content-center"
+        style={{ background: "var(--gradient-hero)" }}
+      >
+        <SignUpAnimation />
+      </section>
     </main>
-  )
+  );
 }
