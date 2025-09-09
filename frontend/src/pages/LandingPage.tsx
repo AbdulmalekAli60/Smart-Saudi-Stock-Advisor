@@ -5,6 +5,7 @@ import Logo from "../components/Logo";
 import { useRef } from "react";
 import useAnimations from "../hooks/useAnimation";
 import { Link } from "react-router-dom";
+import Footer from "../components/Footer";
 
 export default function LandingPage() {
   const cardsContent = [
@@ -128,13 +129,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="bg-text-primary h-40 flex items-center flex-1 justify-around">
-        <span className="whitespace-nowrap text-white">
-          {new Date().getFullYear()}
-        </span>
-
-        <Logo />
-      </footer>
+        {/* Footer */}
+        <Footer/>
     </>
   );
 }
