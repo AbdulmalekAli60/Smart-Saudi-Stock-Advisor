@@ -10,7 +10,7 @@ interface AnimationRefs {
 
 gsap.registerPlugin(ScrollTrigger);
 
-function useAnimations({heroSectionRef, aboutUsSectionRef, cardsSectionRef}: AnimationRefs) {
+function useAnimations({heroSectionRef, aboutUsSectionRef, cardsSectionRef}: AnimationRefs): void {
   useGSAP(() => {
     if (heroSectionRef?.current) {
       gsap.fromTo(

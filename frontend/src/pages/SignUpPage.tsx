@@ -1,14 +1,35 @@
 import { Link } from "react-router-dom";
 import SignUpAnimation from "../animations/SignUpAnimation";
-// import Footer from "../components/Footer";
 import { UserPlus } from "lucide-react";
 import Footer from "../components/Footer";
 import Input from "../components/Input";
 import { useState } from "react";
+import { SignUp } from "../Interfaces/AuthInterfaces";
 
 export default function SignUpPage() {
+  const [signUpFormData, setSignUpFormData] = useState<SignUp>({
+    email: "",
+    name: "",
+    password: "",
+    username: "",
+  });
 
-  // const [signUpFormData, setSignUpFormData] = useState<>(null);
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+
+    setSignUpFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  function handleSubmitClick(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
+    e.preventDefault();
+
+    console.log(signUpFormData);
+  }
   return (
     <>
       <main className="flex flex-col lg:flex-row min-h-screen">
@@ -37,9 +58,10 @@ export default function SignUpPage() {
                   </label>
                   <Input
                     id="name"
-                    name="Name"
+                    name="name"
                     type="text"
                     placeholder="أدخل الإسم"
+                    onChange={handleInputChange}
                   />
                   <span className="text-fail"></span>
                 </div>
@@ -53,9 +75,10 @@ export default function SignUpPage() {
                   </label>
                   <Input
                     id="username"
-                    name="Username"
+                    name="username"
                     type="text"
                     placeholder="أدخل إسم المستخدم"
+                    onChange={handleInputChange}
                   />
                   <span className="text-fail"></span>
                 </div>
@@ -69,9 +92,10 @@ export default function SignUpPage() {
                   </label>
                   <Input
                     id="email"
-                    name="Email"
-                    type="password"
-                    placeholder="أدخل الرقم السىري"
+                    name="email"
+                    type="email"
+                    placeholder="أدخل الإيميل"
+                    onChange={handleInputChange}
                   />
                   <span className="text-fail"></span>
                 </div>
@@ -85,15 +109,17 @@ export default function SignUpPage() {
                   </label>
                   <Input
                     id="password"
-                    name="Password"
+                    name="password"
                     type="password"
                     placeholder="أدخل الرقم السىري"
+                    onChange={handleInputChange}
                   />
                   <span className="text-fail"></span>
                 </div>
 
                 <button
-                  type="submit"
+                  // type="submit"
+                  onClick={(e) => handleSubmitClick(e)}
                   className="w-full p-3 lg:p-4 mt-6 bg-secondary text-white font-primary-bold rounded-lg cursor-pointer hover:bg-amber-400 transition-colors duration-200"
                 >
                   إنشاء حساب
