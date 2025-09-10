@@ -61,6 +61,7 @@ export default function SignUpPage() {
                     name="name"
                     type="text"
                     placeholder="أدخل الإسم"
+                    isRequired={true}
                     onChange={handleInputChange}
                   />
                   <span className="text-fail"></span>
@@ -77,6 +78,7 @@ export default function SignUpPage() {
                     id="username"
                     name="username"
                     type="text"
+                    isRequired={true}
                     placeholder="أدخل إسم المستخدم"
                     onChange={handleInputChange}
                   />
@@ -95,6 +97,7 @@ export default function SignUpPage() {
                     name="email"
                     type="email"
                     placeholder="أدخل الإيميل"
+                    isRequired={true}
                     onChange={handleInputChange}
                   />
                   <span className="text-fail"></span>
@@ -112,6 +115,7 @@ export default function SignUpPage() {
                     name="password"
                     type="password"
                     placeholder="أدخل الرقم السىري"
+                    isRequired={true}
                     onChange={handleInputChange}
                   />
                   <span className="text-fail"></span>

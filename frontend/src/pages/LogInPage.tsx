@@ -2,14 +2,57 @@ import { Link } from "react-router-dom";
 import LogInAnimation from "../animations/LogInAnimation";
 import Footer from "../components/Footer";
 import { LogIn } from "lucide-react";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { LogInState } from "../Interfaces/AuthInterfaces";
 import Input from "../components/Input";
+import UserResponseInterface from "../Interfaces/UserResponseInterface";
+import { useMutation } from "@tanstack/react-query";
+import { logInMutationOptions } from "../services/AuthService";
+
 export default function LogInPage() {
   const [logInFormData, setLogInFormData] = useState<LogInState>({
     email: "",
     password: "",
   });
+
+  const [currentUserData, setCurrentUserData] = useState<UserResponseInterface>(
+    {
+      email: "",
+      joinDate: "",
+      message: "",
+      name: "",
+      role: "",
+      userId: 0,
+      username: "",
+    }
+  );
+
+  const mutation  = useMutation(logInMutationOptions());
+
+  
+  async function handleSubmitClick(e: React.FormEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    console.log("Log in Data", logInFormData);
+
+    try {
+      const response = await mutation.mutateAsync(logInFormData);
+      
+      setCurrentUserData({
+        email: response?.data.email,
+        joinDate: response?.data.joinDate,
+        message: response?.data.message,
+        name: response?.data.name,
+        role: response?.data.role,
+        userId: response?.data.userId,
+        username: response?.data.username,
+      });
+      console.log("Mutation Data: ", response.data);
+      console.log("Curren user Data: ", currentUserData);
+      console.log(mutation.isError, mutation.isSuccess, mutation.isPending)
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -18,13 +61,6 @@ export default function LogInPage() {
       ...prev,
       [name]: value,
     }));
-  }
-
-  function handleSubmitClick(
-    e: React.FormEvent<HTMLButtonElement>
-  ) {
-    e.preventDefault();
-    console.log(logInFormData);
   }
 
   return (
@@ -45,7 +81,7 @@ export default function LogInPage() {
               </div>
 
               {/* Form */}
-              <form  className="space-y-4">
+              <form className="space-y-4">
                 <div>
                   <label
                     htmlFor="email"
@@ -58,6 +94,7 @@ export default function LogInPage() {
                     name="email"
                     type="email"
                     placeholder="أدخل الإيميل"
+                    isRequired={true}
                     onChange={handleInputChange}
                   />
                   <span className="text-fail"></span>
@@ -73,16 +110,17 @@ export default function LogInPage() {
                   <Input
                     id="password"
                     name="password"
-                    type="password"
+                    type="text"
                     placeholder="أدخل الرقم السىري"
+                    isRequired={true}
                     onChange={handleInputChange}
                   />
                   <span className="text-fail"></span>
                 </div>
 
                 <button
-                  type="submit"
-                  onSubmit={(e) => handleSubmitClick(e)}
+                  type="button"
+                  onClick={(e) => handleSubmitClick(e)}
                   className="w-full p-3 lg:p-4 mt-6 bg-secondary text-white font-primary-bold rounded-lg cursor-pointer hover:bg-amber-400 transition-colors duration-200"
                 >
                   إنشاء حساب
