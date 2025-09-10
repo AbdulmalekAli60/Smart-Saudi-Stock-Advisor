@@ -70,10 +70,14 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(12);
     }
 
+    @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // react front end
-        corsConfiguration.setAllowedMethods(Arrays.asList("GTE","POST","DELETE", "PATCH", "PUT", "OPTIONS"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173/")); // react front end
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET","POST","DELETE", "PATCH", "PUT", "OPTIONS"));
+
+        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+        corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
