@@ -1,4 +1,5 @@
 import Footer from "../components/Footer";
+import Toast from "../components/Toast";
 import { useUserInfo } from "../contexts/UserContext";
 
 export default function HomePage() {
@@ -15,6 +16,12 @@ export default function HomePage() {
       </div>
 
       <Footer />
+      <br />
+      <br />
+      <br />
+
+      <Toast text="تم تسجيل الدخول بنجاح" color="success" />
+
     </>
   );
 }
