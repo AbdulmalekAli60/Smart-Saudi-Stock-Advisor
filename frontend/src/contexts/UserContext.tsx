@@ -36,9 +36,10 @@ export function UserContextProvider({
       const user: UserResponseInterface = JSON.parse(userFromSession);
 
       setCurrentUserData(user);
-    } else {
-      navigate("/");
-    }
+    } 
+    // else {
+    //   navigate("/");
+    // }
   }, [navigate]);
 
   return (

@@ -1,4 +1,4 @@
-import { Link, redirect } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LogInAnimation from "../animations/LogInAnimation";
 import Footer from "../components/Footer";
 import { Loader, LogIn } from "lucide-react";
@@ -7,6 +7,7 @@ import { LogInState } from "../Interfaces/AuthInterfaces";
 import Input from "../components/Input";
 import { useMutation } from "@tanstack/react-query";
 import { logInMutationOptions } from "../services/AuthService";
+import axios, { isAxiosError } from "axios";
 
 export default function LogInPage() {
   const [logInFormData, setLogInFormData] = useState<LogInState>({
@@ -14,21 +15,30 @@ export default function LogInPage() {
     password: "",
   });
 
+  const navigate = useNavigate();
+
   const mutation = useMutation(logInMutationOptions());
 
-  async function handleSubmitClick(e: React.FormEvent<HTMLButtonElement>) {
+  async function handleSubmitClick(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     e.preventDefault();
     console.log("Log in Data", logInFormData);
 
     try {
       const response = await mutation.mutateAsync(logInFormData);
+
       setLogInFormData({ email: "", password: "" });
 
       sessionStorage.setItem("user", JSON.stringify(response.data));
 
-      redirect("/home")
+      navigate("/home");
     } catch (error) {
-      console.log(error);
+      if (isAxiosError(error)) {
+        console.log(error.response?.data);
+      } else {
+        console.log("error happend in catch block", error);
+      }
     }
   }
 
@@ -48,14 +58,31 @@ export default function LogInPage() {
         <section className="w-full lg:w-3/5 flex items-center justify-center p-4 lg:p-8">
           <div className="w-full max-w-md lg:max-w-lg bg-gray-100 rounded-3xl shadow-lg p-6 lg:p-8">
             <div className="space-y-4 lg:space-y-6">
-              {/* Logo */}
-              <div className="text-center">
+              {/* Icon */}
+              <div className="text-center space-y-2">
                 <div className="w-16 h-16 lg:w-20 lg:h-20 bg-accent shadow-lg inline-flex items-center justify-center rounded-full mb-3">
                   <LogIn className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
                 </div>
                 <h1 className="font-primary-bold text-xl lg:text-2xl">
                   تسجيل الدخول
                 </h1>
+
+                <div className="w-full mt-2">
+                  {mutation.isError &&
+                  axios.isAxiosError(mutation.error) &&
+                  mutation.error.response?.data
+                    ? Object.values(mutation.error.response.data).map(
+                        (message, key) => (
+                          <li
+                            className="text-fail text-start font-primary-bold "
+                            key={key}
+                          >
+                            {message}
+                          </li>
+                        )
+                      )
+                    : ""}
+                </div>
               </div>
 
               {/* Form */}
@@ -101,7 +128,11 @@ export default function LogInPage() {
                   onClick={(e) => handleSubmitClick(e)}
                   className="w-full p-3 lg:p-4 mt-6 bg-secondary text-white font-primary-bold rounded-lg cursor-pointer hover:bg-amber-400 transition-colors duration-200"
                 >
-                  {mutation.isPending ? <Loader className="flex items-center justify-center" /> : "إنشاء حساب"}
+                  {mutation.isPending ? (
+                    <Loader className="m-auto" />
+                  ) : (
+                    "إنشاء حساب"
+                  )}
                 </button>
               </form>
 

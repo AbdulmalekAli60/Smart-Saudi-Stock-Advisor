@@ -1,10 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SignUpAnimation from "../animations/SignUpAnimation";
-import { UserPlus } from "lucide-react";
+import { Loader, UserPlus } from "lucide-react";
 import Footer from "../components/Footer";
 import Input from "../components/Input";
 import { useState } from "react";
 import { SignUp } from "../Interfaces/AuthInterfaces";
+import { useMutation } from "@tanstack/react-query";
+import { signUpMutationOptions } from "../services/AuthService";
+import axios from "axios";
 
 export default function SignUpPage() {
   const [signUpFormData, setSignUpFormData] = useState<SignUp>({
@@ -13,6 +16,30 @@ export default function SignUpPage() {
     password: "",
     username: "",
   });
+
+  const navigate = useNavigate();
+
+  const mutation = useMutation(signUpMutationOptions());
+
+  async function handleSubmitClick(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
+    e.preventDefault();
+    console.log(signUpFormData);
+
+    try {
+      const response = await mutation.mutateAsync(signUpFormData);
+
+      sessionStorage.setItem("user", JSON.stringify(response.data));
+      setSignUpFormData({ email: "", name: "", password: "", username: "" });
+      navigate("/home");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+      }
+      console.log(error);
+    }
+  }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -23,13 +50,6 @@ export default function SignUpPage() {
     }));
   }
 
-  function handleSubmitClick(
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) {
-    e.preventDefault();
-
-    console.log(signUpFormData);
-  }
   return (
     <>
       <main className="flex flex-col lg:flex-row min-h-screen">
@@ -45,6 +65,25 @@ export default function SignUpPage() {
                 <h1 className="font-primary-bold text-xl lg:text-2xl">
                   إنشاء حساب جديد
                 </h1>
+
+                <div className="w-full mt-2">
+                  {mutation.isError &&
+                  axios.isAxiosError(mutation.error) &&
+                  mutation.error.response?.data
+                    ? Object.values(mutation.error.response?.data).map(
+                        (message, key) => {
+                          return (
+                            <li
+                              className="text-fail text-start font-primary-bold"
+                              key={key}
+                            >
+                              {message}
+                            </li>
+                          );
+                        }
+                      )
+                    : ""}
+                </div>
               </div>
 
               {/* Form */}
@@ -122,11 +161,15 @@ export default function SignUpPage() {
                 </div>
 
                 <button
-                  // type="submit"
+                  type="button"
                   onClick={(e) => handleSubmitClick(e)}
                   className="w-full p-3 lg:p-4 mt-6 bg-secondary text-white font-primary-bold rounded-lg cursor-pointer hover:bg-amber-400 transition-colors duration-200"
                 >
-                  إنشاء حساب
+                  {mutation.isPending ? (
+                    <Loader className="m-auto" />
+                  ) : (
+                    "إنشاء حساب"
+                  )}
                 </button>
               </form>
 
