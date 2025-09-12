@@ -2,8 +2,7 @@
   direction: rtl;
   scrollbar-width: thin;
   scroll-behavior: smooth;
-  box-sizing: border-box;
-  
+  box-sizing: border-box; 
 }
 
 @font-face {
@@ -31,7 +30,7 @@
   --color-primary: #1b4332;
   --color-primary-light: #2d5a3d;
   --color-secondary: #d4af37;
-  --color-background: #fafafa;
+  --color-background: #f6f5f9 ;
   --color-accent: #6b7280;
 
   --color-text-primary: #050316;

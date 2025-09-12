@@ -92,7 +92,7 @@ export default function LandingPage() {
       </section>
 
       {/* About Us Section */}
-      <section className="border-t-2 py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-8 bg-white min-h-[400px] md:min-h-[500px] flex items-center">
+      <section className="border-t-2 py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-8 bg-background min-h-[400px] md:min-h-[500px] flex items-center">
         <div
           ref={aboutUsSectionRef}
           className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 lg:space-y-10"
@@ -114,7 +114,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-8 md:py-12 lg:py-16 px-4 md:px-6 lg:px-8 border-t-2 min-h-[600px]">
+      <section className="py-8 md:py-12 bg-background lg:py-16 px-4 md:px-6 lg:px-8 border-t-2 min-h-[600px]">
         <div className="max-w-7xl mx-auto">
           <div
             ref={cardsSectionRef}

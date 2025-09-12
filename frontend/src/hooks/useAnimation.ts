@@ -3,14 +3,21 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
 
 interface AnimationRefs {
-  heroSectionRef: React.RefObject<HTMLDivElement | null>;
-  aboutUsSectionRef: React.RefObject<HTMLDivElement | null>;
-  cardsSectionRef: React.RefObject<HTMLDivElement | null>;
+  heroSectionRef?: React.RefObject<HTMLDivElement | null>;
+  aboutUsSectionRef?: React.RefObject<HTMLDivElement | null>;
+  cardsSectionRef?: React.RefObject<HTMLDivElement | null>;
+
+  toastContainerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 gsap.registerPlugin(ScrollTrigger);
 
-function useAnimations({heroSectionRef, aboutUsSectionRef, cardsSectionRef}: AnimationRefs): void {
+function useAnimations({
+  heroSectionRef,
+  aboutUsSectionRef,
+  cardsSectionRef,
+  toastContainerRef,
+}: AnimationRefs): void {
   useGSAP(() => {
     if (heroSectionRef?.current) {
       gsap.fromTo(
@@ -70,7 +77,22 @@ function useAnimations({heroSectionRef, aboutUsSectionRef, cardsSectionRef}: Ani
         }
       );
     }
-    
+
+    if (toastContainerRef?.current) {
+      const tl = gsap.timeline();
+
+      tl.fromTo(
+        toastContainerRef.current,
+        { x: -40, opacity: 0.5 },
+        { x: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }
+      ).to(toastContainerRef.current, {
+        x: -40,
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.in(1.7)",
+        delay: 3,
+      });
+    }
   }, []);
 }
 

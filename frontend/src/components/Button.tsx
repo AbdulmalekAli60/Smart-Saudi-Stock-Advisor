@@ -21,6 +21,4 @@ export default function Button({ color, children }: ButtonProps) {
     </button>
   );
 }
-//  border
-//  border-solid
-//  border-border
+

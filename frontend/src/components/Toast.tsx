@@ -1,6 +1,5 @@
-import { useGSAP } from "@gsap/react";
-import { gsap } from "gsap/gsap-core";
 import { useRef } from "react";
+import useAnimations from "../hooks/useAnimation";
 
 const toastColors = {
   success: "var(--color-success)",
@@ -10,28 +9,15 @@ const toastColors = {
 
 interface ToastProps {
   color: keyof typeof toastColors;
-  text: string;
+  text?: string;
 }
 
 export default function Toast({ color, text }: ToastProps) {
+
+
   const toastContainerRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(() => {
-    const tl = gsap.timeline();
-
-    tl.fromTo(
-      toastContainerRef.current,
-      { x: -40, opacity: 0.5 },
-      { x: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }
-    ).to(toastContainerRef.current, {
-      x: -40,
-      opacity: 0,
-      duration: 0.4,
-      ease: "power2.in(1.7)",
-      delay: 3,
-    });
-
-  }, []);
+  useAnimations({toastContainerRef})
 
   return (
     <div

@@ -11,7 +11,7 @@ export function signUpMutationOptions() {
   return mutationOptions({
     mutationKey: ["sign-up"],
     mutationFn: signup,
-    onSuccess: (response: AxiosResponse<SignUp>) => {
+    onSuccess: (response: AxiosResponse<UserResponseInterface>) => {
       return response.data;
     },
     onError: (error: AxiosError) => {
@@ -20,7 +20,7 @@ export function signUpMutationOptions() {
   });
 }
 
-const signup = (signUpFormData: SignUp): Promise<AxiosResponse<SignUp>>  => {
+const signup = (signUpFormData: SignUp): Promise<AxiosResponse<UserResponseInterface>>  => {
   return axios.post(`${BASE_URL}${SIGNUP_URL}`, signUpFormData, {withCredentials: true})
 }   
 
