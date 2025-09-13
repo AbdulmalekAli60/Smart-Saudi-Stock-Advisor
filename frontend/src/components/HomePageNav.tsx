@@ -15,16 +15,26 @@ export default function HomePageNav() {
     enabled: searchTerms.length > 0,
   });
 
-  if(isFetched){
-    setIsSearchResultActive(true)
-  }
+  useEffect(() => {
+    if(isFetched && (data?.data?.length ?? 0) > 0){
+      setIsSearchResultActive(true)
+    }
+
+  }, [isFetched, data])
 
   useEffect(() => {
-    document.addEventListener('click', function() {
-      setIsSearchResultActive(false)
-    })
-    
-  }, []);
+    function handleClickOutside(event:MouseEvent) {
+      const searchContainer = document.getElementById("search-container")
+      if(searchContainer && !searchContainer.contains(event.target as Element))
+        setIsSearchResultActive(false)
+    }
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside)
+    };
+  }, [])
 
   return (
     <nav className="shadow-lg bg-background fixed w-full h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 flex items-center justify-between z-50">
@@ -33,7 +43,7 @@ export default function HomePageNav() {
       </div>
 
       <div className="flex-1 flex justify-center px-2 md:px-4 max-w-md mx-auto">
-        <div className="relative w-full">
+        <div id="search-container" className="relative w-full">
           <input
             type="text"
             alt="search"
@@ -74,7 +84,7 @@ export default function HomePageNav() {
             className="rounded-full mb-2 cursor-pointer  bg-primary hover:bg-primary-light hover:scale-105 transition-all font-medium text-white h-7 px-2 text-xs md:h-8 md:px-3 md:text-xs lg:h-10 lg:px-4 lg:text-sm whitespace-nowrap"
           >
             <span className="hidden sm:inline">الحساب </span>
-            <User className="inline w-3 h-3 md:w-4 md:h-4" />
+            <User onClick={search} className="inline w-3 h-3 md:w-4 md:h-4" />
           </button>
           {isMenueActive && <DropDownMenu />}
         </div>

@@ -9,7 +9,8 @@ export function searchQueryOptions(searchTerm: string) {
   return queryOptions({
     queryKey: ["search"],
     queryFn:() => search(searchTerm),
-    staleTime:300
+    
+    // staleTime:100
   });
 }
 
