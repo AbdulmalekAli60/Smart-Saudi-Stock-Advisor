@@ -4,6 +4,7 @@ import SignUpPage from "../pages/SignUpPage";
 import LogInPage from "../pages/LogInPage";
 import HomePage from "../pages/HomePage";
 import { UserContextProvider } from "../contexts/UserContext";
+import AccountPage from "../pages/AccountPage";
 
 export default function AppRoutes() {
   return (
@@ -13,6 +14,7 @@ export default function AppRoutes() {
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/log-in" element={<LogInPage />} />
         <Route path="/home" element={<HomePage />} />
+        <Route path="/account" element={<AccountPage />} />
       </Routes>
     </UserContextProvider>
   );

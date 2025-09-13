@@ -7,10 +7,10 @@ const BASE_URL = "http://localhost:8080/auth"
 const LOGIN_URL = "/log-in"
 const SIGNUP_URL = "/sign-up"
 
-export function signUpMutationOptions() {
+export function signUpMutationOptions(signUpFormData: SignUp) {
   return mutationOptions({
     mutationKey: ["sign-up"],
-    mutationFn: signup,
+    mutationFn: () =>  signup(signUpFormData),
     onSuccess: (response: AxiosResponse<UserResponseInterface>) => {
       return response.data;
     },
@@ -24,10 +24,10 @@ const signup = (signUpFormData: SignUp): Promise<AxiosResponse<UserResponseInter
   return axios.post(`${BASE_URL}${SIGNUP_URL}`, signUpFormData, {withCredentials: true})
 }   
 
-export function logInMutationOptions() {
+export function logInMutationOptions(logInFormData:LogInState) {
   return mutationOptions({
-    mutationKey: ["log-in"],
-    mutationFn: logIn,
+    mutationKey: ["log-in", logInFormData],
+    mutationFn: () => logIn(logInFormData),
     onSuccess: (response: AxiosResponse<UserResponseInterface>) => {
       return response.data;
     },

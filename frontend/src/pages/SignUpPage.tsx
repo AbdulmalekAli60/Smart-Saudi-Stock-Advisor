@@ -20,7 +20,7 @@ export default function SignUpPage() {
 
   const navigate = useNavigate();
 
-  const mutation = useMutation(signUpMutationOptions());
+  const mutation = useMutation(signUpMutationOptions(signUpFormData));
 
   async function handleSubmitClick(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -29,7 +29,7 @@ export default function SignUpPage() {
     console.log(signUpFormData);
 
     try {
-      const response = await mutation.mutateAsync(signUpFormData);
+      const response = await mutation.mutateAsync();
 
       sessionStorage.setItem("user", JSON.stringify(response.data));
       setSignUpFormData({ email: "", name: "", password: "", username: "" });
