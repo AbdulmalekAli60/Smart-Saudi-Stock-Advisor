@@ -8,6 +8,8 @@ import com.SmartSaudiStockAdvisor.service.JWTService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -27,11 +29,13 @@ public class AuthController {
 
     private final AuthService authService;
     private final JWTService jwtService;
+    private final MessageSource messageSource;
 
     @Autowired
-    public AuthController(AuthService authService, JWTService jwtService) {
+    public AuthController(AuthService authService, JWTService jwtService, MessageSource source) {
         this.authService = authService;
         this.jwtService = jwtService;
+        this.messageSource = source;
     }
 
     @PostMapping(value = "/sign-up")
@@ -67,7 +71,7 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(Map.of("message", "Logged out successfully"));
+                .body(Map.of("message", getMessage("auth-controller-logout.message", null)));
     }
 
 
@@ -76,10 +80,14 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(false) // change it in prod
                 .sameSite("Strict")
-                .maxAge(Duration.ofMinutes(15))
+                .maxAge(Duration.ofMinutes(120))
                 .path("/")
                 .build();
 
         return cookie.toString();
+    }
+
+    private String getMessage(String key, Object[] params){
+        return messageSource.getMessage(key, params, LocaleContextHolder.getLocale());
     }
 }
