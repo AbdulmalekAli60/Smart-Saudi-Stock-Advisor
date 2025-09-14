@@ -1,14 +1,18 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import Toast from "./Toast";
+import { useMutation } from "@tanstack/react-query";
+import { Link, redirect } from "react-router-dom";
+import { LogoutMutationOptions } from "../services/AuthService";
 
 export default function DropDownMenu() {
-  const [showToast, setShowToast] = useState<boolean>(false);
 
-  function handelLogoutClick() {
-    setShowToast(true);
+  const mutation = useMutation(LogoutMutationOptions())
 
-    setTimeout(() => setShowToast(false), 3000);
+  async function handelLogoutClick() {
+    const response = await mutation.mutateAsync()
+
+    // show toast with message
+    sessionStorage.removeItem("user")
+    redirect("/")
+
   }
 
   return (
@@ -28,7 +32,6 @@ export default function DropDownMenu() {
         </li>
       </ul>
 
-      {showToast && <Toast color="success" text="تم تسجيل الخروج بنجاح" />}
     </>
   );
 }
