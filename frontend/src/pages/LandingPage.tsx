@@ -6,6 +6,7 @@ import { useRef } from "react";
 import useAnimations from "../hooks/useAnimation";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
+import { useToast } from "../contexts/ToastContext";
 
 export default function LandingPage() {
   const cardsContent = [
@@ -25,6 +26,8 @@ export default function LandingPage() {
       desc: "نقدم تحليلات يومية محدثة لكل شركة من الشركات الـ16 مع توقعات واضحة لاتجاه السعر",
     },
   ];
+
+  const {showToast} = useToast()
 
   const heroSectionRef = useRef<HTMLDivElement>(null);
   const aboutUsSectionRef = useRef<HTMLDivElement>(null);
@@ -76,7 +79,7 @@ export default function LandingPage() {
         </div>
 
         <div className="col-span-3 text-center mt-2 md:-mt-6 lg:-mt-8 pb-6 md:pb-8 lg:pb-10 space-y-4 md:space-y-5">
-          <p className="font-primary-bold text-secondary text-2xl md:text-3xl lg:text-4xl">
+          <p onClick={() => showToast("success", "Hiiiiii")} className="font-primary-bold text-secondary text-2xl md:text-3xl lg:text-4xl">
             إبدأ الان
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 lg:gap-6">

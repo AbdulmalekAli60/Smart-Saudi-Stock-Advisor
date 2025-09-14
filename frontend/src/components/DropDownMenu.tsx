@@ -1,18 +1,24 @@
 import { useMutation } from "@tanstack/react-query";
-import { Link, redirect } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogoutMutationOptions } from "../services/AuthService";
+import { useToast } from "../contexts/ToastContext";
 
 export default function DropDownMenu() {
+  const { showToast } = useToast();
+  const mutation = useMutation(LogoutMutationOptions());
 
-  const mutation = useMutation(LogoutMutationOptions())
+  const navigate = useNavigate();
 
   async function handelLogoutClick() {
-    const response = await mutation.mutateAsync()
+    const response = await mutation.mutateAsync();
 
-    // show toast with message
-    sessionStorage.removeItem("user")
-    redirect("/")
+    sessionStorage.removeItem("user");
+    console.log("the message is: ", response.data.message);
+    showToast("success", response.data.message);
 
+    setTimeout(() => {
+      navigate("/");
+    }, 500);
   }
 
   return (
@@ -31,7 +37,6 @@ export default function DropDownMenu() {
           تسجيل الخروج
         </li>
       </ul>
-
     </>
   );
 }

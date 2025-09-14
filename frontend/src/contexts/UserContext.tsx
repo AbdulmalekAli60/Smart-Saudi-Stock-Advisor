@@ -37,9 +37,6 @@ export function UserContextProvider({
 
       setCurrentUserData(user);
     } 
-    // else {
-    //   navigate("/");
-    // }
   }, [navigate]);
 
   return (

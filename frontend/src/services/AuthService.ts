@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { LogInState, SignUp } from "../Interfaces/AuthInterfaces";
+import { LogInState, logoutInterface, SignUp } from "../Interfaces/AuthInterfaces";
 import UserResponseInterface from "../Interfaces/UserResponseInterface";
 import { mutationOptions } from "@tanstack/react-query";
 
@@ -54,7 +54,7 @@ export function LogoutMutationOptions() {
   return mutationOptions({
     mutationKey: ["logout"],
     mutationFn: logout,
-    onSuccess: (response: AxiosResponse<string>) => {
+    onSuccess: (response: AxiosResponse<logoutInterface>) => {
       return response.data;
     },
     onError: (error: AxiosError) => {
@@ -63,7 +63,7 @@ export function LogoutMutationOptions() {
   });
 }
 
-const logout = (): Promise<AxiosResponse<string>> => {
+const logout = (): Promise<AxiosResponse<logoutInterface>> => {
   return axios.post(`${BASE_URL}${LOGOUT_URL}`, undefined, {
     withCredentials: true,
   });

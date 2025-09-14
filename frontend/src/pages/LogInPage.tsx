@@ -8,12 +8,15 @@ import Input from "../components/Input";
 import { useMutation } from "@tanstack/react-query";
 import { logInMutationOptions } from "../services/AuthService";
 import axios, { isAxiosError } from "axios";
+import { useToast } from "../contexts/ToastContext";
 
 export default function LogInPage() {
   const [logInFormData, setLogInFormData] = useState<LogInState>({
     email: "",
     password: "",
   });
+
+  const { showToast } = useToast();
 
   const navigate = useNavigate();
 
@@ -31,7 +34,11 @@ export default function LogInPage() {
       setLogInFormData({ email: "", password: "" });
 
       sessionStorage.setItem("user", JSON.stringify(response.data));
-      navigate("/home");
+      showToast("success", response.data.message as string);
+
+      setTimeout(() => {
+        navigate("/home");
+      }, 500);
     } catch (error) {
       if (isAxiosError(error)) {
         console.log(error.response?.data);

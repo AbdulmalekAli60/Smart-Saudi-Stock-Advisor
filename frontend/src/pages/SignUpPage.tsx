@@ -8,7 +8,7 @@ import { SignUp } from "../Interfaces/AuthInterfaces";
 import { useMutation } from "@tanstack/react-query";
 import { signUpMutationOptions } from "../services/AuthService";
 import axios from "axios";
-import Toast from "../components/Toast";
+import { useToast } from "../contexts/ToastContext";
 
 export default function SignUpPage() {
   const [signUpFormData, setSignUpFormData] = useState<SignUp>({
@@ -18,6 +18,7 @@ export default function SignUpPage() {
     username: "",
   });
 
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const mutation = useMutation(signUpMutationOptions(signUpFormData));
@@ -33,8 +34,11 @@ export default function SignUpPage() {
 
       sessionStorage.setItem("user", JSON.stringify(response.data));
       setSignUpFormData({ email: "", name: "", password: "", username: "" });
-      <Toast color="success" text={response?.data.message}/>
-      navigate("/home");
+
+      showToast("success", response.data.message as string);
+      setTimeout(() => {
+        navigate("/home");
+      }, 500);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);

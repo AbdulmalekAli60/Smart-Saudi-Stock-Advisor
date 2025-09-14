@@ -10,3 +10,7 @@ export interface LogInState {
     email:string;
     password:string;
 }
+
+export interface logoutInterface {
+    message:string
+}

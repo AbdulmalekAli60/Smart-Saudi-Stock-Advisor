@@ -9,16 +9,14 @@ const toastColors = {
 
 interface ToastProps {
   color: keyof typeof toastColors;
-  text?: string;
+  text: string;
 }
 
 export default function Toast({ color, text }: ToastProps) {
-
-
   const toastContainerRef = useRef<HTMLDivElement>(null);
-
-  useAnimations({toastContainerRef})
-
+  
+  useAnimations({ toastContainerRef });
+  
   return (
     <div
       ref={toastContainerRef}
