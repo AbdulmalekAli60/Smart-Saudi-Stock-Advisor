@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import DropDownMenu from "./DropDownMenu";
 import { useQuery } from "@tanstack/react-query";
 import { searchQueryOptions } from "../services/SearchService";
+import { Link } from "react-router-dom";
 
 export default function HomePageNav() {
   const [searchTerms, setSearchTerms] = useState<string>("");
@@ -50,7 +51,9 @@ export default function HomePageNav() {
   return (
     <nav className="shadow-lg bg-background fixed w-full h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 flex items-center justify-between z-50">
       <div className="flex-shrink-0 min-w-0">
-        <Logo />
+        <Link to={"/home"}>
+          <Logo />
+        </Link>
       </div>
 
       <div className="flex-1 flex justify-center px-2 md:px-4 max-w-md mx-auto">

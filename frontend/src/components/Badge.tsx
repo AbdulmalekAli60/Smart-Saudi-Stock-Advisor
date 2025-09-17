@@ -1,11 +1,21 @@
 interface BadgeProps {
   arabicName: string;
+  sectorId: number;
 }
 
-export default function Badge({ arabicName }: BadgeProps) {
+export default function Badge({ arabicName, sectorId }: BadgeProps) {
+  function handleSectorClick(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
+    console.log(sectorId)
+  }
   return (
-    <div className="">
-      <button className="font-primary-bold text-2xl">{arabicName}</button>
-    </div>
+    <button
+      key={sectorId}
+      onClick={(e) => handleSectorClick(e)}
+      className={`bg-primary-light whitespace-nowrap hover:bg-primary cursor-pointer font-primary-bold text-white border rounded-full p-3 w-fit`}
+    >
+      {arabicName}
+    </button>
   );
 }
