@@ -9,7 +9,7 @@ public class CompanyInformationDTO {
     private Long sectorId;
     private String sectorArabicName;
     private String companyArabicName;
-    private String getCompanyEnglishName;
+    private String companyEnglishName;
     private String sectorEnglishName;
 
     public CompanyInformationDTO() {
@@ -26,7 +26,7 @@ public class CompanyInformationDTO {
         this.sectorId = company.getSector().getSectorId();
         this.sectorArabicName = company.getSector().getSectorArabicName();
         this.companyArabicName = company.getCompanyArabicName();
-        this.getCompanyEnglishName = company.getCompanyEnglishName();
+        this.companyEnglishName = company.getCompanyEnglishName();
         this.sectorEnglishName = company.getSector().getSectorEnglishName();
     }
 
@@ -78,12 +78,12 @@ public class CompanyInformationDTO {
         this.companyArabicName = companyArabicName;
     }
 
-    public String getGetCompanyEnglishName() {
-        return getCompanyEnglishName;
+    public String getCompanyEnglishName() {
+        return companyEnglishName;
     }
 
-    public void setGetCompanyEnglishName(String getCompanyEnglishName) {
-        this.getCompanyEnglishName = getCompanyEnglishName;
+    public void setCompanyEnglishName(String companyEnglishName) {
+        this.companyEnglishName = companyEnglishName;
     }
 
     public String getSectorEnglishName() {
