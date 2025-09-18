@@ -6,6 +6,7 @@ import HomePage from "../pages/HomePage";
 import { UserContextProvider } from "../contexts/UserContext";
 import AccountPage from "../pages/AccountPage";
 import { ToastContextProvider } from "../contexts/ToastContext";
+import DashBoaredPage from "../pages/DashBoaredPage";
 
 export default function AppRoutes() {
   return (
@@ -17,6 +18,7 @@ export default function AppRoutes() {
           <Route path="/log-in" element={<LogInPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/dashboared" element={<DashBoaredPage/>}/>
         </Routes>
       </UserContextProvider>
     </ToastContextProvider>

@@ -1,19 +1,26 @@
 interface BadgeProps {
   arabicName: string;
   sectorId: number;
+  isSelected: boolean;
+  onSelect: (sectorId: number | null) => void;
 }
 
-export default function Badge({ arabicName, sectorId }: BadgeProps) {
-  function handleSectorClick(
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) {
-    console.log(sectorId)
-  }
+export default function Badge({
+  arabicName,
+  sectorId,
+  isSelected,
+  onSelect,
+}: BadgeProps) {
   return (
     <button
       key={sectorId}
-      onClick={(e) => handleSectorClick(e)}
-      className={`bg-primary-light whitespace-nowrap hover:bg-primary cursor-pointer font-primary-bold text-white border rounded-full p-3 w-fit`}
+      onClick={() => onSelect(isSelected ? null : sectorId)}
+      className={`${
+        isSelected
+          ? "bg-white text-black border border-primary"
+          : "bg-primary-light text-white hover:bg-primary"
+      }
+         whitespace-nowrap  cursor-pointer font-primary-bold rounded-full p-3 w-fit  hover:scale-105 transition-all`}
     >
       {arabicName}
     </button>

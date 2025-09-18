@@ -5,12 +5,15 @@ import DropDownMenu from "./DropDownMenu";
 import { useQuery } from "@tanstack/react-query";
 import { searchQueryOptions } from "../services/SearchService";
 import { Link } from "react-router-dom";
+import { useUserInfo } from "../contexts/UserContext";
 
 export default function HomePageNav() {
   const [searchTerms, setSearchTerms] = useState<string>("");
   const [isMenueActive, setIsMenueActive] = useState<boolean>(false);
   const [isSearchResultActive, setIsSearchResultActive] =
     useState<boolean>(false);
+
+  const { currentUserData } = useUserInfo();
 
   const { data, isLoading, isFetched, refetch } = useQuery(
     searchQueryOptions(searchTerms)
@@ -106,7 +109,14 @@ export default function HomePageNav() {
       </div>
 
       <div className="flex-shrink-0">
-        <div id="menu-container" className="relative ">
+        <div id="menu-container" className="relative space-x-2">
+          {currentUserData.role === "ADMIN" && (
+            <Link to={"/dashboared"}>
+              <button className="rounded-full mb-2 cursor-pointer  bg-primary hover:bg-primary-light hover:scale-105 transition-all font-medium text-white h-7 px-2 text-xs md:h-8 md:px-3 md:text-xs lg:h-10 lg:px-4 lg:text-sm whitespace-nowrap">
+                التحكم
+              </button>
+            </Link>
+          )}
           <button
             onClick={() => {
               setIsMenueActive(!isMenueActive);

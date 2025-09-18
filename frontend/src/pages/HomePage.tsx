@@ -1,15 +1,35 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import Badge from "../components/Badge";
 import HomePageNav from "../components/HomePageNav";
 import { useUserInfo } from "../contexts/UserContext";
 import { getSectorsQueryOptions } from "../services/SectorService";
 import Loader from "../components/Loader";
-<title>Home page</title>;
+import { useEffect, useState } from "react";
+import CompanyCard from "../components/CompanyCard";
+import Footer from "../components/Footer";
+import { getAllCompaniesQueryOptions } from "../services/CompanyService";
+import { useNavigate } from "react-router-dom";
 export default function HomePage() {
-  // check if auth or back no landing page
-  const { currentUserData } = useUserInfo();
+  const [selectedSector, setSelectedSector] = useState<number | null>(null);
+  const navigaet = useNavigate();
 
-  const { data, isLoading } = useQuery(getSectorsQueryOptions());
+  // check if user data in storgae or back no landing page
+  useEffect(() => {
+    if (!sessionStorage.getItem("user")) {
+      navigaet("/");
+    }
+  }, []);
+
+  const { currentUserData } = useUserInfo();
+  const results = useQueries({
+    queries: [getSectorsQueryOptions(), getAllCompaniesQueryOptions()],
+  });
+  const [sectorQuery, companiesQuery] = results;
+  const sectorData = sectorQuery.data;
+  const companiesData = companiesQuery.data;
+
+  const isLoading = sectorQuery.isLoading || companiesQuery.isLoading;
+
   return (
     <main>
       {/* nav */}
@@ -19,7 +39,7 @@ export default function HomePage() {
       {/* nav */}
 
       {/* welcome section */}
-      <div className=" h-32 p-6">
+      <div className=" h-32 p-6 mt-4">
         <h1 className="font-primary-thin sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
           اهلا {currentUserData.name}
         </h1>
@@ -27,27 +47,73 @@ export default function HomePage() {
       {/* welcome section */}
 
       {/* sectors */}
-      <section className=" h-56 p-6">
-        <h1 className="font-primary-bold sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
+      <section className="min-h-56 max-h-fit p-6">
+        <h1 className="font-primary-bold mb-8 sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
           الأقسام
         </h1>
-        <br />
         <div className="flex shrink-0 gap-3 flex-1 flex-wrap grow">
+          <Badge
+            key="all"
+            sectorId={0}
+            arabicName="الكل"
+            isSelected={selectedSector === null}
+            onSelect={() => setSelectedSector(null)}
+          />
           {!isLoading &&
-            data?.data.map(({ sectorId, sectorArabicName }) => {
-              return <Badge key={sectorId} sectorId={sectorId} arabicName={sectorArabicName} />;
+            sectorData?.data.map(({ sectorId, sectorArabicName }) => {
+              return (
+                <Badge
+                  key={sectorId}
+                  sectorId={sectorId}
+                  arabicName={sectorArabicName}
+                  isSelected={selectedSector === sectorId}
+                  onSelect={setSelectedSector}
+                />
+              );
             })}
         </div>
       </section>
       {/* sectors */}
 
       {/* companies */}
-      <section>
+      <section className="h-fit p-6 pb-8">
+        <h1 className="font-primary-bold mb-6 sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
+          الشركات
+        </h1>
 
+        <div className="grid gap-7 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+          {!isLoading &&
+            companiesData?.data.map(
+              ({
+                companyId,
+                companyLogo,
+                tickerName,
+                sectorId,
+                sectorArabicName,
+                companyArabicName,
+                companyEnglishName,
+                sectorEnglishName,
+              }) => {
+                return (
+                  <CompanyCard
+                    key={companyId}
+                    companyArabicName={companyArabicName}
+                    companyId={companyId}
+                    companyLogo={companyLogo}
+                    companyEnglishName={companyEnglishName}
+                    sectorArabicName={sectorArabicName}
+                    tickerName={tickerName}
+                    sectorId={sectorId}
+                    sectorEnglishName={sectorEnglishName}
+                  />
+                );
+              }
+            )}
+        </div>
       </section>
       {/* companies */}
 
-      {/* <Footer /> */}
+      <Footer />
 
       {isLoading && <Loader />}
     </main>
