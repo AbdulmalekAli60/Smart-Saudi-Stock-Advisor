@@ -30,6 +30,10 @@ export default function HomePage() {
 
   const isLoading = sectorQuery.isLoading || companiesQuery.isLoading;
 
+  const filteredData = companiesData?.data.filter(({sectorId}) => {
+    return selectedSector === sectorId || selectedSector === null
+  })
+
   return (
     <main>
       {/* nav */}
@@ -83,7 +87,7 @@ export default function HomePage() {
 
         <div className="grid gap-7 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
           {!isLoading &&
-            companiesData?.data.map(
+            filteredData?.map(
               ({
                 companyId,
                 companyLogo,

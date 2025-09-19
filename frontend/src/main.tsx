@@ -6,10 +6,15 @@ import { BrowserRouter } from "react-router-dom";
 import { scan } from "react-scan";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+if (process.env.NODE_ENV === 'development') {
+  const script = document.createElement('script');
+  script.src = 'http://localhost:8097';
+  document.head.appendChild(script);
+}
 const queryClinet = new QueryClient();
 
 scan({
-  enabled: true,
+  enabled: false,
 });
 
 createRoot(document.getElementById("root")!).render(
