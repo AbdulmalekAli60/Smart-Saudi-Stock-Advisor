@@ -107,8 +107,8 @@ export default function LogInPage() {
                     placeholder="أدخل الإيميل"
                     isRequired={true}
                     onChange={handleInputChange}
+                    isDisabled={false}
                   />
-                  <span className="text-fail"></span>
                 </div>
 
                 <div>
@@ -121,12 +121,12 @@ export default function LogInPage() {
                   <Input
                     id="password"
                     name="password"
-                    type="text"
-                    placeholder="أدخل الرقم السىري"
+                    type="password"
+                    placeholder="أدخل الرقم السري"
                     isRequired={true}
                     onChange={handleInputChange}
+                    isDisabled={false}
                   />
-                  <span className="text-fail"></span>
                 </div>
 
                 <button
@@ -145,7 +145,7 @@ export default function LogInPage() {
               <div className="text-center">
                 <p className="font-primary-regular text-sm lg:text-base">
                   ليس لديك حساب؟{" "}
-                  <Link to={"/log-in"}>
+                  <Link to={"/sign-up"}>
                     <span className="text-primary font-primary-bold hover:text-primary-light transition-colors duration-200">
                       إنشاء حساب
                     </span>

@@ -2,11 +2,14 @@ interface InputProps {
   type: string;
   id: string;
   name: string;
-  placeholder: string;
+  placeholder?: string;
 
   isRequired: boolean;
 
   onChange: React.ChangeEventHandler<HTMLInputElement>;
+  
+  isDisabled: boolean;
+  value?: string
 }
 
 export default function Input({
@@ -16,17 +19,19 @@ export default function Input({
   type,
   isRequired,
   onChange,
+  isDisabled,
 }: InputProps) {
   return (
     <input
       type={type}
       id={id}
       name={name}
-      className="w-full px-3 py-2 lg:px-4 lg:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+      className="w-full px-3 py-2 lg:px-4 lg:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent font-primary-thin"
       placeholder={placeholder}
       onChange={onChange}
       required={isRequired}
       alt={name}
+      disabled={isDisabled}
     />
   );
 }
