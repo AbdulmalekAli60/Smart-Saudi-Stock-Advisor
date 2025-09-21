@@ -2,6 +2,7 @@ package com.SmartSaudiStockAdvisor.dto;
 
 import com.SmartSaudiStockAdvisor.entity.User;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class UserResponseDTO {
@@ -13,6 +14,7 @@ public class UserResponseDTO {
     private Timestamp joinDate;
     private Long userId;
     private String role;
+    private BigDecimal investAmount;
 
     public UserResponseDTO() {
     }
@@ -25,6 +27,7 @@ public class UserResponseDTO {
         this.joinDate = user.getJoinDate();
         this.userId = user.getUserId();
         this.role = user.getRole();
+        this.investAmount = user.getInvestAmount();
     }
 
     public UserResponseDTO(User user) {
@@ -33,6 +36,8 @@ public class UserResponseDTO {
         this.email = user.getEmail();
         this.joinDate = user.getJoinDate();
         this.userId = user.getUserId();
+        this.role = user.getRole();
+        this.investAmount = user.getInvestAmount();
     }
 
     public String getName() {
@@ -89,5 +94,13 @@ public class UserResponseDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public BigDecimal getInvestAmount() {
+        return investAmount;
+    }
+
+    public void setInvestAmount(BigDecimal investAmount) {
+        this.investAmount = investAmount;
     }
 }

@@ -51,4 +51,9 @@ public class UserController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(userService.deleteAccount());
     }
+
+    @GetMapping(value = "/personal")
+    public ResponseEntity<UserResponseDTO> currentUser(){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.freshUserInfo());
+    }
 }

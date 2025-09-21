@@ -13,6 +13,8 @@ public interface UserService {
 
     String updateInvestAmount(Long userId,InvestAmountDTO investAmountDTO);
 
+    UserResponseDTO freshUserInfo();
+
     @PreAuthorize(value = "hasRole('ADMIN')")
     List<UserResponseDTO> getAllUsers();
 

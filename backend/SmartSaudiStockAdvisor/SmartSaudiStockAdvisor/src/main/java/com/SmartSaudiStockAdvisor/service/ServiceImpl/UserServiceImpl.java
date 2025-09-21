@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -58,6 +59,18 @@ public class UserServiceImpl implements UserService {
             log.error("Database error during updating investment amount for user: {}", userId, e);
             throw new UpdateInvestmentAmountException(getMessage("user-service.update-invest-amount.failed-message", null));
         }
+    }
+
+    @Override
+    public UserResponseDTO freshUserInfo() {
+        Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(user instanceof UserPrincipal){
+            Optional<User> currentUser = userRepo.findByUsername(((UserPrincipal) user).getUsername());
+            return new UserResponseDTO(currentUser.get(), "this is info");
+        }
+
+        throw new OperationFailedException("Error happened") ;
     }
 
     @Override
