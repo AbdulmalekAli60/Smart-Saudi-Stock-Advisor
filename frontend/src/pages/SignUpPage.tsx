@@ -102,7 +102,7 @@ export default function SignUpPage() {
                     الإسم
                   </label>
                   <Input
-                    id="name"
+                    id="name-input"
                     name="name"
                     type="text"
                     placeholder="أدخل الإسم"
@@ -121,7 +121,7 @@ export default function SignUpPage() {
                     إسم المستخدم
                   </label>
                   <Input
-                    id="username"
+                    id="username-input"
                     name="username"
                     type="text"
                     isRequired={true}
@@ -140,7 +140,7 @@ export default function SignUpPage() {
                     الإيميل
                   </label>
                   <Input
-                    id="email"
+                    id="email-input"
                     name="email"
                     type="email"
                     placeholder="أدخل الإيميل"
@@ -159,7 +159,7 @@ export default function SignUpPage() {
                     الرقم السري
                   </label>
                   <Input
-                    id="password"
+                    id="password-input"
                     name="password"
                     type="password"
                     placeholder="أدخل الرقم السىري"

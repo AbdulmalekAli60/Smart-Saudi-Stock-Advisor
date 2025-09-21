@@ -101,7 +101,7 @@ export default function LogInPage() {
                     الإيميل
                   </label>
                   <Input
-                    id="email"
+                    id="email-input"
                     name="email"
                     type="email"
                     placeholder="أدخل الإيميل"
@@ -119,7 +119,7 @@ export default function LogInPage() {
                     الرقم السري
                   </label>
                   <Input
-                    id="password"
+                    id="password-input"
                     name="password"
                     type="password"
                     placeholder="أدخل الرقم السري"

@@ -6,4 +6,6 @@ export default interface UserResponseInterface {
   joinDate: string | undefined;
   userId: number | undefined;
   role: string | undefined;
+
+  investAmount: number;
 }
