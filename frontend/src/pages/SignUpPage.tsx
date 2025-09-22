@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { signUpMutationOptions } from "../services/AuthService";
 import axios from "axios";
 import { useToast } from "../contexts/ToastContext";
+import errorResponse from "../Interfaces/ErrorInterface";
 
 export default function SignUpPage() {
   const [signUpFormData, setSignUpFormData] = useState<SignUp>({
@@ -55,7 +56,25 @@ export default function SignUpPage() {
       [name]: value,
     }));
   }
+  function renderErrorMessages() {
+    if (
+      !mutation.isError ||
+      !axios.isAxiosError(mutation.error) ||
+      !mutation.error.response?.data
+    ) {
+      return null;
+    }
 
+    const errorData = mutation.error.response.data as errorResponse;
+
+    if (errorData.errorMessage) {
+      return <li>{errorData.errorMessage}</li>;
+    }
+
+    return Object.values(mutation.error.response.data).map((message, key) => (
+      <li key={key}>{message}</li>
+    ));
+  }
   return (
     <>
       <main className="flex flex-col lg:flex-row min-h-screen">
@@ -73,22 +92,7 @@ export default function SignUpPage() {
                 </h1>
 
                 <div className="w-full mt-2">
-                  {mutation.isError &&
-                  axios.isAxiosError(mutation.error) &&
-                  mutation.error.response?.data
-                    ? Object.values(mutation.error.response?.data).map(
-                        (message, key) => {
-                          return (
-                            <li
-                              className="text-fail text-start font-primary-bold"
-                              key={key}
-                            >
-                              {message}
-                            </li>
-                          );
-                        }
-                      )
-                    : ""}
+                  {renderErrorMessages()}
                 </div>
               </div>
 

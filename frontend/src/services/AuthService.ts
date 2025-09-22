@@ -10,7 +10,7 @@ const LOGOUT_URL = "/logout";
 
 export function signUpMutationOptions(signUpFormData: SignUp) {
   return mutationOptions({
-    mutationKey: ["sign-up"],
+    mutationKey: ["sign-up", signUpFormData],
     mutationFn: () => signup(signUpFormData),
     onSuccess: (response: AxiosResponse<UserResponseInterface>) => {
       return response.data;

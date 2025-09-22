@@ -11,7 +11,7 @@ interface ToastContextType {
   showToast: (color: keyof typeof toastColors, text: string) => void;
 }
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+const ToastContext = createContext<ToastContextType>({} as ToastContextType);
 
 export function ToastContextProvider({
   children,

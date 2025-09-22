@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { logInMutationOptions } from "../services/AuthService";
 import axios, { isAxiosError } from "axios";
 import { useToast } from "../contexts/ToastContext";
+import errorResponse from "../Interfaces/ErrorInterface";
 
 export default function LogInPage() {
   const [logInFormData, setLogInFormData] = useState<LogInState>({
@@ -56,7 +57,25 @@ export default function LogInPage() {
       [name]: value,
     }));
   }
+  function renderErrorMessages() {
+    if (
+      !mutation.isError ||
+      !axios.isAxiosError(mutation.error) ||
+      !mutation.error.response?.data
+    ) {
+      return null;
+    }
 
+    const errorData = mutation.error.response.data as errorResponse;
+
+    if (errorData.errorMessage) {
+      return <li >{errorData.errorMessage}</li>;
+    }
+
+    return Object.values(mutation.error.response.data).map((message, key) => (
+      <li  key={key}>{message}</li>
+    ));
+  }
   return (
     <>
       <main className="flex flex-col lg:flex-row min-h-screen">
@@ -73,21 +92,8 @@ export default function LogInPage() {
                   تسجيل الدخول
                 </h1>
 
-                <div className="w-full mt-2">
-                  {mutation.isError &&
-                  axios.isAxiosError(mutation.error) &&
-                  mutation.error.response?.data
-                    ? Object.values(mutation.error.response.data).map(
-                        (message, key) => (
-                          <li
-                            className="text-fail text-start font-primary-bold "
-                            key={key}
-                          >
-                            {message}
-                          </li>
-                        )
-                      )
-                    : ""}
+                <div className="w-full mt-2 text-fail text-start font-primary-bold">
+                  {renderErrorMessages()}
                 </div>
               </div>
 
