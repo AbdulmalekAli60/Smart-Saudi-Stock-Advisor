@@ -1,8 +1,8 @@
 package com.SmartSaudiStockAdvisor.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
+import java.math.BigDecimal;
 
 public class UpdateAccountDetailsDTO {
 
@@ -30,14 +30,20 @@ public class UpdateAccountDetailsDTO {
     @Email(message = "{validation.update-account.email.email}")
     private String email;
 
+//    @NotNull(message = "{validation.not-null.invest-amount}")
+    @DecimalMax(value = "99999999.99", message = "{validation.max-decimal.invest-amount}")
+    @DecimalMin(value = "0", message = "{validation.min-decimal.invest-amount}")
+    private BigDecimal investAmount;
+
     public UpdateAccountDetailsDTO() {
     }
 
-    public UpdateAccountDetailsDTO(String name, String username, String password, String email) {
+    public UpdateAccountDetailsDTO(String name, String username, String password, String email, BigDecimal amount) {
         this.name = name;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.investAmount = amount;
     }
 
     public String getName() {
@@ -70,5 +76,13 @@ public class UpdateAccountDetailsDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public BigDecimal getInvestAmount() {
+        return investAmount;
+    }
+
+    public void setInvestAmount(BigDecimal investAmount) {
+        this.investAmount = investAmount;
     }
 }

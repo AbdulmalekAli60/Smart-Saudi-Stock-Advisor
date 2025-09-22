@@ -1,13 +1,11 @@
 package com.SmartSaudiStockAdvisor.service.ServiceImpl;
 
-import com.SmartSaudiStockAdvisor.dto.InvestAmountDTO;
 import com.SmartSaudiStockAdvisor.dto.UpdateAccountDetailsDTO;
 import com.SmartSaudiStockAdvisor.dto.UserResponseDTO;
 import com.SmartSaudiStockAdvisor.entity.User;
 import com.SmartSaudiStockAdvisor.exception.AlreadyExistsException;
 import com.SmartSaudiStockAdvisor.exception.EntryNotFoundException;
 import com.SmartSaudiStockAdvisor.exception.OperationFailedException;
-import com.SmartSaudiStockAdvisor.exception.UpdateInvestmentAmountException;
 import com.SmartSaudiStockAdvisor.repo.UserRepo;
 import com.SmartSaudiStockAdvisor.security.UserPrincipal;
 import com.SmartSaudiStockAdvisor.service.UserService;
@@ -38,27 +36,6 @@ public class UserServiceImpl implements UserService {
         this.userRepo = repo;
         this.passwordEncoder = passwordEncoder;
         this.messageSource = source;
-    }
-
-    @Override
-    @Transactional
-    public String updateInvestAmount(Long userId, InvestAmountDTO investAmountDTO) {
-        Long[] notFoundParam = {userId};
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> {
-            log.info("User was not found to update invest amount. passed Id: {}", userId);
-                    return new EntryNotFoundException(getMessage("user-service.update-invest-amount.user.not-found-message", notFoundParam));
-        });
-
-        try {
-            user.setInvestAmount(investAmountDTO.getInvestAmount());
-            log.info("Invest amount has been updated to {}, for user: {}", investAmountDTO.getInvestAmount(), userId);
-            userRepo.save(user);
-            return getMessage("user-service.update-invest-amount.success-message", null);
-        }catch (DataAccessException e){
-            log.error("Database error during updating investment amount for user: {}", userId, e);
-            throw new UpdateInvestmentAmountException(getMessage("user-service.update-invest-amount.failed-message", null));
-        }
     }
 
     @Override
@@ -135,6 +112,10 @@ public class UserServiceImpl implements UserService {
 
             if(updateAccountDetailsDTO.getPassword() != null){
                 currentUser.setPassword(passwordEncoder.encode(updateAccountDetailsDTO.getPassword()));
+            }
+
+            if(updateAccountDetailsDTO.getInvestAmount() != null){
+                currentUser.setInvestAmount(updateAccountDetailsDTO.getInvestAmount());
             }
 
             User updatedUser = userRepo.save(currentUser);
