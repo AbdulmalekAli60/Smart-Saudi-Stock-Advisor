@@ -11,6 +11,10 @@ import { useToast } from "../contexts/ToastContext";
 import axios, { isAxiosError } from "axios";
 import errorResponse from "../Interfaces/ErrorInterface";
 import HomePageNav from "../components/HomePageNav";
+import BookMark from "../components/BookMark";
+import { WatchListQueryOptions } from "../services/WatchListService";
+import WatchListResponseInterface from "../Interfaces/WatchListResponseInterface";
+import { BookmarkX } from "lucide-react";
 
 export default function AccountPage() {
   const [updateData, setUpdateData] = useState<boolean>(false);
@@ -27,6 +31,8 @@ export default function AccountPage() {
   const isUpdateData = updateData ? false : true;
 
   const { data, isLoading, refetch } = useQuery(userDataQueryOptions());
+
+  const watchListQuery = useQuery(WatchListQueryOptions());
 
   const mutation = useMutation(updateUserDataMutationOptions(updatedInfo));
 
@@ -128,7 +134,7 @@ export default function AccountPage() {
     <>
       <HomePageNav />
 
-      <main className="max-w-4xl mx-auto p-6 h-fit bg-white ">
+      <main className="max-w-4xl mx-auto p-6 bg-white ">
         {/* Header Section */}
         <div className="mb-8 mt-14">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">
@@ -194,11 +200,44 @@ export default function AccountPage() {
           </button>
         </div>
 
-        <section className="bg-green-400 w-full h-3/5 ">
-          <div className="bg-accent max-w-4/5 h-full ">WatchList section</div>
+        <section className="bg-gray-400 w-full min-h-fit  rounded-3xl  shadow-lg mt-4  font-primary-bold p-4 ">
+          <h1 className="w-full  sm:text-sm md:text-xl lg:text-2xl text-center text-black">
+            الشركات المفضلة
+          </h1>
+          {(watchListQuery.data?.data?.length ?? 0) > 0 ? (
+            watchListQuery.data?.data.map(
+              ({
+                companyId,
+                companyLogo,
+                companyName,
+                tickerName,
+                userId,
+                watchListId,
+              }: WatchListResponseInterface) => {
+                return (
+                  <BookMark
+                    key={watchListId}
+                    companyId={companyId}
+                    companyLogo={companyLogo}
+                    companyName={companyName}
+                    tickerName={tickerName}
+                    userId={userId}
+                    watchListId={watchListId}
+                  />
+                );
+              }
+            )
+          ) : (
+            <div className="text-center font-primary-regular mt-7 space-x-2">
+                <h1 className="inline sm:text-sm md:text-xl lg:text-2xl">لايوجد</h1>
+               <BookmarkX className="inline"/>
+               </div>
+          )}
         </section>
 
-        {isLoading && mutation.isPending && <Loader />}
+        {(isLoading || mutation.isPending || watchListQuery.isLoading) && (
+          <Loader />
+        )}
       </main>
     </>
   );

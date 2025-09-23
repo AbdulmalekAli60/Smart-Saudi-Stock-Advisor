@@ -1,6 +1,10 @@
 import { Star, ChartCandlestick } from "lucide-react";
 import { CompanyResponse } from "../Interfaces/CompanyResponseInterface";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { AddWatchListMutationOptions } from "../services/WatchListService";
+import axios from "axios";
+import { useToast } from "../contexts/ToastContext";
 
 export default function CompanyCard({
   companyArabicName,
@@ -12,13 +16,31 @@ export default function CompanyCard({
   tickerName,
 }: CompanyResponse) {
   const navigate = useNavigate();
+  const { showToast } = useToast();
+  const mutation = useMutation(AddWatchListMutationOptions(companyId));
+
+  async function handleSaveClick() {
+    console.log("the company id is: ", companyId)
+    try {
+      const response = await mutation.mutateAsync();
+      showToast("success", response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.message);
+        showToast("fail", error.message);
+      }
+    }
+  }
+
   return (
     <div className="w-full h-full p-6 bg-background text-center space-y-6 rounded-3xl shadow-lg">
       <div className="w-full flex justify-between">
         <div></div>
         <img className="w-1/2 h-1/2" src={companyLogo} alt="company logo" />
 
-        <Star className="cursor-pointer" />
+        <div onClick={handleSaveClick}>
+          <Star className="cursor-pointer" />
+        </div>
       </div>
 
       <div

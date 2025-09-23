@@ -26,6 +26,7 @@ export function UserContextProvider({
       role: "",
       userId: 0,
       username: "",
+      investAmount:0
     }
   );
 
