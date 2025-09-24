@@ -8,19 +8,16 @@ import axios from "axios";
 import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
 
+interface bookMarksProps {
+  data: WatchListResponseInterface
+  onBookmarkChaneg: () => void
+}
 
-export default function BookMark({
-  companyId,
-  companyLogo,
-  companyName,
-  tickerName,
-  userId,
-  watchListId,
-}: WatchListResponseInterface) {
+export default function BookMark({data, onBookmarkChaneg}:bookMarksProps ) {
   const [isSavedBookMark, setIsSaveToBookmark] = useState<boolean>(true);
   const { showToast } = useToast();
   const navigate = useNavigate()
-  const mutation = useMutation(deleteWatchListMutationOptions(watchListId));
+  const mutation = useMutation(deleteWatchListMutationOptions(data.watchListId));
 
   async function handelBookMarkClick() {
     try {
@@ -28,7 +25,7 @@ export default function BookMark({
         const response = await mutation.mutateAsync();
         showToast("success", response.data);
         setIsSaveToBookmark(false);
-        window.location.reload()
+        onBookmarkChaneg()
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -40,12 +37,12 @@ export default function BookMark({
   return (
     <>
       <div className=" bg-background h-fit mt-3 w-full flex justify-between items-center gap-0 pr-2 rounded-2xl shadow-lg">
-        <img src={companyLogo} className="w-12 h-12" alt="logo" />
-        <div onClick={() => navigate(`/companies/${companyId}`)} className="w-4/5  text-start mr-3 border-r-2 p-2 cursor-pointer">
+        <img src={data.companyLogo} className="w-12 h-12" alt="logo" />
+        <div onClick={() => navigate(`/companies/${data.companyId}`)} className="w-4/5  text-start mr-3 border-r-2 p-2 cursor-pointer">
           <div className="space-y-3">
-            <h1 className="sm:text-sm md:text-xl lg:text-2xl">{companyName}</h1>
+            <h1 className="sm:text-sm md:text-xl lg:text-2xl">{data.companyName}</h1>
             <h3 className="sm:text-sm md:text-base lg:text-xl font-primary-thin text-black">
-              {tickerName.split(".")[0]}{" "}
+              {data.tickerName.split(".")[0]}{" "}
               <ChartCandlestick className="inline " />
             </h3>
           </div>

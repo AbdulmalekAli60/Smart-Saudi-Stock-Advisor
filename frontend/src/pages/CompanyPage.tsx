@@ -7,7 +7,7 @@ export default function CompanyPage() {
   const { companyId } = useParams();
 
   const { data, isLoading } = useQuery(companyById(companyId));
-  console.log("the data is: " , {...data?.data});
+  console.log("the data is: ", { ...data?.data });
   return (
     <div className="bg-red-700">
       <p>this is specific company page {companyId}</p>

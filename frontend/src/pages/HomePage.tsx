@@ -9,6 +9,7 @@ import CompanyCard from "../components/CompanyCard";
 import Footer from "../components/Footer";
 import { getAllCompaniesQueryOptions } from "../services/CompanyService";
 import { useNavigate } from "react-router-dom";
+import { WatchListQueryOptions } from "../services/WatchListService";
 export default function HomePage() {
   const [selectedSector, setSelectedSector] = useState<number | null>(null);
   const navigaet = useNavigate();
@@ -22,17 +23,28 @@ export default function HomePage() {
 
   const { currentUserData } = useUserInfo();
   const results = useQueries({
-    queries: [getSectorsQueryOptions(), getAllCompaniesQueryOptions()],
+    queries: [
+      getSectorsQueryOptions(),
+      getAllCompaniesQueryOptions(),
+      WatchListQueryOptions(),
+    ],
   });
-  const [sectorQuery, companiesQuery] = results;
+  const [sectorQuery, companiesQuery, watchlists] = results;
   const sectorData = sectorQuery.data;
   const companiesData = companiesQuery.data;
+  const watchlistsData = watchlists.data;
 
-  const isLoading = sectorQuery.isLoading || companiesQuery.isLoading;
+  const isLoading =
+    sectorQuery.isLoading || companiesQuery.isLoading || watchlists.isLoading;
 
-  const filteredData = companiesData?.data.filter(({sectorId}) => {
-    return selectedSector === sectorId || selectedSector === null
-  })
+  const filteredData = companiesData?.data.filter(({ sectorId }) => {
+    return selectedSector === sectorId || selectedSector === null;
+  });
+
+  const bookmarkedCompanies = new Map();
+  watchlistsData?.data.forEach((item) => {
+    bookmarkedCompanies.set(item.companyId, item.watchListId);
+  });
 
   return (
     <main>
@@ -87,32 +99,19 @@ export default function HomePage() {
 
         <div className="grid gap-7 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
           {!isLoading &&
-            filteredData?.map(
-              ({
-                companyId,
-                companyLogo,
-                tickerName,
-                sectorId,
-                sectorArabicName,
-                companyArabicName,
-                companyEnglishName,
-                sectorEnglishName,
-              }) => {
-                return (
-                  <CompanyCard
-                    key={companyId}
-                    companyArabicName={companyArabicName}
-                    companyId={companyId}
-                    companyLogo={companyLogo}
-                    companyEnglishName={companyEnglishName}
-                    sectorArabicName={sectorArabicName}
-                    tickerName={tickerName}
-                    sectorId={sectorId}
-                    sectorEnglishName={sectorEnglishName}
-                  />
-                );
-              }
-            )}
+            filteredData?.map((company) => {
+              const isBookmarked = bookmarkedCompanies.has(company.companyId);
+              const watchListId = bookmarkedCompanies.get(company.companyId);
+              return (
+                <CompanyCard
+                  key={company.companyId}
+                  compnayData={company}
+                  isBookmarked={isBookmarked}
+                  watchListId={watchListId}
+                  onBookMarkChange={watchlists.refetch}
+                />
+              );
+            })}
         </div>
       </section>
       {/* companies */}

@@ -13,7 +13,6 @@ import errorResponse from "../Interfaces/ErrorInterface";
 import HomePageNav from "../components/HomePageNav";
 import BookMark from "../components/BookMark";
 import { WatchListQueryOptions } from "../services/WatchListService";
-import WatchListResponseInterface from "../Interfaces/WatchListResponseInterface";
 import { BookmarkX } from "lucide-react";
 
 export default function AccountPage() {
@@ -32,7 +31,7 @@ export default function AccountPage() {
 
   const { data, isLoading, refetch } = useQuery(userDataQueryOptions());
 
-  const watchListQuery = useQuery(WatchListQueryOptions());
+  const {data:watchListData, isLoading: watchListLoading, refetch:watchListRefetch} = useQuery(WatchListQueryOptions());
 
   const mutation = useMutation(updateUserDataMutationOptions(updatedInfo));
 
@@ -204,25 +203,14 @@ export default function AccountPage() {
           <h1 className="w-full  sm:text-sm md:text-xl lg:text-2xl text-center text-black">
             الشركات المفضلة
           </h1>
-          {(watchListQuery.data?.data?.length ?? 0) > 0 ? (
-            watchListQuery.data?.data.map(
-              ({
-                companyId,
-                companyLogo,
-                companyName,
-                tickerName,
-                userId,
-                watchListId,
-              }: WatchListResponseInterface) => {
+          {(watchListData?.data?.length ?? 0) > 0 ? (
+            watchListData?.data.map(
+              (item) => {
                 return (
                   <BookMark
-                    key={watchListId}
-                    companyId={companyId}
-                    companyLogo={companyLogo}
-                    companyName={companyName}
-                    tickerName={tickerName}
-                    userId={userId}
-                    watchListId={watchListId}
+                    key={item.companyId}
+                    data={item}
+                    onBookmarkChaneg={watchListRefetch}
                   />
                 );
               }
@@ -235,7 +223,7 @@ export default function AccountPage() {
           )}
         </section>
 
-        {(isLoading || mutation.isPending || watchListQuery.isLoading) && (
+        {(isLoading || mutation.isPending || watchListLoading) && (
           <Loader />
         )}
       </main>

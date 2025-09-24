@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
 const queryClinet = new QueryClient();
 
 scan({
-  enabled: false,
+  enabled: true,
 });
 
 createRoot(document.getElementById("root")!).render(

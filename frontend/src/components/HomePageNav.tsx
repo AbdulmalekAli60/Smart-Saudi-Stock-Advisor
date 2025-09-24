@@ -90,12 +90,14 @@ export default function HomePageNav() {
             {isSearchResultActive &&
               data?.data?.map(({ companyId, companyArabicName }) => {
                 return (
-                  <span
-                    key={companyId}
-                    className="p-2 border rounded-2xl block bg-gray-400 cursor-pointer"
-                  >
-                    {companyArabicName}
-                  </span>
+                  <Link to={`/companies/${companyId}`}>
+                    <span
+                      key={companyId}
+                      className="p-2 border rounded-2xl block bg-gray-400 cursor-pointer"
+                    >
+                      {companyArabicName}
+                    </span>
+                  </Link>
                 );
               })}
 
