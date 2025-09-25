@@ -10,8 +10,6 @@ import java.util.List;
 @Service
 public interface UserService {
 
-
-
     UserResponseDTO freshUserInfo();
 
     @PreAuthorize(value = "hasRole('ADMIN')")

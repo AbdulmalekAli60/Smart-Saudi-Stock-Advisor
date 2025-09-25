@@ -8,7 +8,7 @@ public class UpdateAccountDetailsDTO {
 
     @Size(min = 3, max = 24, message = "{validation.update-account.name.size}")
     @Pattern(
-            regexp = "^[a-zA-Z\\s'-]+$",
+            regexp = "^[a-zA-Z\\s'\\u0600-\\u06FF-]+$",
             message = "{validation.update-account.name.pattern}"
     )
     private String name;

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,5 +64,11 @@ public class AdminController {
     public ResponseEntity<String> deleteUser(@PathVariable(value = "user-id") Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userService.deleteUser(id));
+    }
+
+    @GetMapping(value = "/dashboard")
+    @PreAuthorize(value = "hasRole('ADMIN')")
+    public  ResponseEntity<?> isAdmin(){
+        return ResponseEntity.ok().build();
     }
 }

@@ -11,4 +11,5 @@ public interface AuthService {
     UserResponseDTO signUp(SignUpDTO signUpDTO);
 
     UserResponseDTO logIn(LogInDTO logInDTO);
+
 }

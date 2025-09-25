@@ -14,7 +14,7 @@ public class SignUpDTO {
     @NotBlank(message = "{validation.sign-up.name.not-blank}")
     @Size(min = 3, max = 24, message = "{validation.sign-up.name.size}")
     @Pattern(
-            regexp = "^[a-zA-Z\\s'-]+$",
+            regexp = "^[a-zA-Z\\s'\\u0600-\\u06FF-]+$",
             message = "{validation.sign-up.name.pattern}"
     )
     private String name;
