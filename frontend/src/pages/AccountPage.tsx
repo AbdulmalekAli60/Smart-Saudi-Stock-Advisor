@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "../components/Input";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  deleteAccountMutationOptions,
   updateUserDataMutationOptions,
   userDataQueryOptions,
 } from "../services/UserService";
@@ -14,6 +15,8 @@ import HomePageNav from "../components/HomePageNav";
 import BookMark from "../components/BookMark";
 import { WatchListQueryOptions } from "../services/WatchListService";
 import { BookmarkX } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useUserInfo } from "../contexts/UserContext";
 
 export default function AccountPage() {
   const [updateData, setUpdateData] = useState<boolean>(false);
@@ -25,15 +28,23 @@ export default function AccountPage() {
     investAmount: null,
   });
 
+  const { setCurrentUserData } = useUserInfo();
+  const navigate = useNavigate();
   const { showToast } = useToast();
 
   const isUpdateData = updateData ? false : true;
 
   const { data, isLoading, refetch } = useQuery(userDataQueryOptions());
 
-  const {data:watchListData, isLoading: watchListLoading, refetch:watchListRefetch} = useQuery(WatchListQueryOptions());
+  const {
+    data: watchListData,
+    isLoading: watchListLoading,
+    refetch: watchListRefetch,
+  } = useQuery(WatchListQueryOptions());
 
   const mutation = useMutation(updateUserDataMutationOptions(updatedInfo));
+
+  const deleteMutation = useMutation(deleteAccountMutationOptions());
 
   const formFields = [
     {
@@ -92,6 +103,7 @@ export default function AccountPage() {
       const result = await mutation.mutateAsync();
 
       showToast("success", result.data.message as string);
+      setCurrentUserData(result.data);
       refetch();
 
       if (updatedInfo.password !== null) {
@@ -127,7 +139,22 @@ export default function AccountPage() {
     ));
   }
 
-  console.log({ ...updatedInfo });
+  async function handleDeleteAccountClick() {
+    try {
+      alert("هل انت متأكد من الحذف؟");
+      const response = await deleteMutation.mutateAsync();
+      sessionStorage.removeItem("user");
+      navigate("/");
+      showToast("success", response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        showToast("fail", error.response?.data);
+        console.log(error);
+        return;
+      }
+      console.log(error);
+    }
+  }
 
   return (
     <>
@@ -148,6 +175,12 @@ export default function AccountPage() {
                 {data?.data.joinDate?.split("T")[0] || "غير متوفر"}
               </span>
             </div>
+            <button
+              onClick={handleDeleteAccountClick}
+              className="bg-fail text-white font-primary-bold p-2 rounded-full hover:bg-red-500 cursor-pointer"
+            >
+              حذف الحساب
+            </button>
           </div>
         </div>
 
@@ -204,28 +237,26 @@ export default function AccountPage() {
             الشركات المفضلة
           </h1>
           {(watchListData?.data?.length ?? 0) > 0 ? (
-            watchListData?.data.map(
-              (item) => {
-                return (
-                  <BookMark
-                    key={item.companyId}
-                    data={item}
-                    onBookmarkChaneg={watchListRefetch}
-                  />
-                );
-              }
-            )
+            watchListData?.data.map((item) => {
+              return (
+                <BookMark
+                  key={item.companyId}
+                  data={item}
+                  onBookmarkChaneg={watchListRefetch}
+                />
+              );
+            })
           ) : (
             <div className="text-center font-primary-regular mt-7 space-x-2">
-                <h1 className="inline sm:text-sm md:text-xl lg:text-2xl">لايوجد</h1>
-               <BookmarkX className="inline"/>
-               </div>
+              <h1 className="inline sm:text-sm md:text-xl lg:text-2xl">
+                لايوجد
+              </h1>
+              <BookmarkX className="inline" />
+            </div>
           )}
         </section>
 
-        {(isLoading || mutation.isPending || watchListLoading) && (
-          <Loader />
-        )}
+        {(isLoading || mutation.isPending || watchListLoading) && <Loader />}
       </main>
     </>
   );

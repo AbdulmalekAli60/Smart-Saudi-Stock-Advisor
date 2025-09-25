@@ -26,7 +26,7 @@ export function UserContextProvider({
       role: "",
       userId: 0,
       username: "",
-      investAmount:0
+      investAmount: 0,
     }
   );
 
@@ -35,10 +35,15 @@ export function UserContextProvider({
 
     if (userFromSession) {
       const user: UserResponseInterface = JSON.parse(userFromSession);
-
       setCurrentUserData(user);
-    } 
+    }
   }, [navigate]);
+
+  useEffect(() => {
+    if (currentUserData.userId !== 0) {
+      sessionStorage.setItem("user", JSON.stringify(currentUserData));
+    }
+  }, [currentUserData]);
 
   return (
     <userContext.Provider value={{ currentUserData, setCurrentUserData }}>

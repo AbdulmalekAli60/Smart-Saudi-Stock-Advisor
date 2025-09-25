@@ -91,7 +91,7 @@ export default function SignUpPage() {
                   إنشاء حساب جديد
                 </h1>
 
-                <div className="w-full mt-2">
+                <div className="w-full mt-2 text-fail">
                   {renderErrorMessages()}
                 </div>
               </div>

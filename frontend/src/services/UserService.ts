@@ -6,6 +6,7 @@ import { UpdateInfo } from "../Interfaces/UpdateInfoInterface";
 const BASE_URL = "http://localhost:8080/user";
 const userData = "/personal";
 const updateEndpoint = "/update";
+const deleteAccountEndpoint = "/delete";
 export function userDataQueryOptions() {
   return queryOptions({
     queryKey: ["fresh-data"],
@@ -35,6 +36,25 @@ const updateUserData = (
   newInfo: UpdateInfo
 ): Promise<AxiosResponse<UserResponseInterface>> => {
   return axios.patch(`${BASE_URL}${updateEndpoint}`, newInfo, {
+    withCredentials: true,
+  });
+};
+
+export function deleteAccountMutationOptions() {
+  return mutationOptions({
+    mutationKey: ["delete-account"],
+    mutationFn: deleteAccount,
+    onSuccess: (response: AxiosResponse<string>) => {
+      return response;
+    },
+    onError: (error: AxiosError) => {
+      throw error;
+    },
+  });
+}
+
+const deleteAccount = (): Promise<AxiosResponse<string>> => {
+  return axios.delete(`${BASE_URL}${deleteAccountEndpoint}`, {
     withCredentials: true,
   });
 };
