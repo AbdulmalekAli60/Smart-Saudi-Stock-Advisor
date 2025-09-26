@@ -81,10 +81,10 @@ export default function CompanyCard({
           </h1>
 
           <div className="space-x-2 whitespace-nowrap">
-            <span className="font-primary-bold sm:text-sm md:text-base lg:text-lg">
+            <span className="font-primary-regular sm:text-sm md:text-base lg:text-lg">
               {compnayData.tickerName.split(".")[0]}
             </span>
-            <ChartCandlestick className="inline" />
+            <ChartCandlestick className="inline text-blue-600" />
           </div>
         </div>
 
@@ -93,7 +93,7 @@ export default function CompanyCard({
             {compnayData.companyEnglishName}
           </h2>
           <h2 className="font-primary-bold sm:text-sm md:text-base lg:text-lg">
-            {compnayData.companyArabicName}
+            {compnayData.sectorArabicName}
           </h2>
         </div>
       </div>

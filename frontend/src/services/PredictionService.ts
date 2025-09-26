@@ -29,7 +29,7 @@ export function latestPredictionsQueryOptions(compnayId: string | undefined) {
 
 const getLatestPredictions = (
   compnayId: string | undefined
-): Promise<AxiosResponse<PredictionInterface[]>> => {
+): Promise<AxiosResponse<PredictionInterface>> => {
     console.log(`${BASE_URL}${latest}${compnayId}`)
   return axios.get(`${BASE_URL}${latest}${compnayId}`, {
     withCredentials: true,
