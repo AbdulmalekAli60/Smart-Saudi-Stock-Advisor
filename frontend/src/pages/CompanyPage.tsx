@@ -19,6 +19,7 @@ import {
 import { WatchListQueryOptions } from "../services/WatchListService";
 import { useUserInfo } from "../contexts/UserContext";
 import { useState } from "react";
+import PredictionsChart from "../components/PredictionsChart";
 
 export default function CompanyPage() {
   const { companyId } = useParams();
@@ -57,14 +58,14 @@ export default function CompanyPage() {
 
         {isAside && (
           <div
-            className="fixed  h-screen w-screen bg-black bg-opacity-50 z-40 md:hidden lg:hidden"
+            className="fixed  h-screen w-screen bg-gray-500 opacity-50 z-40 md:hidden lg:hidden"
             onClick={() => setIsAside(false)}
           />
         )}
         {isAside && (
           <aside
             className={`
-              fixed md:relative top-14 md:top-0 left-0 z-50 md:z-0
+              fixed md:relative top-14 md:top-0 m-auto z-50 md:z-0
               bg-white 
               w-80 md:w-72 lg:w-1/4 xl:w-1/5 
               h-full border-r border-gray-200 
@@ -187,10 +188,11 @@ export default function CompanyPage() {
           <div className="flex justify-between items-center">
             <button
               onClick={() => setIsAside(!isAside)}
-              className="bg-primary text-white sm:px-3 px-4 py-2 cursor-pointer rounded-lg hover:bg-primary-dark transition-colors duration-200 font-medium"
+              className="bg-primary text-white sm:px-3 whitespace-nowrap px-4 py-2 cursor-pointer rounded-lg hover:bg-primary-dark transition-colors duration-200 font-medium"
             >
               {isAside ? "إخفاء المعلومات" : "إظهار المعلومات"}
             </button>
+
             <div className="gap-1 text-center flex w-fit p-1 bg-gray-100 rounded-full mb-3 border border-gray-200">
               <button
                 onClick={() => setIsHistricalData(true)}
@@ -218,7 +220,11 @@ export default function CompanyPage() {
 
           <div className="bg-white w-full h-screen rounded-xl shadow-sm border border-gray-200 flex items-center justify-center ">
             <p className="text-gray-500">
-              {isHistoricalData ? "محتوى البيانات سيظهر هنا" : "التوقعات هنا"}
+              {isHistoricalData ? (
+                "محتوى البيانات سيظهر هنا"
+              ) : (
+                <PredictionsChart />
+              )}
             </p>
           </div>
         </section>

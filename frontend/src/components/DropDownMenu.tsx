@@ -22,8 +22,8 @@ export default function DropDownMenu() {
   }
 
   return (
-    <>
-      <ul className="bg-gray-400  w-fit p-2 whitespace-nowrap rounded-lg space-y-3 shadow-lg absolute top-full  sm:left-10 md:left-10 lg:left-0 xl:left-0 2xl:left-0 ">
+    <div className="fixed top-12 left-2 sm:left-7 md:left-4 lg:left-5 xl:left-5 2xl:left-5 shadow-lg bg-gray-400 rounded-lg z-50">
+      <ul className=" w-fit p-2 whitespace-nowrap  space-y-3 ">
         <Link to={"/account"}>
           <li className="font-primary-regular p-3 cursor-pointer hover:bg-gray-500  hover:shadow-lg hover:rounded-full text-white">
             الحساب
@@ -37,6 +37,6 @@ export default function DropDownMenu() {
           تسجيل الخروج
         </li>
       </ul>
-    </>
+    </div>
   );
 }
