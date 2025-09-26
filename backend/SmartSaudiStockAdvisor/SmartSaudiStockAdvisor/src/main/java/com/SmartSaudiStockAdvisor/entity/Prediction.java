@@ -2,7 +2,7 @@ package com.SmartSaudiStockAdvisor.entity;
 
 import jakarta.persistence.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "prediction")
@@ -14,7 +14,7 @@ public class Prediction {
     private Long predictionId;
 
     @Column(name = "prediction_date")
-    private Timestamp predictionDate;
+    private LocalDateTime predictionDate;
 
     @Column(name = "prediction")
     private Float prediction;
@@ -23,7 +23,7 @@ public class Prediction {
     private Boolean direction;
 
     @Column(name = "expiration_date")
-    private Timestamp expirationDate;
+    private LocalDateTime expirationDate;
 
     @Column(name = "actual_result")
     private Float actualResult;
@@ -33,10 +33,11 @@ public class Prediction {
     private Company company;
 
     public Prediction() {
-        this.predictionDate = new Timestamp(System.currentTimeMillis());
+
+        this.predictionDate = LocalDateTime.now();
     }
 
-    public Prediction(Long predictionId, Float prediction, Boolean direction, Timestamp expirationDate, Float actualResult, Company company) {
+    public Prediction(Long predictionId, Float prediction, Boolean direction, LocalDateTime expirationDate, Float actualResult, Company company) {
         this();
         this.predictionId = predictionId;
         this.prediction = prediction;
@@ -54,11 +55,11 @@ public class Prediction {
         this.predictionId = predictionId;
     }
 
-    public Timestamp getPredictionDate() {
+    public LocalDateTime getPredictionDate() {
         return predictionDate;
     }
 
-    public void setPredictionDate(Timestamp predictionDate) {
+    public void setPredictionDate(LocalDateTime predictionDate) {
         this.predictionDate = predictionDate;
     }
 
@@ -78,11 +79,11 @@ public class Prediction {
         this.direction = direction;
     }
 
-    public Timestamp getExpirationDate() {
+    public LocalDateTime getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Timestamp expirationDate) {
+    public void setExpirationDate(LocalDateTime expirationDate) {
         this.expirationDate = expirationDate;
     }
 

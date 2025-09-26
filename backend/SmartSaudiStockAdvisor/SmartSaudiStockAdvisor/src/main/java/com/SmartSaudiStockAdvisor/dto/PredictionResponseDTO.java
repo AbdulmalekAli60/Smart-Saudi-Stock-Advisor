@@ -2,14 +2,14 @@ package com.SmartSaudiStockAdvisor.dto;
 
 import com.SmartSaudiStockAdvisor.entity.Prediction;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class PredictionResponseDTO {
     private Long predictionId;
-    private Timestamp predictionDate;
+    private LocalDateTime predictionDate;
     private float prediction;
     private boolean direction;
-    private Timestamp expirationDate;
+    private LocalDateTime expirationDate;
     private Float actualResult;
     private Long CompanyId;
 
@@ -34,11 +34,11 @@ public class PredictionResponseDTO {
         this.predictionId = predictionId;
     }
 
-    public Timestamp getPredictionDate() {
+    public LocalDateTime getPredictionDate() {
         return predictionDate;
     }
 
-    public void setPredictionDate(Timestamp predictionDate) {
+    public void setPredictionDate(LocalDateTime predictionDate) {
         this.predictionDate = predictionDate;
     }
 
@@ -58,11 +58,11 @@ public class PredictionResponseDTO {
         this.direction = direction;
     }
 
-    public Timestamp getExpirationDate() {
+    public LocalDateTime getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Timestamp expirationDate) {
+    public void setExpirationDate(LocalDateTime expirationDate) {
         this.expirationDate = expirationDate;
     }
 
