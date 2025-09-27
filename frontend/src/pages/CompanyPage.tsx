@@ -10,6 +10,7 @@ import { getHistoricalDataQueryOptions } from "../services/HistoricalDataService
 import HomePageNav from "../components/HomePageNav";
 import {
   CandlestickChart,
+  Clock,
   Database,
   Factory,
   SaudiRiyal,
@@ -23,6 +24,7 @@ import { WatchListQueryOptions } from "../services/WatchListService";
 import { useUserInfo } from "../contexts/UserContext";
 import { useState } from "react";
 import PredictionsChart from "../components/PredictionsChart";
+import StatCard from "../components/StatCard";
 
 export default function CompanyPage() {
   const { companyId } = useParams();
@@ -117,92 +119,70 @@ export default function CompanyPage() {
               </div>
 
               <div className="space-y-2 md:space-y-3">
-                <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
-                  <CandlestickChart className="w-4 h-4 md:w-5 md:h-5 text-blue-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-500">رمز التداول</p>
-                    <p className="font-medium text-sm md:text-base text-gray-900 truncate">
-                      {company?.tickerName.split(".")[0]}
-                    </p>
-                  </div>
-                </div>
+                <StatCard
+                  Icon={CandlestickChart}
+                  body={company?.tickerName?.split(".")[0]}
+                  title="رمز التداول"
+                  color="text-blue-600"
+                />
 
-                <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
-                  <Factory className="w-4 h-4 md:w-5 md:h-5 text-green-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-500">القطاع</p>
-                    <p className="font-medium text-sm md:text-base text-gray-900 truncate">
-                      {company?.sectorArabicName}
-                    </p>
-                  </div>
-                </div>
+                <StatCard
+                  Icon={Factory}
+                  body={company?.sectorArabicName}
+                  title="القطاع"
+                  color="text-green-600"
+                />
 
-                <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
-                  <TrendingUpDown className="w-4 h-4 md:w-5 md:h-5 text-blue-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-500">
-                      توقع سعر اليوم التالي:{" "}
-                      {latestPredction?.expirationDate.split("T")[0]}
-                    </p>
-                    <p className="font-medium text-sm md:text-base text-gray-900">
-                      {latestPredction?.prediction.toFixed(2)}
-                    </p>
-                  </div>
-                </div>
+                <StatCard
+                  Icon={TrendingUpDown}
+                  body={latestPredction?.prediction.toFixed(2)}
+                  title={`توقع سعر اليوم التالي ${
+                    latestPredction?.expirationDate.split("T")[0]
+                  }`}
+                  color="text-blue-600"
+                />
 
-                <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
-                  <Database className="w-4 h-4 md:w-5 md:h-5 text-gray-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-500">
-                      عدد البيانات التي تم إستخدامها للتحليل
-                    </p>
-                    <p className="font-medium text-sm md:text-base text-gray-900">
-                      {historical?.length}
-                    </p>
-                  </div>
-                </div>
+                <StatCard
+                  Icon={Database}
+                  body={historical?.length.toString()}
+                  title="عدد البيانات التي تم استخدامها للتحليل"
+                  color="text-black"
+                />
 
-                <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
-                  <SaudiRiyal className="w-4 h-4 md:w-5 md:h-5 text-gray-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-500">
-                      الأرباح المتوقعة بناءا على مبلغ الإستثمار
-                    </p>
-                    <p className="font-medium text-sm md:text-base text-gray-900">
-                      {latestPredction?.prediction
-                        ? (
-                            currentUserData.investAmount *
-                            latestPredction.prediction
-                          ).toFixed(2)
-                        : "لايوجد"}
-                    </p>
-                  </div>
-                </div>
+                <StatCard
+                  Icon={SaudiRiyal}
+                  body={
+                    // change
+                    latestPredction?.prediction
+                      ? (
+                          currentUserData.investAmount *
+                          latestPredction.prediction
+                        ).toFixed(2)
+                      : "لايوجد"
+                  }
+                  title="الأرباح المتوقعة بناءا على مبلغ الإستثمار"
+                  color="text-green-700"
+                />
 
-                <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
-                  <Database className="w-4 h-4 md:w-5 md:h-5 text-gray-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-500">
-                      نهاية تاريخ الصلاحية
-                    </p>
-                    <p className="font-medium text-sm md:text-base text-gray-900">
-                      {latestPredction?.expirationDate.split("T")[0]}
-                    </p>
-                  </div>
-                </div>
+                <StatCard
+                  Icon={Clock}
+                  body={latestPredction?.expirationDate.split("T")[0]}
+                  title="نهاية تاريخ الصلاحية"
+                  color="text-black"
+                />
 
-                <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
-                  <SignpostBig className="w-4 h-4 md:w-5 md:h-5 text-gray-600 flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-gray-500">
-                      الإتجاة 
-                    </p>
-                    <p className="font-medium text-sm md:text-base text-gray-900">
-                      {latestPredction?.direction ? <TrendingUp className="text-success"/>: <TrendingDown className="text-fail"/>}
-                    </p>
-                  </div>
-                </div>
-
+                <StatCard
+                  Icon={SignpostBig}
+                  body={
+                    latestPredction?.direction ? (
+                      <TrendingUp className="text-success" />
+                    ) : (
+                      <TrendingDown className="text-fail" />
+                    )
+                  }
+                  title="الإتجاة"
+                  color="text-amber-400"
+                />
               </div>
             </div>
           </aside>
@@ -247,7 +227,7 @@ export default function CompanyPage() {
             <div></div>
           </div>
 
-          <div className="bg-white w-full h-screen rounded-xl shadow-sm border border-gray-200 p-4 ">
+          <div className="bg-white w-full  h-screen rounded-xl shadow-sm border border-gray-200 p-4 ">
             {isHistoricalData ? (
               "محتوى البيانات سيظهر هنا"
             ) : (

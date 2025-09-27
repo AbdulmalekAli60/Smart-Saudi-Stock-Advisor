@@ -8,6 +8,7 @@ import {
 } from "../services/WatchListService";
 import axios from "axios";
 import { useToast } from "../contexts/ToastContext";
+import StatCard from "./StatCard";
 
 interface compnayCardProps {
   compnayData: CompanyResponse;
@@ -81,10 +82,13 @@ export default function CompanyCard({
           </h1>
 
           <div className="space-x-2 whitespace-nowrap">
-            <span className="font-primary-regular sm:text-sm md:text-base lg:text-lg">
-              {compnayData.tickerName.split(".")[0]}
-            </span>
-            <ChartCandlestick className="inline text-blue-600" />
+            <StatCard
+              bodyClassName="font-primary-bold sm:text-sm md:text-base lg:text-lg"
+              Icon={ChartCandlestick}
+              body={compnayData.tickerName.split(".")[0]}
+              color="text-green-600"
+              title="رمز التداول"
+            />
           </div>
         </div>
 

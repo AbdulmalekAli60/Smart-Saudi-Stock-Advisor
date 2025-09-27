@@ -8,8 +8,10 @@ import {
   Legend,
 } from "chart.js/auto";
 import Zoom from "chartjs-plugin-zoom";
-import { Bar} from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import PredictionInterface from "../Interfaces/PredictionInterface";
+import { useEffect, useState } from "react";
+import getNumberOfDataPointsBasedOnWidth from "../utils/GetNumberOfDataPointsBasedOnWidth";
 
 ChartJS.register(
   CategoryScale,
@@ -27,46 +29,67 @@ interface PredictionsChartProps {
 }
 
 export default function PredictionsChart(data: PredictionsChartProps) {
+  const [dataPoints, setDataPoints] = useState<number>(5);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDataPoints(getNumberOfDataPointsBasedOnWidth());
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    // <div className="bg-gray-200 w-full h-full rounded-xl  overflow-y-hidden">
+    <div className="bg-gray-200 w-full h-full rounded-xl  p-4">
       <Bar
-        className="overflow-x-scroll"
         options={{
           devicePixelRatio: 1,
           responsive: true,
           maintainAspectRatio: false,
 
-          layout: {
-            autoPadding: true,
-          },
           scales: {
             y: {
-              grid: { display: true, color: "rgba(0,0,0,0.1)" },
               beginAtZero: true,
               ticks: {
+                maxTicksLimit: 20,
                 font: { family: "var(--font-primary-bold)", size: 16 },
               },
+              // stacked: true,
             },
             x: {
-              grid: { display: true, color: "rgba(0,0,0,0.1)" },
-              min: 0,
-              max: 20,
+              min: Math.max(0, (data.predections?.length || 0) - dataPoints),
+              max: (data.predections?.length || 0) - 1,
               ticks: {
                 maxTicksLimit: 20,
                 font: { family: "var(--font-primary-regular)", size: 16 },
               },
+              // stacked: true,
             },
           },
           plugins: {
             title: {
               display: true,
               text: "مقارنة التوقعات مع السعر الفعلي",
+              padding: { top: 0 },
               font: {
-                size: 12,
-                family: "var(--font-primary-thin)",
+                size: 30,
+                family: "Helvetica Neue",
               },
             },
-            tooltip: { enabled: true, rtl: true },
+            legend: {
+              labels: {
+                font: {
+                  size: 30,
+                  weight: "bold",
+                },
+              },
+            },
+
+            tooltip: { rtl: true },
 
             zoom: {
               pan: {
@@ -80,7 +103,6 @@ export default function PredictionsChart(data: PredictionsChartProps) {
                 wheel: { enabled: true, speed: 0.1 },
                 pinch: { enabled: true },
                 mode: "x",
-                scaleMode: "x",
               },
             },
           },
@@ -88,7 +110,6 @@ export default function PredictionsChart(data: PredictionsChartProps) {
             duration: 300,
           },
           interaction: {
-            intersect: false,
             mode: "index",
           },
         }}
@@ -115,6 +136,6 @@ export default function PredictionsChart(data: PredictionsChartProps) {
           ],
         }}
       />
-    // </div>
+    </div>
   );
 }
