@@ -13,6 +13,9 @@ import {
   Database,
   Factory,
   SaudiRiyal,
+  SignpostBig,
+  TrendingDown,
+  TrendingUp,
   TrendingUpDown,
   X,
 } from "lucide-react";
@@ -47,6 +50,7 @@ export default function CompanyPage() {
   const company = companyQuery.data?.data;
   // const watchListData = watchListQuery.data?.data;
   const latestPredction = latestPredictionQuery.data?.data;
+  const predctions = predictionsQuery.data?.data;
   const historical = historicalDataQuery.data?.data;
   console.log(isHistoricalData);
   return (
@@ -137,7 +141,7 @@ export default function CompanyPage() {
                   <TrendingUpDown className="w-4 h-4 md:w-5 md:h-5 text-blue-600 flex-shrink-0" />
                   <div className="min-w-0 flex-1">
                     <p className="text-xs text-gray-500">
-                      توقع سعر تاريخ:{" "}
+                      توقع سعر اليوم التالي:{" "}
                       {latestPredction?.expirationDate.split("T")[0]}
                     </p>
                     <p className="font-medium text-sm md:text-base text-gray-900">
@@ -174,6 +178,31 @@ export default function CompanyPage() {
                     </p>
                   </div>
                 </div>
+
+                <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
+                  <Database className="w-4 h-4 md:w-5 md:h-5 text-gray-600 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-gray-500">
+                      نهاية تاريخ الصلاحية
+                    </p>
+                    <p className="font-medium text-sm md:text-base text-gray-900">
+                      {latestPredction?.expirationDate.split("T")[0]}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
+                  <SignpostBig className="w-4 h-4 md:w-5 md:h-5 text-gray-600 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-gray-500">
+                      الإتجاة 
+                    </p>
+                    <p className="font-medium text-sm md:text-base text-gray-900">
+                      {latestPredction?.direction ? <TrendingUp className="text-success"/>: <TrendingDown className="text-fail"/>}
+                    </p>
+                  </div>
+                </div>
+
               </div>
             </div>
           </aside>
@@ -218,14 +247,12 @@ export default function CompanyPage() {
             <div></div>
           </div>
 
-          <div className="bg-white w-full h-screen rounded-xl shadow-sm border border-gray-200 flex items-center justify-center ">
-            <p className="text-gray-500">
-              {isHistoricalData ? (
-                "محتوى البيانات سيظهر هنا"
-              ) : (
-                <PredictionsChart />
-              )}
-            </p>
+          <div className="bg-white w-full h-screen rounded-xl shadow-sm border border-gray-200 p-4 ">
+            {isHistoricalData ? (
+              "محتوى البيانات سيظهر هنا"
+            ) : (
+              <PredictionsChart predections={predctions} />
+            )}
           </div>
         </section>
 
