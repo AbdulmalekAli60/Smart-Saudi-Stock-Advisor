@@ -1,6 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 import Badge from "../components/Badge";
-import HomePageNav from "../components/HomePageNav";
+import MainNav from "../components/MainNav";
 import { useUserInfo } from "../contexts/UserContext";
 import { getSectorsQueryOptions } from "../services/SectorService";
 import Loader from "../components/Loader";
@@ -50,7 +50,7 @@ export default function HomePage() {
     <main>
       {/* nav */}
       <div className="h-12 md:h-14 lg:h-16">
-        <HomePageNav />
+        <MainNav />
       </div>
       {/* nav */}
 

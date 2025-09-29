@@ -7,7 +7,7 @@ import {
   latestPredictionsQueryOptions,
 } from "../services/PredictionService";
 import { getHistoricalDataQueryOptions } from "../services/HistoricalDataService";
-import HomePageNav from "../components/HomePageNav";
+import HomePageNav from "../components/MainNav";
 import {
   CandlestickChart,
   Clock,
@@ -25,12 +25,18 @@ import { useUserInfo } from "../contexts/UserContext";
 import { useState } from "react";
 import PredictionsChart from "../components/PredictionsChart";
 import StatCard from "../components/StatCard";
+import { SelectedValue } from "../Interfaces/SelectedValueInterface";
 
 export default function CompanyPage() {
   const { companyId } = useParams();
   const { currentUserData } = useUserInfo();
   const [isHistoricalData, setIsHistricalData] = useState<boolean>(false);
   const [isAside, setIsAside] = useState<boolean>(true);
+  const [selectedValue, setSelectedValue] = useState<SelectedValue>({
+    from: "",
+    to: "",
+  });
+
   const result = useQueries({
     queries: [
       companyById(companyId),
@@ -87,7 +93,7 @@ export default function CompanyPage() {
             <div className="flex justify-between items-start mb-4 md:mb-6">
               <button
                 onClick={() => setIsAside(false)}
-                className="md:hidden bg-gray-100 cursor-pointer hover:bg-red-100 text-gray-600 hover:text-red-600 p-2 rounded-full transition-colors"
+                className="md:hidden bg-gray-100 cursor-pointer hover:bg-red-100 text-gray-600 hover:text-red-600 p-2 rounded-full transition-colors "
               >
                 <X size={20} />
               </button>
@@ -102,7 +108,7 @@ export default function CompanyPage() {
 
               <button
                 onClick={() => setIsAside(false)}
-                className="hidden md:block bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 p-2 rounded-full transition-colors"
+                className="hidden md:block bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 p-2 rounded-full transition-colors cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -227,11 +233,63 @@ export default function CompanyPage() {
             <div></div>
           </div>
 
+          <div className=" w-full flex items-center justify-around  p-4 m-auto text-whit font-primary-thin">
+            <h1 className="font-primary-bold">إختر التاريخ</h1>
+
+            <div>
+              <label className="font-primary-bold">من</label>
+
+              <select
+                value={selectedValue.from}
+                onChange={(e) => {
+                  setSelectedValue({ ...selectedValue, from: e.target.value });
+                }}
+                className="bg-gray-200 rounded-full p-2 mr-2"
+              >
+                {historical?.map((item) => {
+                  const date = item.dataDate.split("T")[0];
+                  return (
+                    <option value={date} key={item.dataId.toString()}>
+                      {date}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            <div>
+              <label className="font-primary-bold">الى</label>
+              <select
+                value={selectedValue.to}
+                onChange={(e) => {
+                  setSelectedValue({ ...selectedValue, to: e.target.value });
+                }}
+                className="bg-gray-200 rounded-full p-2 mr-2"
+              >
+                {historical?.map((item) => {
+                  const date = item.dataDate.split("T")[0];
+                  return (
+                    <option
+                      onSelect={(e) => console.log("From: ", e.target)}
+                      value={date}
+                      key={item.dataId.toString()}
+                    >
+                      {date}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          </div>
+
           <div className="bg-white w-full  h-screen rounded-xl shadow-sm border border-gray-200 p-4 ">
             {isHistoricalData ? (
               "محتوى البيانات سيظهر هنا"
             ) : (
-              <PredictionsChart predections={predctions} />
+              <PredictionsChart
+                predections={predctions}
+                limits={selectedValue}
+              />
             )}
           </div>
         </section>

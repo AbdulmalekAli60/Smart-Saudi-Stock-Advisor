@@ -1,5 +1,5 @@
 import Button from "../components/Button";
-import Card from "../components/Card";
+import LandingPageCard from "../components/LandingPageCard";
 import LandingPageAnimation from "../animations/LandingPageAnimation";
 import Logo from "../components/Logo";
 import { useRef } from "react";
@@ -28,18 +28,21 @@ export default function LandingPage() {
     },
   ];
 
-  const {showToast} = useToast()
+  const { showToast } = useToast();
 
   const heroSectionRef = useRef<HTMLDivElement>(null);
   const aboutUsSectionRef = useRef<HTMLDivElement>(null);
   const cardsSectionRef = useRef<HTMLDivElement>(null);
-  console.log("The version : ", React.version)
+  console.log("The version : ", React.version);
   console.log(window.__REACT_DEVTOOLS_GLOBAL_HOOK__);
   useAnimations({ heroSectionRef, aboutUsSectionRef, cardsSectionRef });
   return (
     <>
       {/* Navigation */}
-      <nav style={{background:"var(--gradient-hero)"}} className=" w-4/5 fixed left-1/2 z-50 -translate-x-1/2 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 shadow-lg flex items-center justify-between rounded-bl-xl rounded-br-xl md:rounded-bl-2xl md:rounded-br-2xl">
+      <nav
+        style={{ background: "var(--gradient-hero)" }}
+        className=" w-4/5 fixed left-1/2 z-50 -translate-x-1/2 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 shadow-lg flex items-center justify-between rounded-bl-xl rounded-br-xl md:rounded-bl-2xl md:rounded-br-2xl"
+      >
         <div className="flex items-center">
           <Logo />
         </div>
@@ -81,7 +84,10 @@ export default function LandingPage() {
         </div>
 
         <div className="col-span-3 text-center mt-2 md:-mt-6 lg:-mt-8 pb-6 md:pb-8 lg:pb-10 space-y-4 md:space-y-5">
-          <p onClick={() => showToast("success", "Hiiiiii")} className="font-primary-bold text-secondary text-2xl md:text-3xl lg:text-4xl">
+          <p
+            onClick={() => showToast("success", "Hiiiiii")}
+            className="font-primary-bold text-secondary text-2xl md:text-3xl lg:text-4xl"
+          >
             إبدأ الان
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 lg:gap-6">
@@ -127,15 +133,18 @@ export default function LandingPage() {
           >
             {cardsContent.map((cardContent) => (
               <div key={cardContent.id}>
-                <Card title={cardContent.title} desc={cardContent.desc} />
+                <LandingPageCard
+                  title={cardContent.title}
+                  desc={cardContent.desc}
+                />
               </div>
             ))}
           </div>
         </div>
       </section>
-      
-        {/* Footer */}
-        <Footer/>
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 }

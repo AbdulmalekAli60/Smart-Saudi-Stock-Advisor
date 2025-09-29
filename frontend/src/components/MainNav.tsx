@@ -7,7 +7,7 @@ import { searchQueryOptions } from "../services/SearchService";
 import { Link } from "react-router-dom";
 import { useUserInfo } from "../contexts/UserContext";
 
-export default function HomePageNav() {
+export default function MainNav() {
   const [searchTerms, setSearchTerms] = useState<string>("");
   const [isMenueActive, setIsMenueActive] = useState<boolean>(false);
   const [isSearchResultActive, setIsSearchResultActive] =

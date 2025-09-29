@@ -13,11 +13,7 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType>({} as ToastContextType);
 
-export function ToastContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function ToastContextProvider({ children}: {children: React.ReactNode;}) {
   const [toast, setToast] = useState<{
     color: keyof typeof toastColors;
     text: string;

@@ -11,7 +11,7 @@ import { UpdateInfo } from "../Interfaces/UpdateInfoInterface";
 import { useToast } from "../contexts/ToastContext";
 import axios, { isAxiosError } from "axios";
 import errorResponse from "../Interfaces/ErrorInterface";
-import HomePageNav from "../components/HomePageNav";
+import MainNav from "../components/MainNav";
 import BookMark from "../components/BookMark";
 import { WatchListQueryOptions } from "../services/WatchListService";
 import { BookmarkX } from "lucide-react";
@@ -158,7 +158,7 @@ export default function AccountPage() {
 
   return (
     <>
-      <HomePageNav />
+      <MainNav />
 
       <main className="max-w-4xl mx-auto p-6 bg-white ">
         {/* Header Section */}
