@@ -29,11 +29,17 @@ ChartJS.defaults.font.family = "var(--font-primary-regular)";
 interface PredictionsChartProps {
   predections: PredictionInterface[] | undefined;
 
-  limits?: SelectedValue
+  limits?: SelectedValue;
 }
 
-export default function PredictionsChart({predections, limits}: PredictionsChartProps) {
+export default function PredictionsChart({
+  predections,
+  limits,
+}: PredictionsChartProps) {
   const [dataPoints, setDataPoints] = useState<number>(0);
+  const [filteredPredections, setFilteredPredections] = useState<
+    PredictionInterface[] | undefined
+  >(undefined);
 
   useEffect(() => {
     const handleResize = () => {
@@ -46,6 +52,18 @@ export default function PredictionsChart({predections, limits}: PredictionsChart
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    const filteredDates = predections?.filter((predecion) => {
+      if (!limits?.from || !limits?.to) return true;
+      return (
+        predecion.predictionDate.split("T")[0] >= limits!.from.value &&
+        predecion.predictionDate.split("T")[0] <= limits!.to.value
+      );
+    });
+
+    setFilteredPredections(filteredDates);
+  }, [predections, limits]);
 
   const optionsObj: ChartOptions<"bar"> = {
     devicePixelRatio: 1,
@@ -62,8 +80,8 @@ export default function PredictionsChart({predections, limits}: PredictionsChart
         // stacked: true,
       },
       x: {
-        min: Math.max(0, (predections?.length || 0) - dataPoints),
-        max: (predections?.length || 0) - 1,
+        min: Math.max(0, (filteredPredections?.length || 0) - dataPoints),
+        max: (filteredPredections?.length || 0) - 1,
         ticks: {
           maxTicksLimit: getNumberOfDataPointsBasedOnWidth(),
           font: { family: "var(--font-primary-regular)", size: 16 },
@@ -97,7 +115,7 @@ export default function PredictionsChart({predections, limits}: PredictionsChart
           enabled: true,
           mode: "x",
           scaleMode: "x",
-          threshold: 20,
+          threshold: 10,
         },
         zoom: {
           drag: { enabled: false },
@@ -116,7 +134,9 @@ export default function PredictionsChart({predections, limits}: PredictionsChart
   };
 
   const dataObj = {
-    labels: predections?.map((item) => item.predictionDate.split("T")[0]), // x-axis
+    labels: filteredPredections?.map(
+      (item) => item.predictionDate.split("T")[0]
+    ), // x-axis
 
     datasets: [
       {
@@ -128,7 +148,7 @@ export default function PredictionsChart({predections, limits}: PredictionsChart
       },
       {
         label: "التوقع",
-        data: predections?.map((item) => item.prediction),
+        data: predections?.map((item) => parseInt(item.prediction.toFixed(2))),
         backgroundColor: "rgba(250,192,19,0.8)",
         barThickness: 10,
         borderRadius: 4,
@@ -137,11 +157,8 @@ export default function PredictionsChart({predections, limits}: PredictionsChart
   };
 
   return (
-    <div className="bg-gray-200 w-full h-full rounded-xl  p-4">
-      <Bar
-        options={optionsObj}
-        data={dataObj}
-      />
+    <div className="bg-gray-50 w-full h-full rounded-xl  p-4 border">
+      <Bar options={optionsObj} data={dataObj} />
     </div>
   );
 }

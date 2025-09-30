@@ -1,4 +1,4 @@
 export interface SelectedValue {
-  from: string;
-  to: string;
+  from: { value: string ; label: string };
+  to: { value: string; label: string };
 }

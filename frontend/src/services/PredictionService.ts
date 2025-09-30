@@ -16,7 +16,7 @@ export function allPredictionsQueryOptions(compnayId: string | undefined) {
 const getAllPredictions = (
   compnayId: string | undefined
 ): Promise<AxiosResponse<PredictionInterface[]>> => {
-    console.log(`${BASE_URL}/${compnayId}${all}`)
+    // console.log(`${BASE_URL}/${compnayId}${all}`)
   return axios.get(`${BASE_URL}/${compnayId}${all}`, { withCredentials: true });
 };
 
@@ -30,7 +30,7 @@ export function latestPredictionsQueryOptions(compnayId: string | undefined) {
 const getLatestPredictions = (
   compnayId: string | undefined
 ): Promise<AxiosResponse<PredictionInterface>> => {
-    console.log(`${BASE_URL}${latest}${compnayId}`)
+    // console.log(`${BASE_URL}${latest}${compnayId}`)
   return axios.get(`${BASE_URL}${latest}${compnayId}`, {
     withCredentials: true,
   });

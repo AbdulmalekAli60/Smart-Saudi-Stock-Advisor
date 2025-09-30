@@ -13,6 +13,7 @@ import {
   Clock,
   Database,
   Factory,
+  RotateCcw,
   SaudiRiyal,
   SignpostBig,
   TrendingDown,
@@ -26,6 +27,7 @@ import { useState } from "react";
 import PredictionsChart from "../components/PredictionsChart";
 import StatCard from "../components/StatCard";
 import { SelectedValue } from "../Interfaces/SelectedValueInterface";
+import Select from "react-select";
 
 export default function CompanyPage() {
   const { companyId } = useParams();
@@ -33,8 +35,8 @@ export default function CompanyPage() {
   const [isHistoricalData, setIsHistricalData] = useState<boolean>(false);
   const [isAside, setIsAside] = useState<boolean>(true);
   const [selectedValue, setSelectedValue] = useState<SelectedValue>({
-    from: "",
-    to: "",
+    from: { value: "", label: "" },
+    to: { value: "", label: "" },
   });
 
   const result = useQueries({
@@ -60,7 +62,12 @@ export default function CompanyPage() {
   const latestPredction = latestPredictionQuery.data?.data;
   const predctions = predictionsQuery.data?.data;
   const historical = historicalDataQuery.data?.data;
-  console.log(isHistoricalData);
+  // console.log(isHistoricalData);
+
+  const options = predctions?.map((item) => {
+    return { value: item.predictionDate, label: item.predictionDate };
+  });
+
   return (
     <>
       <HomePageNav />
@@ -156,6 +163,13 @@ export default function CompanyPage() {
                 />
 
                 <StatCard
+                  Icon={Database}
+                  body={historical?.length.toString()}
+                  title="عدد البيانات التي تم استخدامها للتحليل"
+                  color="text-black"
+                />
+
+                <StatCard
                   Icon={SaudiRiyal}
                   body={
                     // change
@@ -236,49 +250,83 @@ export default function CompanyPage() {
           <div className=" w-full flex items-center justify-around  p-4 m-auto text-whit font-primary-thin">
             <h1 className="font-primary-bold">إختر التاريخ</h1>
 
-            <div>
-              <label className="font-primary-bold">من</label>
-
-              <select
-                value={selectedValue.from}
-                onChange={(e) => {
-                  setSelectedValue({ ...selectedValue, from: e.target.value });
-                }}
-                className="bg-gray-200 rounded-full p-2 mr-2"
-              >
-                {historical?.map((item) => {
-                  const date = item.dataDate.split("T")[0];
-                  return (
-                    <option value={date} key={item.dataId.toString()}>
-                      {date}
-                    </option>
-                  );
-                })}
-              </select>
+            <div
+              className="bg-gray-300 rounded-full cursor-pointer hover:bg-gray-200 p-2"
+              onClick={() => setSelectedValue({ from: "", to: "" })}
+            >
+              <RotateCcw />
             </div>
 
             <div>
-              <label className="font-primary-bold">الى</label>
-              <select
-                value={selectedValue.to}
-                onChange={(e) => {
-                  setSelectedValue({ ...selectedValue, to: e.target.value });
-                }}
-                className="bg-gray-200 rounded-full p-2 mr-2"
-              >
-                {historical?.map((item) => {
-                  const date = item.dataDate.split("T")[0];
-                  return (
-                    <option
-                      onSelect={(e) => console.log("From: ", e.target)}
-                      value={date}
-                      key={item.dataId.toString()}
-                    >
-                      {date}
-                    </option>
-                  );
-                })}
-              </select>
+              <div className=" p-2 flex flex-col sm:flex-row items-center justify-center">
+                <label className="font-primary-bold">من</label>
+                {/* from */}
+                <Select
+                  className=""
+                  isSearchable={true}
+                  value={selectedValue.from}
+                  placeholder="حدد تاريخ البحث"
+                  options={options}
+                  onChange={(option) => {
+                    setSelectedValue({
+                      ...selectedValue,
+                      from: option
+                        ? { value: option.value, label: option.label }
+                        : { value: "", label: "" },
+                    });
+                  }}
+                  onInputChange={(value) => console.log(value)}
+                  onMenuOpen={() => {}}
+                  onMenuClose={() => {}}
+                />
+                {/* <select
+                  value={selectedValue.from.v}
+                  onChange={(e) => {
+                    setSelectedValue({
+                      ...selectedValue,
+                      from: e.target.value,
+                    });
+                  }}
+                  className="bg-gray-200 rounded-full p-2 mr-2"
+                >
+                  {predctions?.map((item) => {
+                    const date = item.predictionDate.split("T")[0];
+
+                    return (
+                      <option value={date} key={item.predictionId.toString()}>
+                        {date}
+                      </option>
+                    );
+                  })}
+                </select> */}
+              </div>
+            </div>
+
+            <div></div>
+            <div>
+              <div className=" p-2 flex flex-col sm:flex-row items-center justify-center">
+                <label className="font-primary-bold">الى</label>
+                {/* <select
+                  value={selectedValue.to}
+                  onChange={(e) => {
+                    setSelectedValue({ ...selectedValue, to: e.target.value });
+                  }}
+                  className="bg-gray-200 rounded-full p-2 mr-2"
+                >
+                  {predctions?.map((item) => {
+                    const date = item.predictionDate.split("T")[0];
+                    return (
+                      <option
+                        onSelect={(e) => console.log("From: ", e.target)}
+                        value={date}
+                        key={item.predictionId.toString()}
+                      >
+                        {date}
+                      </option>
+                    );
+                  })}
+                </select> */}
+              </div>
             </div>
           </div>
 
