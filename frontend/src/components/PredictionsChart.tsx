@@ -53,18 +53,28 @@ export default function PredictionsChart({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  console.log("Limits: ", limits, { ...predections });
   useEffect(() => {
     const filteredDates = predections?.filter((predecion) => {
-      if (!limits?.from || !limits?.to) return true;
-      return (
-        predecion.predictionDate.split("T")[0] >= limits!.from.value &&
-        predecion.predictionDate.split("T")[0] <= limits!.to.value
-      );
+      const predDate = predecion.predictionDate.split("T")[0];
+      
+      if (!limits?.from.value || !limits?.to.value) return true;
+
+      if (limits.from.value && !limits.to.value) {
+        return predDate >= limits.from.value;
+      }
+
+      if (!limits?.from.value && limits?.to.value) {
+        return predDate <= limits.to.value;
+      }
+
+      return predDate >= limits.from.value && predDate <= limits.to.value;
     });
 
     setFilteredPredections(filteredDates);
   }, [predections, limits]);
 
+  console.log({ ...predections });
   const optionsObj: ChartOptions<"bar"> = {
     devicePixelRatio: 1,
     responsive: true,

@@ -27,7 +27,7 @@ import { useState } from "react";
 import PredictionsChart from "../components/PredictionsChart";
 import StatCard from "../components/StatCard";
 import { SelectedValue } from "../Interfaces/SelectedValueInterface";
-import Select from "react-select";
+import SelectComponent from "../components/SelectComponent";
 
 export default function CompanyPage() {
   const { companyId } = useParams();
@@ -58,16 +58,14 @@ export default function CompanyPage() {
   ] = result;
 
   const company = companyQuery.data?.data;
-  // const watchListData = watchListQuery.data?.data;
   const latestPredction = latestPredictionQuery.data?.data;
   const predctions = predictionsQuery.data?.data;
   const historical = historicalDataQuery.data?.data;
-  // console.log(isHistoricalData);
 
   const options = predctions?.map((item) => {
-    return { value: item.predictionDate, label: item.predictionDate };
+    const date = item.predictionDate.split("T")[0];
+    return { value: date, label: date };
   });
-
   return (
     <>
       <HomePageNav />
@@ -172,7 +170,7 @@ export default function CompanyPage() {
                 <StatCard
                   Icon={SaudiRiyal}
                   body={
-                    // change
+                    // fix
                     latestPredction?.prediction
                       ? (
                           currentUserData.investAmount *
@@ -247,87 +245,51 @@ export default function CompanyPage() {
             <div></div>
           </div>
 
-          <div className=" w-full flex items-center justify-around  p-4 m-auto text-whit font-primary-thin">
-            <h1 className="font-primary-bold">إختر التاريخ</h1>
+          <div className="w-full flex flex-wrap items-center gap-4 bg-white border border-gray-200 rounded-2xl shadow-sm p-4 mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-8 bg-blue-500 rounded-full"></div>
+              <h1 className="font-primary-bold text-lg text-gray-800">
+                إختر التاريخ
+              </h1>
+            </div>
 
-            <div
-              className="bg-gray-300 rounded-full cursor-pointer hover:bg-gray-200 p-2"
-              onClick={() => setSelectedValue({ from: "", to: "" })}
+            <div className="flex items-center gap-2">
+              <label className="font-primary-bold text-gray-700 text-sm">
+                من
+              </label>
+              <SelectComponent
+                options={options}
+                placeholder="حدد تاريخ البداية"
+                field="from"
+                setValeu={setSelectedValue}
+                value={selectedValue.from}
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="font-primary-bold text-gray-700 text-sm">
+                إلى
+              </label>
+              <SelectComponent
+                options={options}
+                field="to"
+                placeholder="حدد تاريخ النهاية"
+                setValeu={setSelectedValue}
+                value={selectedValue.to}
+              />
+            </div>
+
+            <button
+              className="mr-auto bg-gray-100 rounded-xl cursor-pointer hover:bg-blue-50 hover:text-blue-600 p-2.5 transition-all duration-200 group"
+              onClick={() =>
+                setSelectedValue({
+                  from: { value: "", label: "" },
+                  to: { value: "", label: "" },
+                })
+              }
             >
-              <RotateCcw />
-            </div>
-
-            <div>
-              <div className=" p-2 flex flex-col sm:flex-row items-center justify-center">
-                <label className="font-primary-bold">من</label>
-                {/* from */}
-                <Select
-                  className=""
-                  isSearchable={true}
-                  value={selectedValue.from}
-                  placeholder="حدد تاريخ البحث"
-                  options={options}
-                  onChange={(option) => {
-                    setSelectedValue({
-                      ...selectedValue,
-                      from: option
-                        ? { value: option.value, label: option.label }
-                        : { value: "", label: "" },
-                    });
-                  }}
-                  onInputChange={(value) => console.log(value)}
-                  onMenuOpen={() => {}}
-                  onMenuClose={() => {}}
-                />
-                {/* <select
-                  value={selectedValue.from.v}
-                  onChange={(e) => {
-                    setSelectedValue({
-                      ...selectedValue,
-                      from: e.target.value,
-                    });
-                  }}
-                  className="bg-gray-200 rounded-full p-2 mr-2"
-                >
-                  {predctions?.map((item) => {
-                    const date = item.predictionDate.split("T")[0];
-
-                    return (
-                      <option value={date} key={item.predictionId.toString()}>
-                        {date}
-                      </option>
-                    );
-                  })}
-                </select> */}
-              </div>
-            </div>
-
-            <div></div>
-            <div>
-              <div className=" p-2 flex flex-col sm:flex-row items-center justify-center">
-                <label className="font-primary-bold">الى</label>
-                {/* <select
-                  value={selectedValue.to}
-                  onChange={(e) => {
-                    setSelectedValue({ ...selectedValue, to: e.target.value });
-                  }}
-                  className="bg-gray-200 rounded-full p-2 mr-2"
-                >
-                  {predctions?.map((item) => {
-                    const date = item.predictionDate.split("T")[0];
-                    return (
-                      <option
-                        onSelect={(e) => console.log("From: ", e.target)}
-                        value={date}
-                        key={item.predictionId.toString()}
-                      >
-                        {date}
-                      </option>
-                    );
-                  })}
-                </select> */}
-              </div>
-            </div>
+              <RotateCcw className="w-5 h-5 hover:rotate-180 transition-transform duration-300" />
+            </button>
           </div>
 
           <div className="bg-white w-full  h-screen rounded-xl shadow-sm border border-gray-200 p-4 ">
