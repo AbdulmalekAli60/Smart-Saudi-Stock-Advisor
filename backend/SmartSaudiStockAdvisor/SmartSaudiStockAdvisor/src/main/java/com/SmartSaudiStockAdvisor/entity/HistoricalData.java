@@ -2,8 +2,7 @@ package com.SmartSaudiStockAdvisor.entity;
 
 import jakarta.persistence.*;
 
-
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "historical_data")
@@ -30,14 +29,14 @@ public class HistoricalData {
     private Long volume;
 
     @Column(name = "data_date") // initialize in def constructor
-    private Timestamp dataDate;
+    private LocalDateTime dataDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
     public HistoricalData() {
-        this.dataDate = new Timestamp(System.currentTimeMillis());
+        this.dataDate = LocalDateTime.now();
     }
 
     public HistoricalData(Long dataId, Company company, Long volume, Float low, Float high, Float close, Float open) {
@@ -99,11 +98,11 @@ public class HistoricalData {
         this.volume = volume;
     }
 
-    public Timestamp getDataDate() {
+    public LocalDateTime getDataDate() {
         return dataDate;
     }
 
-    public void setDataDate(Timestamp dataDate) {
+    public void setDataDate(LocalDateTime dataDate) {
         this.dataDate = dataDate;
     }
 

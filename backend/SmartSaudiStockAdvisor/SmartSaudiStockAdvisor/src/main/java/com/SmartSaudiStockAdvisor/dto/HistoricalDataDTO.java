@@ -2,7 +2,7 @@ package com.SmartSaudiStockAdvisor.dto;
 
 import com.SmartSaudiStockAdvisor.entity.HistoricalData;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class HistoricalDataDTO {
 
@@ -12,7 +12,7 @@ public class HistoricalDataDTO {
     private Float high;
     private Float low;
     private Long volume;
-    private Timestamp dataDate;
+    private LocalDateTime dataDate;
     private Long companyId;
 
     public HistoricalDataDTO() {
@@ -77,11 +77,11 @@ public class HistoricalDataDTO {
         this.volume = volume;
     }
 
-    public Timestamp getDataDate() {
+    public LocalDateTime getDataDate() {
         return dataDate;
     }
 
-    public void setDataDate(Timestamp dataDate) {
+    public void setDataDate(LocalDateTime dataDate) {
         this.dataDate = dataDate;
     }
 
