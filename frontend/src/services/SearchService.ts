@@ -7,12 +7,16 @@ const SEARCH_URL = "/companies/search-company?";
 
 export function searchQueryOptions(searchTerm: string) {
   return queryOptions({
-    queryKey: ["search"],
-    queryFn:() => search(searchTerm),
-    enabled:false
+    queryKey: ["search", searchTerm],
+    queryFn: () => search(searchTerm),
+    enabled: searchTerm.length > 0,
   });
 }
 
-const search = (searchTerm: string): Promise<AxiosResponse<SearchResponse[]>> => {
-  return axios.get(`${BASE_URL}${SEARCH_URL}term=${searchTerm}`, {withCredentials:true});
+const search = (
+  searchTerm: string
+): Promise<AxiosResponse<SearchResponse[]>> => {
+  return axios.get(`${BASE_URL}${SEARCH_URL}term=${searchTerm}`, {
+    withCredentials: true,
+  });
 };

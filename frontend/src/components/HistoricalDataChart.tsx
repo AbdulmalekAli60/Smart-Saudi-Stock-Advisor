@@ -104,17 +104,19 @@ export default function HistoricalDataChart({
           title: () => "البيانات",
           afterTitle: function (toolTipItems) {
             const dataIndex = toolTipItems[0].dataIndex;
-            const dataPoint = filteredHistoricalData?.at(dataIndex);
-
-            if (!dataPoint) return "";
+            const dataPointObject = filteredHistoricalData?.at(dataIndex);
+            // console.log("All items:" , toolTipItems)
+            // console.log("Data index: ", dataIndex)
+            // console.log("Data point: ", dataPointObject)
+            if (!dataPointObject) return "";
 
             return [
-              `التاريخ: ${dataPoint.dataDate.split("T")[0]}`,
-              `الافتتاح : ${dataPoint.open}`,
-              `الأعلى: ${dataPoint.high}`,
-              `الأدنى : ${dataPoint.low}`,
-              `الإغلاق: ${dataPoint.close}`,
-              `الحجم: ${dataPoint.volume}`,
+              `التاريخ: ${dataPointObject.dataDate.split("T")[0]}`,
+              `الافتتاح : ${dataPointObject.open}`,
+              `الأعلى: ${dataPointObject.high}`,
+              `الأدنى : ${dataPointObject.low}`,
+              `الإغلاق: ${dataPointObject.close}`,
+              `الحجم: ${dataPointObject.volume}`,
             ];
           },
         },

@@ -1,4 +1,4 @@
-import { User, Search, LoaderCircle } from "lucide-react";
+import { User, LoaderCircle } from "lucide-react";
 import Logo from "./Logo";
 import { useEffect, useState } from "react";
 import DropDownMenu from "./DropDownMenu";
@@ -6,50 +6,31 @@ import { useQuery } from "@tanstack/react-query";
 import { searchQueryOptions } from "../services/SearchService";
 import { Link } from "react-router-dom";
 import { useUserInfo } from "../contexts/UserContext";
+import Select from "react-select";
+import SearchResponse from "../Interfaces/SearchInterface";
 
 export default function MainNav() {
-  const [searchTerms, setSearchTerms] = useState<string>("");
+  const [searchTerms, setSearchTerms] = useState<SearchResponse>({
+    companyId: 0,
+    companyArabicName: "",
+  });
+
   const [isMenueActive, setIsMenueActive] = useState<boolean>(false);
-  const [isSearchResultActive, setIsSearchResultActive] =
-    useState<boolean>(false);
 
   const { currentUserData } = useUserInfo();
 
-  const { data, isLoading, isFetched, refetch } = useQuery(
-    searchQueryOptions(searchTerms)
-  );
+  const { data, isLoading, refetch } = useQuery({
+    ...searchQueryOptions(searchTerms.companyArabicName),
+    enabled: searchTerms.companyArabicName.length > 0,
+  });
 
   useEffect(() => {
-    if (isFetched && (data?.data?.length ?? 0) > 0) {
-      setIsSearchResultActive(true);
-    }
-  }, [isFetched, data]);
+    const timeToStartSearch = setTimeout(() => {
+      if (searchTerms.companyArabicName.length > 0) refetch();
+    }, 500);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      const searchContainer = document.getElementById("search-container");
-      if (
-        searchContainer &&
-        !searchContainer.contains(event.target as Element)
-      ) {
-        setIsSearchResultActive(false);
-      }
-
-      const menuContainer = document.getElementById("menu-container");
-      if (menuContainer && !menuContainer.contains(event.target as Element)) {
-        setIsMenueActive(false);
-      }
-    }
-
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    if (searchTerms.length === 0 || searchTerms === "") {
-      setIsSearchResultActive(false);
-    }
-  }, [searchTerms]);
+    return () => clearTimeout(timeToStartSearch);
+  }, [searchTerms, refetch]);
 
   return (
     <nav className="shadow-lg bg-background fixed w-full h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 flex items-center justify-between z-50">
@@ -61,52 +42,116 @@ export default function MainNav() {
 
       <div className="flex-1 flex justify-center px-2 md:px-4 max-w-md mx-auto">
         <div id="search-container" className="relative w-full">
-          <input
-            type="text"
-            alt="search"
-            value={searchTerms}
+          <Select
             placeholder="إبحث عن الشركات"
-            className="w-full h-8 md:h-9 lg:h-10 px-3 md:px-4 pr-10 bg-gray-100 border border-gray-300 rounded-full text-xs md:text-sm lg:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            onChange={(e) => setSearchTerms(e.target.value)}
-            onClick={() => {
-              if (searchTerms.length > 0) refetch();
+            isSearchable={true}
+            isClearable={true}
+            isLoading={isLoading}
+            menuIsOpen={
+              searchTerms.companyArabicName.length > 0 ? undefined : false
+            }
+            value={
+              searchTerms.companyId !== 0
+                ? {
+                    value: searchTerms.companyId,
+                    label: searchTerms.companyArabicName,
+                  }
+                : null
+            }
+            formatOptionLabel={(option) => (
+              <Link to={`/companies/${option.value}`} className="block w-full">
+                {option.label}
+              </Link>
+            )}
+            options={
+              data?.data?.map((result) => ({
+                value: result.companyId,
+                label: result.companyArabicName,
+              })) || []
+            }
+            onInputChange={(inputValue, actionMeta) => {
+              if (actionMeta.action === "input-change") {
+                setSearchTerms({
+                  companyId: 0,
+                  companyArabicName: inputValue,
+                });
+              }
             }}
             onKeyDown={(e) => {
-              if (e.key == "Enter") {
-                e.preventDefault();
+              if (e.key === "Enter") {
                 refetch();
               }
             }}
-          />
-          <Search
-            onClick={() => {
-              if (searchTerms.length > 0) refetch();
+            onChange={(option) => {
+              if (option) {
+                setSearchTerms({
+                  companyId: option.value,
+                  companyArabicName: option.label,
+                });
+              } else {
+                setSearchTerms({
+                  companyId: 0,
+                  companyArabicName: "",
+                });
+              }
             }}
-            className="absolute left-4 top-1/2 cursor-pointer transform -translate-y-1/2 w-3 h-3 md:w-4 md:h-4 text-gray-500"
+            noOptionsMessage={() => "لا توجد نتائج"}
+            loadingMessage={() => <LoaderCircle className="animate-spin" />}
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                minWidth: "180px",
+                borderRadius: "12px",
+                border: state.isFocused
+                  ? "2px solid #3b82f6"
+                  : "1px solid #e5e7eb",
+                boxShadow: "none",
+                padding: "2px 4px",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                "&:hover": {
+                  borderColor: "#3b82f6",
+                },
+              }),
+              menu: (base, state) => ({
+                ...base,
+                borderRadius: "12px",
+                overflow: "hidden",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                border: "1px solid #e5e7eb",
+                text: state.options.length === 0 ? "لايوجد نتائج" : "",
+              }),
+              menuList: (base) => ({
+                ...base,
+                padding: "4px",
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isSelected
+                  ? "#3b82f6"
+                  : state.isFocused
+                  ? "#eff6ff"
+                  : "white",
+                color: state.isSelected ? "white" : "#374151",
+                cursor: "pointer",
+                borderRadius: "8px",
+                padding: "8px 12px",
+                fontSize: "14px",
+                transition: "all 0.15s",
+              }),
+              placeholder: (base) => ({
+                ...base,
+                color: "#9ca3af",
+                fontSize: "14px",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: "#1f2937",
+                fontSize: "14px",
+                fontWeight: "500",
+              }),
+            }}
           />
-
-          <div className="absolute top-full  w-full h-fit z-50">
-            {isLoading && <LoaderCircle />}
-            {isSearchResultActive &&
-              data?.data?.map(({ companyId, companyArabicName }) => {
-                return (
-                  <Link to={`/companies/${companyId}`}>
-                    <span
-                      key={companyId}
-                      className="p-2 border rounded-2xl block bg-gray-400 cursor-pointer"
-                    >
-                      {companyArabicName}
-                    </span>
-                  </Link>
-                );
-              })}
-
-            {isFetched &&
-              !isLoading &&
-              (!data?.data || data.data.length === 0) && (
-                <div className="p-2">لاتوجد نتيجة</div>
-              )}
-          </div>
         </div>
       </div>
 
