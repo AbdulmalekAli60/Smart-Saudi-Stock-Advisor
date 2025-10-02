@@ -28,6 +28,7 @@ import PredictionsChart from "../components/PredictionsChart";
 import StatCard from "../components/StatCard";
 import { SelectedValue } from "../Interfaces/SelectedValueInterface";
 import SelectComponent from "../components/SelectComponent";
+import HistoricalDataChart from "../components/HistoricalDataChart";
 
 export default function CompanyPage() {
   const { companyId } = useParams();
@@ -288,13 +289,16 @@ export default function CompanyPage() {
                 })
               }
             >
-              <RotateCcw className="w-5 h-5 hover:rotate-180 transition-transform duration-300" />
+              <RotateCcw className="w-5 h-5 hover:rotate-180 duration-300" />
             </button>
           </div>
 
           <div className="bg-white w-full  h-screen rounded-xl shadow-sm border border-gray-200 p-4 ">
             {isHistoricalData ? (
-              "محتوى البيانات سيظهر هنا"
+              <HistoricalDataChart
+                historicalData={historical}
+                limits={selectedValue}
+              />
             ) : (
               <PredictionsChart
                 predections={predctions}

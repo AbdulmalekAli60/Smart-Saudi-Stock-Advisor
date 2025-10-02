@@ -53,7 +53,6 @@ export default function PredictionsChart({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  console.log("Limits: ", limits, { ...predections });
   useEffect(() => {
     const filteredDates = predections?.filter((predecion) => {
       const predDate = predecion.predictionDate.split("T")[0];
@@ -74,7 +73,6 @@ export default function PredictionsChart({
     setFilteredPredections(filteredDates);
   }, [predections, limits]);
 
-  console.log({ ...predections });
   const optionsObj: ChartOptions<"bar"> = {
     devicePixelRatio: 1,
     responsive: true,
@@ -82,7 +80,7 @@ export default function PredictionsChart({
 
     scales: {
       y: {
-        beginAtZero: true,
+        beginAtZero: false,
         ticks: {
           maxTicksLimit: getNumberOfDataPointsBasedOnWidth(),
           font: { family: "var(--font-primary-bold)", size: 16 },
@@ -140,6 +138,7 @@ export default function PredictionsChart({
     },
     interaction: {
       mode: "index",
+      axis:"x"
     },
   };
 
@@ -152,14 +151,14 @@ export default function PredictionsChart({
       {
         label: "السعر الفعلي",
         data: predections?.map((item) => item.actualResult), // data = y-axis
-        backgroundColor: "rgba(43,63,229,0.8)",
+        backgroundColor: "rgba(100,63,229,0.8)",
         barThickness: 20,
         borderRadius: 4,
       },
       {
         label: "التوقع",
         data: predections?.map((item) => parseInt(item.prediction.toFixed(2))),
-        backgroundColor: "rgba(250,192,19,0.8)",
+        backgroundColor: "rgba(250,192,15,0.8)",
         barThickness: 10,
         borderRadius: 4,
       },
