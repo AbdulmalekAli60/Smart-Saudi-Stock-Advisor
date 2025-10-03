@@ -7,7 +7,6 @@ import useAnimations from "../hooks/useAnimation";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import { useToast } from "../contexts/ToastContext";
-import React from "react";
 
 export default function LandingPage() {
   const cardsContent = [
@@ -33,8 +32,7 @@ export default function LandingPage() {
   const heroSectionRef = useRef<HTMLDivElement>(null);
   const aboutUsSectionRef = useRef<HTMLDivElement>(null);
   const cardsSectionRef = useRef<HTMLDivElement>(null);
-  console.log("The version : ", React.version);
-  console.log(window.__REACT_DEVTOOLS_GLOBAL_HOOK__);
+
   useAnimations({ heroSectionRef, aboutUsSectionRef, cardsSectionRef });
   return (
     <>
@@ -79,7 +77,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-around h-full">
+        <div className="flex items-center justify-center h-full w-full">
           <LandingPageAnimation />
         </div>
 

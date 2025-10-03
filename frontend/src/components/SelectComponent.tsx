@@ -3,12 +3,7 @@ import { SelectedValue } from "../Interfaces/SelectedValueInterface";
 
 interface SelectComponentProps {
   value: { value: string; label: string };
-  options:
-    | {
-        value: string;
-        label: string;
-      }[]
-    | undefined;
+  options: {value: string;label: string;}[]| undefined;
   setValeu: React.Dispatch<React.SetStateAction<SelectedValue>>;
   field: "from" | "to";
   placeholder: string;
@@ -24,7 +19,8 @@ export default function SelectComponent({
   return (
     <Select
       isSearchable={true}
-      value={value.value ? value : null}
+      isClearable={true}
+      value={value?.value ? value : null}
       placeholder={placeholder}
       options={options}
       onChange={(option) => {
