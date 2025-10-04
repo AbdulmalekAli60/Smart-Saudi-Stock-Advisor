@@ -34,6 +34,8 @@ export default function LandingPage() {
   const cardsSectionRef = useRef<HTMLDivElement>(null);
 
   useAnimations({ heroSectionRef, aboutUsSectionRef, cardsSectionRef });
+  throw Error
+  
   return (
     <>
       {/* Navigation */}
@@ -145,4 +147,5 @@ export default function LandingPage() {
       <Footer />
     </>
   );
+  
 }
