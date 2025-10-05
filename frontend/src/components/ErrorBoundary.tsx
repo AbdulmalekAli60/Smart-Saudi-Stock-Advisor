@@ -17,7 +17,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     // any childeren of this component throw an error it will update the state and rerender
-    return { hasError: true };
+    if (error) {
+      return { hasError: true };
+    }
+    return { hasError: false };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {

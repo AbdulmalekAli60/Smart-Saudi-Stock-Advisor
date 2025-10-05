@@ -29,6 +29,8 @@ import StatCard from "../components/StatCard";
 import { SelectedValue } from "../Interfaces/SelectedValueInterface";
 import SelectComponent from "../components/SelectComponent";
 import HistoricalDataChart from "../components/HistoricalDataChart";
+import Footer from "../components/Footer";
+import calculateROI from "../utils/CalculateROI";
 
 export default function CompanyPage() {
   const { companyId } = useParams();
@@ -67,16 +69,22 @@ export default function CompanyPage() {
     const date = item.predictionDate.split("T")[0];
     return { value: date, label: date };
   });
+
+    const {roiValeu} = calculateROI(historical[historical!.length - 1].close, latestPredction.prediction, currentUserData.investAmount)
+
   return (
     <>
       <HomePageNav />
 
-      <main className="w-full h-screen flex pt-14">
+      <main
+        className="w-full flex pt-14"
+        style={{ height: "calc(100vh - 3.5rem)" }}
+      >
         {/* side */}
 
         {isAside && (
           <div
-            className="fixed  h-screen w-screen bg-gray-500 opacity-50 z-40 md:hidden lg:hidden"
+            className="fixed h-screen w-screen bg-gray-500 opacity-50 z-40 md:hidden lg:hidden"
             onClick={() => setIsAside(false)}
           />
         )}
@@ -86,15 +94,15 @@ export default function CompanyPage() {
               fixed md:relative top-14 md:top-0 m-auto z-50 md:z-0
               bg-white 
               w-80 md:w-72 lg:w-1/4 xl:w-1/5 
-              h-full border-r border-gray-200 
+              border-r border-gray-200 
               sm:w-full
               p-3 md:p-4 lg:p-6
               flex flex-col 
               overflow-y-auto
               transform transition-all duration-300
               translate-x-0
-
             `}
+            style={{ height: "calc(100vh - 3.5rem)" }}
           >
             <div className="flex justify-between items-start mb-4 md:mb-6">
               <button
@@ -167,16 +175,13 @@ export default function CompanyPage() {
                   title="عدد البيانات التي تم استخدامها للتحليل"
                   color="text-black"
                 />
-
+                {/* ROI = [(Total Return - Cost of Investment) / Cost of Investment] x 100. */}
                 <StatCard
                   Icon={SaudiRiyal}
                   body={
                     // fix
                     latestPredction?.prediction
-                      ? (
-                          currentUserData.investAmount *
-                          latestPredction.prediction
-                        ).toFixed(2)
+                      ? roiValeu
                       : "لايوجد"
                   }
                   title="الأرباح المتوقعة بناءا على مبلغ الإستثمار"
@@ -209,9 +214,10 @@ export default function CompanyPage() {
 
         <section
           className={`
-          bg-gray-50 h-screen p-3 md:p-4 lg:p-6 transition-all duration-300
+          bg-gray-50 p-3 md:p-4 lg:p-6 transition-all duration-300 overflow-y-auto
           ${isAside ? "w-full md:w-3/4 lg:w-3/4 xl:w-4/5" : "w-full"}
         `}
+          style={{ height: "calc(100vh - 3.5rem)" }}
         >
           <div className="flex justify-between items-center">
             <button
@@ -293,7 +299,7 @@ export default function CompanyPage() {
             </button>
           </div>
 
-          <div className="bg-white w-full  h-screen rounded-xl shadow-sm border border-gray-200 p-4 ">
+          <div className="bg-white w-full h-full rounded-xl shadow-sm border border-gray-200 p-4">
             {isHistoricalData ? (
               <HistoricalDataChart
                 historicalData={historical}
@@ -314,6 +320,7 @@ export default function CompanyPage() {
           historicalDataQuery.isLoading ||
           watchListQuery.isLoading) && <Loader />}
       </main>
+      <Footer />
     </>
   );
 }
