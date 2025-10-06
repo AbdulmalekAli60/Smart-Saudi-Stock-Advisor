@@ -1,13 +1,14 @@
 interface calculateROI {
-  roiValeu: number;
+  roiValue: number;
   roiPercentage: number;
 }
 
 interface calculateROIProps {
-  currentClose: number;
+  currentClose: number ;
   predection: number;
   investAmount: number;
 }
+// {/* ROI = [(prediction - Cost of Investment) / Cost of Investment] x 100. */}
 
 export default function calculateROI({
   currentClose,
@@ -17,7 +18,7 @@ export default function calculateROI({
   const priceDiff = predection - currentClose;
 
   const roiPercentage = (priceDiff / currentClose) * 100;
-  const roiValeu = (priceDiff / currentClose) * investAmount;
+  const roiValue = (priceDiff / currentClose) * investAmount;
 
-  return { roiValeu, roiPercentage };
+  return { roiValue, roiPercentage };
 }

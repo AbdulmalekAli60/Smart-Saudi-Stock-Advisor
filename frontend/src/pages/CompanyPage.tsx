@@ -21,9 +21,8 @@ import {
   TrendingUpDown,
   X,
 } from "lucide-react";
-import { WatchListQueryOptions } from "../services/WatchListService";
 import { useUserInfo } from "../contexts/UserContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PredictionsChart from "../components/PredictionsChart";
 import StatCard from "../components/StatCard";
 import { SelectedValue } from "../Interfaces/SelectedValueInterface";
@@ -35,6 +34,13 @@ import calculateROI from "../utils/CalculateROI";
 export default function CompanyPage() {
   const { companyId } = useParams();
   const { currentUserData } = useUserInfo();
+  const [roiResult, setRoiResult] = useState<{
+    value: number;
+    percentage: number;
+  }>({
+    percentage: 0,
+    value: 0,
+  });
   const [isHistoricalData, setIsHistricalData] = useState<boolean>(false);
   const [isAside, setIsAside] = useState<boolean>(true);
   const [selectedValue, setSelectedValue] = useState<SelectedValue>({
@@ -48,7 +54,7 @@ export default function CompanyPage() {
       allPredictionsQueryOptions(companyId),
       latestPredictionsQueryOptions(companyId),
       getHistoricalDataQueryOptions(companyId),
-      WatchListQueryOptions(),
+      // WatchListQueryOptions(),
     ],
   });
 
@@ -57,20 +63,38 @@ export default function CompanyPage() {
     predictionsQuery,
     latestPredictionQuery,
     historicalDataQuery,
-    watchListQuery,
+    // watchListQuery,
   ] = result;
 
   const company = companyQuery.data?.data;
   const latestPredction = latestPredictionQuery.data?.data;
   const predctions = predictionsQuery.data?.data;
   const historical = historicalDataQuery.data?.data;
-
+  console.log(
+    "Company: ",
+    company,
+    "Latest Predection: ",
+    latestPredction,
+    "Predictions: ",
+    predctions,
+    "Historical Data: ",
+    historical
+  );
   const options = predctions?.map((item) => {
     const date = item.predictionDate.split("T")[0];
     return { value: date, label: date };
   });
 
-    const {roiValeu} = calculateROI(historical[historical!.length - 1].close, latestPredction.prediction, currentUserData.investAmount)
+  useEffect(() => {
+    if (historical != null && latestPredction != null) {
+      const { roiPercentage, roiValue } = calculateROI({
+        currentClose: historical[historical.length - 1].close,
+        predection: latestPredction?.prediction,
+        investAmount: currentUserData.investAmount,
+      });
+      setRoiResult({ value: roiValue, percentage: roiPercentage });
+    }
+  }, [historical, latestPredction, currentUserData.investAmount]);
 
   return (
     <>
@@ -175,13 +199,11 @@ export default function CompanyPage() {
                   title="عدد البيانات التي تم استخدامها للتحليل"
                   color="text-black"
                 />
-                {/* ROI = [(Total Return - Cost of Investment) / Cost of Investment] x 100. */}
                 <StatCard
                   Icon={SaudiRiyal}
                   body={
-                    // fix
                     latestPredction?.prediction
-                      ? roiValeu
+                      ? roiResult.value.toFixed(2)
                       : "لايوجد"
                   }
                   title="الأرباح المتوقعة بناءا على مبلغ الإستثمار"
@@ -317,8 +339,10 @@ export default function CompanyPage() {
         {(companyQuery.isLoading ||
           predictionsQuery.isLoading ||
           latestPredictionQuery.isLoading ||
-          historicalDataQuery.isLoading ||
-          watchListQuery.isLoading) && <Loader />}
+          historicalDataQuery.isLoading) && (
+          // watchListQuery.isLoading
+          <Loader />
+        )}
       </main>
       <Footer />
     </>

@@ -56,7 +56,7 @@ export default function PredictionsChart({
   useEffect(() => {
     const filteredDates = predections?.filter((predecion) => {
       const predDate = predecion.predictionDate.split("T")[0];
-      
+
       if (!limits?.from.value || !limits?.to.value) return true;
 
       if (limits.from.value && !limits.to.value) {
@@ -69,6 +69,36 @@ export default function PredictionsChart({
 
       return predDate >= limits.from.value && predDate <= limits.to.value;
     });
+
+    console.log("=== DATA DEBUG ===");
+    console.log("Total predictions:", filteredDates?.length);
+    console.log(
+      "actualResult values:",
+      JSON.stringify(
+        filteredDates?.map((p) => ({
+          date: p.predictionDate,
+          actual: p.actualResult,
+          type: typeof p.actualResult,
+          isNull: p.actualResult === null,
+          isUndefined: p.actualResult === undefined,
+        })),
+        null,
+        2
+      )
+    ); // This will show the full data
+
+    console.log(
+      "prediction values:",
+      JSON.stringify(
+        filteredDates?.map((p) => ({
+          date: p.predictionDate,
+          pred: p.prediction,
+          type: typeof p.prediction,
+        })),
+        null,
+        2
+      )
+    ); // This will show the full data
 
     setFilteredPredections(filteredDates);
   }, [predections, limits]);
@@ -116,7 +146,25 @@ export default function PredictionsChart({
         },
       },
 
-      tooltip: { rtl: true },
+      tooltip: {
+        rtl: true,
+        callbacks: {
+          label: function (context) {
+            const label = context.dataset.label || "";
+            const value = context.parsed.y;
+
+            // Check if value is null, NaN, or an empty array
+            // if (
+            //   value === null ||
+            //   isNaN(value) ||
+            //   (Array.isArray(value) && value.length === 0)
+            // ) {
+            // }
+
+            return `${label}: gasda`;
+          },
+        },
+      },
 
       zoom: {
         pan: {
@@ -138,7 +186,7 @@ export default function PredictionsChart({
     },
     interaction: {
       mode: "index",
-      axis:"x"
+      axis: "x",
     },
   };
 
@@ -150,14 +198,16 @@ export default function PredictionsChart({
     datasets: [
       {
         label: "السعر الفعلي",
-        data: predections?.map((item) => item.actualResult), // data = y-axis
+        data: filteredPredections?.map((item) => item.actualResult || []), // data = y-axis
         backgroundColor: "rgba(100,63,229,0.8)",
         barThickness: 20,
         borderRadius: 4,
       },
       {
         label: "التوقع",
-        data: predections?.map((item) => parseInt(item.prediction.toFixed(2))),
+        data: filteredPredections?.map((item) =>
+          parseInt(item.prediction.toFixed(2))
+        ),
         backgroundColor: "rgba(250,192,15,0.8)",
         barThickness: 10,
         borderRadius: 4,
