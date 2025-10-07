@@ -150,18 +150,14 @@ export default function PredictionsChart({
         rtl: true,
         callbacks: {
           label: function (context) {
+            console.log(context);
             const label = context.dataset.label || "";
             const value = context.parsed.y;
 
-            // Check if value is null, NaN, or an empty array
-            // if (
-            //   value === null ||
-            //   isNaN(value) ||
-            //   (Array.isArray(value) && value.length === 0)
-            // ) {
-            // }
-
-            return `${label}: gasda`;
+            if (value === 0) {
+              return `${label}:  لايوجد حتى الان`;
+            }
+            return `${label}: ${value}`;
           },
         },
       },

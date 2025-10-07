@@ -138,10 +138,12 @@ export default function AccountPage() {
       <li key={key}>{message}</li>
     ));
   }
-
   async function handleDeleteAccountClick() {
     try {
-      alert("هل انت متأكد من الحذف؟");
+      const userChoice = confirm("هل أنت متأكد من الحذف؟ لايمكنك التراجع بعد الحذف")
+      if(!userChoice){
+        return
+      }
       const response = await deleteMutation.mutateAsync();
       sessionStorage.removeItem("user");
       navigate("/");

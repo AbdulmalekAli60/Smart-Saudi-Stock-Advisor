@@ -33,7 +33,7 @@ export default function MainNav() {
       <div className="flex-1 flex justify-center px-2 md:px-4 max-w-md mx-auto">
         <div id="search-container" className="relative w-full">
           <Select
-            placeholder="إبحث"
+            placeholder="إبحث بإسم او رمز الشركة"
             isLoading={isLoading}
             isSearchable={true}
             isClearable={true}

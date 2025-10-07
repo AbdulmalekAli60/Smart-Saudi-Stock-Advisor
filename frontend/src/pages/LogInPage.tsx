@@ -69,11 +69,11 @@ export default function LogInPage() {
     const errorData = mutation.error.response.data as errorResponse;
 
     if (errorData.errorMessage) {
-      return <li >{errorData.errorMessage}</li>;
+      return <li>{errorData.errorMessage}</li>;
     }
 
     return Object.values(mutation.error.response.data).map((message, key) => (
-      <li  key={key}>{message}</li>
+      <li key={key}>{message}</li>
     ));
   }
   return (
@@ -141,7 +141,7 @@ export default function LogInPage() {
                   className="w-full p-3 lg:p-4 mt-6 bg-secondary text-white font-primary-bold rounded-lg cursor-pointer hover:bg-amber-400 transition-colors duration-200"
                 >
                   {mutation.isPending ? (
-                    <Loader className="m-auto" />
+                    <Loader className="m-auto animate-spin" />
                   ) : (
                     "إنشاء حساب"
                   )}

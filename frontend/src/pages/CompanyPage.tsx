@@ -70,16 +70,7 @@ export default function CompanyPage() {
   const latestPredction = latestPredictionQuery.data?.data;
   const predctions = predictionsQuery.data?.data;
   const historical = historicalDataQuery.data?.data;
-  console.log(
-    "Company: ",
-    company,
-    "Latest Predection: ",
-    latestPredction,
-    "Predictions: ",
-    predctions,
-    "Historical Data: ",
-    historical
-  );
+
   const options = predctions?.map((item) => {
     const date = item.predictionDate.split("T")[0];
     return { value: date, label: date };
