@@ -1,5 +1,7 @@
 import { LucideIcon } from "lucide-react";
 import { ReactNode } from "react";
+import SectorInterface from "../Interfaces/SectorInterface";
+import { SectionInterface } from "../pages/DashBoaredPage";
 
 interface statCardProps {
   Icon: LucideIcon;
@@ -7,10 +9,12 @@ interface statCardProps {
   body: string | undefined | ReactNode;
   color: string;
   bodyClassName?:string
+  handleClick?: React.Dispatch<React.SetStateAction<"addCompany" | "users" | "deleteUser" | "deleteCompany" | null>>
 }
-export default function StatCard({ body, Icon, title, color, bodyClassName }: statCardProps) {
+export default function StatCard({ body, Icon, title, color, bodyClassName, handleClick }: statCardProps) {
+
   return (
-    <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
+    <div onClick={() => handleClick("addCompany")}  className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
       <Icon className={`w-4 h-4 md:w-5 md:h-5 ${color} flex-shrink-0`} />
       <div className="min-w-0 flex-1">
         <p className="text-xs text-gray-500">{title}</p>
