@@ -17,11 +17,17 @@ import { getAllCompaniesQueryOptions } from "../services/CompanyService";
 import Side from "../components/Side";
 import StatCard from "../components/StatCard";
 import { CirclePlus } from "lucide-react";
+import Input from "../components/Input";
 
 export default function DashBoaredPage() {
   const [newCompnay, setNewCompany] = useState<AddCompany>({} as AddCompany);
+
+  console.log("New company Data: ", { ...newCompnay });
+
   const [selectedUserId, setSelectedUserId] = useState<number>(0);
-  const [selectedSection, setSelectedSection] = useState<"addCompany" | "users" | "deleteUser" | "deleteCompany" | null>();
+  const [selectedSection, setSelectedSection] = useState<
+    "addCompany" | "users" | "deleteUser" | "deleteCompany" | null
+  >();
 
   const navigate = useNavigate();
 
@@ -53,41 +59,58 @@ export default function DashBoaredPage() {
   const deleteuserMutation = useMutation(
     DeleteUserMutationOptions(selectedUserId)
   );
-  console.log(selectedSection);
+
   return (
     <>
       <MainNav />
-      {/* <div
-        className="grid grid-cols-2 pt-14"
-        style={{ height: "calc(100vh - 3.5rem)" }}
+      <div
+        className="grid grid-cols-4  pt-14 h-screen"
+        // style={{ height: "calc(100vh - 3.5rem)" }}
       >
-        <div className="bg-red-300 flex flex-col">
-          <div className="bg-amber-300 h-1/2">create companies</div>
-          <div className="bg-blue-200 h-1/2">sada</div>
+        <div className="bg-gray-400 ">
+          <Side>
+            <StatCard
+              handleClick={setSelectedSection}
+              Icon={CirclePlus}
+              body="إضافة شركة جديدة"
+              title="إضافة شركة"
+              color="text-green-400"
+              bodyClassName="cursor-pointer"
+            />
+
+            <StatCard
+              handleClick={setSelectedSection}
+              Icon={CirclePlus}
+              body="حذف شركة "
+              title="حذف شركة"
+              color="text-green-400"
+              bodyClassName="cursor-pointer"
+            />
+          </Side>
         </div>
 
-        <div className="bg-yellow-300">all users</div>
-      </div> */}
+        <div className="col-span-3  flex-row w-full h-full items-center justify-center p-4">
+          <div className=" h-1/2 w-full">
+            <h1 className="font-primary-bold text-2xl sm:text-3xl lg:text-4xl">
+              كل المستخدمين
+            </h1>
+            <div className="p-4 font-primary-bold">
+              {users?.map((user) => {
+                return (
+                  <li key={user.userId} className="w-full list-none bg-background rounded-full mt-3 p-3  cursor-pointer">
+                    {user.name}
+                  </li>
+                );
+              })}
+            </div>
+          </div>
 
-      <Side>
-        <StatCard
-          handleClick={setSelectedSection}
-          Icon={CirclePlus}
-          body="إضافة شركة جديدة"
-          title="إضافة شركة"
-          color="text-green-400"
-          bodyClassName="cursor-pointer"
-        />
+          {/* <div className="h-1/2 w-full">
+            <h1 className="font-primary-bold text-2xl sm:text-3xl lg:text-4xl">حذف مستخدم</h1>
 
-        <StatCard
-        handleClick={setSelectedSection}
-          Icon={CirclePlus}
-          body="حذف شركة "
-          title="حذف شركة"
-          color="text-green-400"
-          bodyClassName="cursor-pointer"
-        />
-      </Side>
+          </div> */}
+        </div>
+      </div>
 
       {/* <Footer /> */}
 

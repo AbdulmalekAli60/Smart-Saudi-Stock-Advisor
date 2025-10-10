@@ -18,6 +18,7 @@ export default function Side({ children }: { children: React.ReactNode }) {
       {isAside && (
         <aside
           className={`
+            h-fu
               fixed z-50 md:z-0
               bg-red-300 
               w-80 md:w-72 lg:w-1/4 xl:w-1/5 

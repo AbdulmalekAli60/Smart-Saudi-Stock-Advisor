@@ -1,5 +1,5 @@
 export interface AddCompany {
-  ompanyLogo: string;
+  companyLogo: string;
 
   tickerName: string;
 

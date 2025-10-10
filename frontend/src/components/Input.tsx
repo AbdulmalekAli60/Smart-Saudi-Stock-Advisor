@@ -11,7 +11,6 @@ interface InputProps {
   isDisabled: boolean;
   value?: string
 }
-
 export default function Input({
   id,
   name,
