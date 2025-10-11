@@ -1,4 +1,4 @@
-import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
   AllUsersQueryOptions,
@@ -6,23 +6,13 @@ import {
   isAdminQueryOptions,
 } from "../services/AdminService";
 import Loader from "../components/Loader";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios, { isAxiosError } from "axios";
-import { getSectorsQueryOptions } from "../services/SectorService";
 import MainNav from "../components/MainNav";
-import { getAllCompaniesQueryOptions } from "../services/CompanyService";
-import Side from "../components/Side";
-import StatCard from "../components/StatCard";
-import { CirclePlus } from "lucide-react";
 import { useToast } from "../contexts/ToastContext";
+import Footer from "../components/Footer";
 
 export default function DashBoaredPage() {
-  const [selectedUserId, setSelectedUserId] = useState<number | undefined>(undefined);
-
-  const [selectedSection, setSelectedSection] = useState<
-    "addCompany" | "users" | "deleteUser" | "deleteCompany" | null
-  >();
-
   const { showToast } = useToast();
   const navigate = useNavigate();
 
@@ -34,31 +24,14 @@ export default function DashBoaredPage() {
     }
   }, [error, navigate]);
 
-  const queries = useQueries({
-    queries: [
-      getSectorsQueryOptions(),
-      AllUsersQueryOptions(),
-      getAllCompaniesQueryOptions(),
-    ],
-  });
-  const [sectorsQuery, usersQuery, companiesQuery] = queries;
-
-  // const sectors = sectorsQuery.data?.data;
+  const usersQuery = useQuery(AllUsersQueryOptions());
   const users = usersQuery.data?.data;
-  // const companies = companiesQuery.data?.data;
 
-  // const addCompanyMutation = useMutation(AddCompanyMutationOptions(newCompnay));
-  // const deleteCompanyMutation = useMutation(
-  //   DeleteCompanyMutationOptions(selectedUserId)
-  // );
-  const deleteuserMutation = useMutation(
-    DeleteUserMutationOptions(selectedUserId)
-  );
-
-  async function handleDeleteUserClick(
-    userRole: string | undefined,
+  const deleteuserMutation = useMutation(DeleteUserMutationOptions());
+  async function handelUserDelete(
+    userId: number | undefined,
+    userRole: string | undefined
   ) {
-    
     if (userRole != undefined && userRole === "ADMIN") {
       alert("لايمكن حذف حساب مسؤول");
       return;
@@ -71,9 +44,13 @@ export default function DashBoaredPage() {
     if (!adminConfirm) return;
 
     try {
-      const deleteUser = await deleteuserMutation.mutateAsync();
+      if (userId != undefined) {
+        await deleteuserMutation.mutateAsync(userId);
+      }
 
-      showToast("success", deleteUser.data);
+      showToast("success", `تم حذف المستخدم بنجاح`);
+      usersQuery.refetch();
+      deleteuserMutation.reset();
     } catch (error) {
       if (isAxiosError(error)) {
         console.log(error.response?.data);
@@ -82,47 +59,19 @@ export default function DashBoaredPage() {
       }
     }
   }
-console.log("Selected id: ", selectedUserId)
-console.log(selectedSection)
+
   return (
     <>
       <MainNav />
-      <div
-        className="grid grid-cols-4  pt-14 h-screen"
-        // style={{ height: "calc(100vh - 3.5rem)" }}
-      >
-        <div className="bg-gray-400 ">
-          <Side>
-            <StatCard
-              handleClick={setSelectedSection}
-              value="add"
-              Icon={CirclePlus}
-              body="إضافة شركة جديدة"
-              title="إضافة شركة"
-              color="text-green-400"
-              bodyClassName="cursor-pointer"
-            />
+      <div className="pt-14 h-screen w-full bg-background">
+        <div className=" p-4">
+          <h1 className="font-primary-bold text-2xl sm:text-3xl lg:text-4xl">
+            كل المستخدمين
+          </h1>
 
-            <StatCard
-              handleClick={setSelectedSection}
-              value="delete"
-              Icon={CirclePlus}
-              body="حذف شركة "
-              title="حذف شركة"
-              color="text-green-400"
-              bodyClassName="cursor-pointer"
-            />
-          </Side>
-        </div>
-
-        <div className="col-span-3  flex-row w-full h-full items-center justify-center p-4">
-          <div className=" h-1/2 w-full">
-            <h1 className="font-primary-bold text-2xl sm:text-3xl lg:text-4xl">
-              كل المستخدمين
-            </h1>
-
-            <div className="p-4 rounded-3xl mt-2  bg-background shadow-lg overflow-y-auto">
-              <table className="table-auto w-full border text-center border-collapse">
+          <div className="p-4 rounded-3xl mt-2  bg-background shadow-lg overflow-x-auto md:overflow-y-auto">
+            <table className="table-auto w-full border text-center border-collapse ">
+              <thead>
                 <tr className="bg-success font-primary-thin border border-black text-white">
                   <th className="p-2">الإسم</th>
                   <th>إسم المسخدم</th>
@@ -131,38 +80,37 @@ console.log(selectedSection)
                   <th>الإيميل</th>
                   <th>حذف الحساب</th>
                 </tr>
-                {users?.map((user) => {
-                  return (
-                    <tr className="border even:bg-gray-400 font-primary-regular" key={user.userId}>
-                      <td className="p-2 border" >
+              </thead>
+              {users?.map((user) => {
+                return (
+                  <thead key={user.userId}>
+                    <tr className="border even:bg-gray-400 font-primary-regular">
+                      <td key={user.name} className="p-2 border">
                         {user.name}
                       </td>
 
-                      <td className="border" >
+                      <td key={user.username} className="border">
                         {user.username}
                       </td>
 
-                      <td className=" border" >
+                      <td key={user.role} className=" border">
                         {user.role}
                       </td>
 
-                      <td className=" border" >
+                      <td key={user.joinDate} className=" border">
                         {user.joinDate?.split("T")[0]}
                       </td>
 
-                      <td className=" border">
+                      <td key={user.email} className=" border">
                         {user.email}
                       </td>
 
                       <td className="p-2">
                         <button
                           onClick={() => {
-                            setSelectedUserId(user.userId)
-                            handleDeleteUserClick(user.role)
-                          }
-                            
-                          }
-                          className="text-white font-primary-bold hover:bg-red-700 cursor-pointer w-full bg-fail p-2 rounded-full"
+                            handelUserDelete(user.userId, user.role);
+                          }}
+                          className="text-white whitespace-nowrap font-primary-bold hover:bg-red-700 cursor-pointer w-full bg-fail p-2 rounded-full"
                         >
                           {user.role === "ADMIN"
                             ? "لايمكن حذف حساب مسؤول"
@@ -170,21 +118,19 @@ console.log(selectedSection)
                         </button>
                       </td>
                     </tr>
-                  );
-                })}
-              </table>
-            </div>
+                  </thead>
+                );
+              })}
+            </table>
           </div>
         </div>
       </div>
 
-      {/* <Footer /> */}
+      <Footer />
 
-      {(isLoading ||
-        sectorsQuery.isLoading ||
-        usersQuery.isLoading ||
-        deleteuserMutation.isPending ||
-        companiesQuery.isLoading) && <Loader />}
+      {(isLoading || usersQuery.isLoading, deleteuserMutation.isPending) && (
+        <Loader />
+      )}
     </>
   );
 }

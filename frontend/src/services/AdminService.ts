@@ -72,10 +72,14 @@ const getAllUsers = (): Promise<AxiosResponse<UserResponseInterface[]>> => {
   });
 };
 
-export function DeleteUserMutationOptions(id: number | undefined) {
+export function DeleteUserMutationOptions() {
   return mutationOptions({
-    mutationKey: ["add-company", id],
-    mutationFn: () => deletUser(id),
+    mutationKey: ["add-company"],
+      mutationFn: (userId: number | undefined) => {
+    return axios.delete(`${BASE_URL}${deleteUser}/${userId}`, {
+    withCredentials: true,
+  }) 
+  },
     onSuccess: (response: AxiosResponse<string>) => {
       return response.data;
     },
@@ -85,8 +89,8 @@ export function DeleteUserMutationOptions(id: number | undefined) {
   });
 }
 
-const deletUser = (id: number | undefined): Promise<AxiosResponse<string>> => {
-  return axios.delete(`${BASE_URL}${deleteUser}/${id}`, {
-    withCredentials: true,
-  });
-};
+// const deletUser = (id: number | undefined): Promise<AxiosResponse<string>> => {
+//   return axios.delete(`${BASE_URL}${deleteUser}/${id}`, {
+//     withCredentials: true,
+//   });
+// };

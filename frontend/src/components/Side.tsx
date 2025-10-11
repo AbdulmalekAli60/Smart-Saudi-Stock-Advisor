@@ -1,12 +1,8 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-// interface SideProps {
-//   childeren: ;
-// }
 export default function Side({ children }: { children: React.ReactNode }) {
   const [isAside, setIsAside] = useState<boolean>(true);
-  // console.log(isAside);
   return (
     <>
       {isAside && (
