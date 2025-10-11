@@ -72,7 +72,7 @@ const getAllUsers = (): Promise<AxiosResponse<UserResponseInterface[]>> => {
   });
 };
 
-export function DeleteUserMutationOptions(id: number) {
+export function DeleteUserMutationOptions(id: number | undefined) {
   return mutationOptions({
     mutationKey: ["add-company", id],
     mutationFn: () => deletUser(id),
@@ -85,7 +85,7 @@ export function DeleteUserMutationOptions(id: number) {
   });
 }
 
-const deletUser = (id: number): Promise<AxiosResponse<string>> => {
+const deletUser = (id: number | undefined): Promise<AxiosResponse<string>> => {
   return axios.delete(`${BASE_URL}${deleteUser}/${id}`, {
     withCredentials: true,
   });

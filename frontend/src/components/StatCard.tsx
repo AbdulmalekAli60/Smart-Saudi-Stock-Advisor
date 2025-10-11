@@ -10,11 +10,12 @@ interface statCardProps {
   color: string;
   bodyClassName?:string
   handleClick?: React.Dispatch<React.SetStateAction<"addCompany" | "users" | "deleteUser" | "deleteCompany" | null>>
+  value?:string
 }
-export default function StatCard({ body, Icon, title, color, bodyClassName, handleClick }: statCardProps) {
+export default function StatCard({ body, Icon, title, color, bodyClassName, handleClick, value }: statCardProps) {
 
   return (
-    <div onClick={() => handleClick("addCompany")}  className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
+    <div id={value} onClick={() => handleClick("addCompany")}  className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gray-50 rounded-lg">
       <Icon className={`w-4 h-4 md:w-5 md:h-5 ${color} flex-shrink-0`} />
       <div className="min-w-0 flex-1">
         <p className="text-xs text-gray-500">{title}</p>

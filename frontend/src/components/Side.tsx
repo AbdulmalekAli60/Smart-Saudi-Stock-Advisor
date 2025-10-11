@@ -6,7 +6,7 @@ import { useState } from "react";
 // }
 export default function Side({ children }: { children: React.ReactNode }) {
   const [isAside, setIsAside] = useState<boolean>(true);
-  console.log(isAside);
+  // console.log(isAside);
   return (
     <>
       {isAside && (
