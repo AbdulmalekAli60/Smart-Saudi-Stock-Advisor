@@ -55,7 +55,7 @@ public class AdminController {
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .cacheControl(CacheControl.maxAge(3, TimeUnit.MINUTES).mustRevalidate())
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES).mustRevalidate())
                 .eTag(currentETag)
                 .body(allUsers);
     }

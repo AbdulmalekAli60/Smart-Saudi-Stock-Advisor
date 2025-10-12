@@ -8,16 +8,14 @@ import com.SmartSaudiStockAdvisor.service.JWTService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.Map;
@@ -30,6 +28,9 @@ public class AuthController {
     private final AuthService authService;
     private final JWTService jwtService;
     private final MessageSource messageSource;
+
+    @Value(value = "${app.JWT_EXPIRATION_TIME}")
+    private Long expirationDuration;
 
     @Autowired
     public AuthController(AuthService authService, JWTService jwtService, MessageSource source) {
@@ -74,13 +75,42 @@ public class AuthController {
                 .body(Map.of("message", getMessage("auth-controller-logout.message", null)));
     }
 
+    @PostMapping(value = "/refresh-token")
+    public ResponseEntity<HttpHeaders> refreshToken(
+            @CookieValue(name = "JWT-TOKEN", required = false) String cookieValue) {
+
+        log.info("=== REFRESH ENDPOINT CALLED ===");
+        log.info("=== Cookie value: {}", cookieValue);
+
+        if (cookieValue == null) {
+            log.warn("No token provided");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+
+        if (!jwtService.isTokenValidButExpired(cookieValue)) {
+            log.warn("Token is still valid but expired or has invalid sig");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String email = jwtService.extractEmail(cookieValue);
+        String userRole = jwtService.extractUserRoleFromToken(cookieValue);
+
+        log.info("Refreshing token for user: {}", email);
+
+        String newToken = jwtService.generateToken(email, userRole);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, constructCookie(newToken))
+                .build();
+    }
 
     private String constructCookie(String token){
         ResponseCookie cookie = ResponseCookie.from("JWT-TOKEN", token)
                 .httpOnly(true)
                 .secure(false) // change it in prod
                 .sameSite("Strict")
-                .maxAge(Duration.ofMinutes(120))
+                .maxAge(Duration.ofMillis(expirationDuration))
                 .path("/")
                 .build();
 

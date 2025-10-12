@@ -10,7 +10,9 @@ public interface JWTService {
 
     String extractEmail(String token);
 
-    boolean isTokenValid(String token);
+    boolean isTokenExpired(String token);
+
+    boolean isTokenValidButExpired(String token);
 
     String extractUserRoleFromToken(String token);
 

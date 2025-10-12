@@ -32,14 +32,15 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+//        log.info("shouldNotFilter check - Path: {}, Skip filter: {}", path, path.startsWith("/auth/"));
+        return path.startsWith("/auth/");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
       try {
-
-          if (shouldNotFilter(request)) {
-              filterChain.doFilter(request, response);
-              return;
-          }
-
           String extractedToken = extractTokenFromCookie(request.getCookies());
 
           if(extractedToken == null){
@@ -47,9 +48,9 @@ public class JWTFilter extends OncePerRequestFilter {
               return;
           }
 
-          boolean isTokenValid = jwtService.isTokenValid(extractedToken);
+          boolean isTokenExpired = jwtService.isTokenExpired(extractedToken);
 
-          if(!isTokenValid){
+          if(isTokenExpired){
               filterChain.doFilter(request, response);
                 return;
           }

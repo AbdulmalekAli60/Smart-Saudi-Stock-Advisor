@@ -2,6 +2,7 @@ package com.SmartSaudiStockAdvisor.service.ServiceImpl;
 
 import com.SmartSaudiStockAdvisor.service.JWTService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -52,20 +53,29 @@ public class JWTServiceImpl implements JWTService {
     }
 
     @Override
-    public boolean isTokenValid(String token) {
+    public boolean isTokenExpired(String token) {
         try {
-            Claims claims = extractClaims(token);
+            Claims claims = extractClaims(token); // if we get claims then the data in token is valid, before checking date
             if (claims == null) {
-                return false;
+                return true;
             }
 
             Date expiration = claims.getExpiration();
-            return expiration != null && !expiration.before(new Date());
+            return expiration != null && expiration.before(new Date());
+
+        } catch (ExpiredJwtException e) {
+            return true;
 
         } catch (Exception e) {
-            log.error("Error while validating the token: {}", e.getMessage());
-            return false;
+            log.error("Error while refreshing the token: {}", e.getMessage());
+            return true;
         }
+    }
+
+    @Override
+    public boolean isTokenValidButExpired(String token) {
+        Claims claims = extractClaims(token);
+        return claims != null && isTokenExpired(token);
     }
 
     @Override
@@ -76,7 +86,11 @@ public class JWTServiceImpl implements JWTService {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-        }catch (Exception e){
+        }catch (ExpiredJwtException e){
+            log.debug("Token is expired but its data is valid");
+            return e.getClaims();
+
+        } catch (Exception e){
             log.error("Error extracting claims from token: {}", e.getMessage());
             return null;
         }
