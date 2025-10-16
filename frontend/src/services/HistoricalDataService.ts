@@ -1,8 +1,9 @@
 import { queryOptions } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
+import  { AxiosResponse } from "axios";
 import HistoricalDataInterface from "../Interfaces/HistoricalDataInterface";
+import { axiosInstance } from "../utils/AxiosInstance";
 
-const BASE_URL = "http://localhost:8080";
+// const BASE_URL = "http://localhost:8080";
 const historicalData = "/historical-data";
 
 export function getHistoricalDataQueryOptions(id: string | undefined) {
@@ -15,7 +16,5 @@ export function getHistoricalDataQueryOptions(id: string | undefined) {
 const getAllHistoricalData = (
   id: string | undefined
 ): Promise<AxiosResponse<HistoricalDataInterface[]>> => {
-  return axios.get(`${BASE_URL}${historicalData}/${id}`, {
-    withCredentials: true,
-  });
+  return axiosInstance.get(`${historicalData}/${id}`);
 };

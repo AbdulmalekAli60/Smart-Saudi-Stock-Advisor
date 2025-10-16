@@ -143,7 +143,7 @@ export default function LogInPage() {
                   {mutation.isPending ? (
                     <Loader className="m-auto animate-spin" />
                   ) : (
-                    "إنشاء حساب"
+                    "تسجيل الدخول"
                   )}
                 </button>
               </form>

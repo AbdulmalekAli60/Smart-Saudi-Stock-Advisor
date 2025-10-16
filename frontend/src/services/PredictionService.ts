@@ -1,10 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import PredictionInterface from "../Interfaces/PredictionInterface";
+import { axiosInstance } from "../utils/AxiosInstance";
 
-const BASE_URL = "http://localhost:8080/predictions";
+// const BASE_URL = "http://localhost:8080/predictions";
 const all = "/all";
-const latest = "/latest/";
+const latest = "latest/";
 
 export function allPredictionsQueryOptions(compnayId: string | undefined) {
   return queryOptions({
@@ -16,8 +17,7 @@ export function allPredictionsQueryOptions(compnayId: string | undefined) {
 const getAllPredictions = (
   compnayId: string | undefined
 ): Promise<AxiosResponse<PredictionInterface[]>> => {
-    // console.log(`${BASE_URL}/${compnayId}${all}`)
-  return axios.get(`${BASE_URL}/${compnayId}${all}`, { withCredentials: true });
+  return axiosInstance.get(`/predictions/${compnayId}${all}`);
 };
 
 export function latestPredictionsQueryOptions(compnayId: string | undefined) {
@@ -30,8 +30,5 @@ export function latestPredictionsQueryOptions(compnayId: string | undefined) {
 const getLatestPredictions = (
   compnayId: string | undefined
 ): Promise<AxiosResponse<PredictionInterface>> => {
-    // console.log(`${BASE_URL}${latest}${compnayId}`)
-  return axios.get(`${BASE_URL}${latest}${compnayId}`, {
-    withCredentials: true,
-  });
+  return axiosInstance.get(`/predictions/${latest}${compnayId}`);
 };

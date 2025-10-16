@@ -1,12 +1,12 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { AddCompany } from "../Interfaces/AdminInterfaces";
+import { AxiosError, AxiosResponse } from "axios";
 import UserResponseInterface from "../Interfaces/UserResponseInterface";
+import { axiosInstance } from "../utils/AxiosInstance";
 
-const BASE_URL = "http://localhost:8080/admin";
+// const BASE_URL = "http://localhost:8080/admin";
 const isAdminEndpoint = "/dashboard";
-const createCompany = "/add-company";
-const deleteCompany = "/delete-company";
+// const createCompany = "/add-company";
+// const deleteCompany = "/delete-company";
 const allUsers = "/all-users";
 const deleteUser = "/delete-user";
 export function isAdminQueryOptions() {
@@ -18,46 +18,46 @@ export function isAdminQueryOptions() {
 }
 
 const isAdmin = (): Promise<AxiosResponse> => {
-  return axios.get(`${BASE_URL}${isAdminEndpoint}`, { withCredentials: true });
+  return axiosInstance.get(`/admin${isAdminEndpoint}`);
 };
 
-export function AddCompanyMutationOptions(data: AddCompany) {
-  return mutationOptions({
-    mutationKey: ["add-company", data],
-    mutationFn: () => addCompany(data),
-    onSuccess: (response: AxiosResponse<AddCompany>) => {
-      return response.data;
-    },
-    onError: (error: AxiosError) => {
-      throw error;
-    },
-  });
-}
+// export function AddCompanyMutationOptions(data: AddCompany) {
+//   return mutationOptions({
+//     mutationKey: ["add-company", data],
+//     mutationFn: () => addCompany(data),
+//     onSuccess: (response: AxiosResponse<AddCompany>) => {
+//       return response.data;
+//     },
+//     onError: (error: AxiosError) => {
+//       throw error;
+//     },
+//   });
+// }
 
-const addCompany = (data: AddCompany): Promise<AxiosResponse<AddCompany>> => {
-  return axios.post(`${BASE_URL}${createCompany}`, data, {
-    withCredentials: true,
-  });
-};
+// const addCompany = (data: AddCompany): Promise<AxiosResponse<AddCompany>> => {
+//   return axios.post(`${BASE_URL}${createCompany}`, data, {
+//     withCredentials: true,
+//   });
+// };
 
-export function DeleteCompanyMutationOptions(id: number) {
-  return mutationOptions({
-    mutationKey: ["delete-company", id],
-    mutationFn: () => deletCompany(id),
-    onSuccess: (response: AxiosResponse<string>) => {
-      return response.data;
-    },
-    onError: (error: AxiosError) => {
-      throw error;
-    },
-  });
-}
+// export function DeleteCompanyMutationOptions(id: number) {
+//   return mutationOptions({
+//     mutationKey: ["delete-company", id],
+//     mutationFn: () => deletCompany(id),
+//     onSuccess: (response: AxiosResponse<string>) => {
+//       return response.data;
+//     },
+//     onError: (error: AxiosError) => {
+//       throw error;
+//     },
+//   });
+// }
 
-const deletCompany = (id: number): Promise<AxiosResponse<string>> => {
-  return axios.delete(`${BASE_URL}${deleteCompany}/${id}`, {
-    withCredentials: true,
-  });
-};
+// const deletCompany = (id: number): Promise<AxiosResponse<string>> => {
+//   return axios.delete(`${BASE_URL}${deleteCompany}/${id}`, {
+//     withCredentials: true,
+//   });
+// };
 
 export function AllUsersQueryOptions() {
   return queryOptions({
@@ -67,19 +67,15 @@ export function AllUsersQueryOptions() {
 }
 
 const getAllUsers = (): Promise<AxiosResponse<UserResponseInterface[]>> => {
-  return axios.get(`${BASE_URL}${allUsers}`, {
-    withCredentials: true,
-  });
+  return axiosInstance.get(`/admin${allUsers}`);
 };
 
 export function DeleteUserMutationOptions() {
   return mutationOptions({
     mutationKey: ["add-company"],
-      mutationFn: (userId: number | undefined) => {
-    return axios.delete(`${BASE_URL}${deleteUser}/${userId}`, {
-    withCredentials: true,
-  }) 
-  },
+    mutationFn: (userId: number | undefined) => {
+      return axiosInstance.delete(`/admin${deleteUser}/${userId}`);
+    },
     onSuccess: (response: AxiosResponse<string>) => {
       return response.data;
     },
@@ -88,9 +84,3 @@ export function DeleteUserMutationOptions() {
     },
   });
 }
-
-// const deletUser = (id: number | undefined): Promise<AxiosResponse<string>> => {
-//   return axios.delete(`${BASE_URL}${deleteUser}/${id}`, {
-//     withCredentials: true,
-//   });
-// };

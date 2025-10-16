@@ -1,8 +1,9 @@
 import { queryOptions } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { CompanyResponse } from "../Interfaces/CompanyResponseInterface";
+import { axiosInstance } from "../utils/AxiosInstance";
 
-const BASE_URL = "http://localhost:8080";
+// const BASE_URL = "http://localhost:8080";
 const ALL_COMPANIES_URL = "/companies/all";
 const SPECIFIC_COMPANY = "/companies";
 
@@ -14,9 +15,7 @@ export function getAllCompaniesQueryOptions() {
 }
 
 const getAllCompanies = (): Promise<AxiosResponse<CompanyResponse[]>> => {
-  return axios.get(`${BASE_URL}${ALL_COMPANIES_URL}`, {
-    withCredentials: true,
-  });
+  return axiosInstance.get(`${ALL_COMPANIES_URL}`);
 };
 
 export function companyById(id: string | undefined) {
@@ -30,7 +29,5 @@ export function companyById(id: string | undefined) {
 const getCompanyById = (
   companyId: string | undefined
 ): Promise<AxiosResponse<CompanyResponse>> => {
-  return axios.get(`${BASE_URL}${SPECIFIC_COMPANY}/${companyId}`, {
-    withCredentials: true,
-  });
+  return axiosInstance.get(`${SPECIFIC_COMPANY}/${companyId}`);
 };

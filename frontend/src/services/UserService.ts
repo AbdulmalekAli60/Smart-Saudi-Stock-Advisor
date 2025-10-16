@@ -1,9 +1,10 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import UserResponseInterface from "../Interfaces/UserResponseInterface";
 import { UpdateInfo } from "../Interfaces/UpdateInfoInterface";
+import { axiosInstance } from "../utils/AxiosInstance";
 
-const BASE_URL = "http://localhost:8080/user";
+// const BASE_URL = "http://localhost:8080/user";
 const userData = "/personal";
 const updateEndpoint = "/update";
 const deleteAccountEndpoint = "/delete";
@@ -15,7 +16,7 @@ export function userDataQueryOptions() {
 }
 
 const getUserData = (): Promise<AxiosResponse<UserResponseInterface>> => {
-  return axios.get(`${BASE_URL}${userData}`, { withCredentials: true });
+  return axiosInstance.get(`/user${userData}`);
 };
 
 export function updateUserDataMutationOptions(updatedInfo: UpdateInfo) {
@@ -35,9 +36,7 @@ export function updateUserDataMutationOptions(updatedInfo: UpdateInfo) {
 const updateUserData = (
   newInfo: UpdateInfo
 ): Promise<AxiosResponse<UserResponseInterface>> => {
-  return axios.patch(`${BASE_URL}${updateEndpoint}`, newInfo, {
-    withCredentials: true,
-  });
+  return axiosInstance.patch(`/user${updateEndpoint}`, newInfo);
 };
 
 export function deleteAccountMutationOptions() {
@@ -54,7 +53,5 @@ export function deleteAccountMutationOptions() {
 }
 
 const deleteAccount = (): Promise<AxiosResponse<string>> => {
-  return axios.delete(`${BASE_URL}${deleteAccountEndpoint}`, {
-    withCredentials: true,
-  });
+  return axiosInstance.delete(`/user${deleteAccountEndpoint}`);
 };

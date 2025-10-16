@@ -1,8 +1,9 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import WatchListResponseInterface from "../Interfaces/WatchListResponseInterface";
+import { axiosInstance } from "../utils/AxiosInstance";
 
-const BASE_URL = "http://localhost:8080/watch-list";
+// const BASE_URL = "http://localhost:8080/watch-list";
 const all = "/all";
 const deleteUrl = "/delete";
 const add = "/add";
@@ -17,7 +18,7 @@ export function WatchListQueryOptions() {
 const getAllWatchLists = (): Promise<
   AxiosResponse<WatchListResponseInterface[]>
 > => {
-  return axios.get(`${BASE_URL}${all}`, { withCredentials: true });
+  return axiosInstance.get(`/watch-list${all}`);
 };
 
 export function AddWatchListMutationOptions(companyId: number) {
@@ -34,7 +35,7 @@ export function AddWatchListMutationOptions(companyId: number) {
 }
 
 const AddWatchList = (id: number): Promise<AxiosResponse<string>> => {
-  return axios.post(`${BASE_URL}${add}/${id}`, {}, { withCredentials: true });
+  return axiosInstance.post(`/watch-list${add}/${id}`, undefined);
 };
 
 export function deleteWatchListMutationOptions(watchListId: number) {
@@ -53,7 +54,5 @@ export function deleteWatchListMutationOptions(watchListId: number) {
 const deleteWatchList = (
   watchListId: number
 ): Promise<AxiosResponse<string>> => {
-  return axios.delete(`${BASE_URL}${deleteUrl}/${watchListId}`, {
-    withCredentials: true,
-  });
+  return axiosInstance.delete(`/watch-list${deleteUrl}/${watchListId}`);
 };

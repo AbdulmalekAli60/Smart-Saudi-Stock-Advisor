@@ -70,36 +70,6 @@ export default function PredictionsChart({
       return predDate >= limits.from.value && predDate <= limits.to.value;
     });
 
-    console.log("=== DATA DEBUG ===");
-    console.log("Total predictions:", filteredDates?.length);
-    console.log(
-      "actualResult values:",
-      JSON.stringify(
-        filteredDates?.map((p) => ({
-          date: p.predictionDate,
-          actual: p.actualResult,
-          type: typeof p.actualResult,
-          isNull: p.actualResult === null,
-          isUndefined: p.actualResult === undefined,
-        })),
-        null,
-        2
-      )
-    ); // This will show the full data
-
-    console.log(
-      "prediction values:",
-      JSON.stringify(
-        filteredDates?.map((p) => ({
-          date: p.predictionDate,
-          pred: p.prediction,
-          type: typeof p.prediction,
-        })),
-        null,
-        2
-      )
-    ); // This will show the full data
-
     setFilteredPredections(filteredDates);
   }, [predections, limits]);
 
@@ -150,7 +120,7 @@ export default function PredictionsChart({
         rtl: true,
         callbacks: {
           label: function (context) {
-            console.log(context);
+            // console.log(context);
             const label = context.dataset.label || "";
             const value = context.parsed.y;
 
