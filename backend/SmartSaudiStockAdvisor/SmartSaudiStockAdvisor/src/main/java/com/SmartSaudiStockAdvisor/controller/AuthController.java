@@ -79,7 +79,7 @@ public class AuthController {
     public ResponseEntity<HttpHeaders> refreshToken(
             @CookieValue(name = "JWT-TOKEN", required = false) String cookieValue) {
 
-        log.info("=== REFRESH ENDPOINT CALLED ===");
+        log.info("====== REFRESH ENDPOINT CALLED ======");
         log.info("=== Cookie value: {}", cookieValue);
 
         if (cookieValue == null) {
