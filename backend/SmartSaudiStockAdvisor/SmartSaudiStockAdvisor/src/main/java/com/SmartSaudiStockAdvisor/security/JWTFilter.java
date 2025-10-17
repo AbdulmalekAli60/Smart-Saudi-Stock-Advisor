@@ -34,55 +34,62 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-//        log.info("shouldNotFilter check - Path: {}, Skip filter: {}", path, path.startsWith("/auth/"));
-        return path.startsWith("/auth/");
+        boolean shouldSkip = path.startsWith("/auth/");
+        log.info("shouldNotFilter check: Path: {}, Skip filter: {}", path, shouldSkip);
+        return shouldSkip;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-      try {
-          String extractedToken = extractTokenFromCookie(request.getCookies());
+        String path = request.getServletPath();
 
-          if(extractedToken == null){
-              filterChain.doFilter(request, response);
-              return;
-          }
+        if (path.startsWith("/auth/")) {
+            log.info("Skipping JWT filter for auth path: {}", path);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-          boolean isTokenExpired = jwtService.isTokenExpired(extractedToken);
+        try {
+            String extractedToken = extractTokenFromCookie(request.getCookies());
 
-          if(isTokenExpired){
-              filterChain.doFilter(request, response);
+            if (extractedToken == null) {
+                log.warn("No token found in cookies for path: {}", request.getServletPath());
+                filterChain.doFilter(request, response);
                 return;
-          }
+            }
 
-          String userEmail = jwtService.extractEmail(extractedToken);
+            boolean isTokenExpired = jwtService.isTokenExpired(extractedToken);
+            if (isTokenExpired) {
+                log.warn("Token is expired for path: {}", request.getServletPath());
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-          if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            String userEmail = jwtService.extractEmail(extractedToken);
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities()
+                );
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }
 
-              UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
+            filterChain.doFilter(request, response);
 
-              UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                      userDetails, null, userDetails.getAuthorities()
-              );
-
-              authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-              SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-              filterChain.doFilter(request, response);
-              return;
-          }
-
-          filterChain.doFilter(request, response);
-
-      }catch (ExpiredJwtException e) {
-        log.error("JWT token is expired: ", e);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      } catch (JwtException e) {
-        log.error("JWT token is invalid: ", e);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      }catch (UsernameNotFoundException e) {
-          log.error("User not found during JWT authentication: ", e);
-          response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      }
+        } catch (ExpiredJwtException e) {
+            log.error("JWT token is expired: ", e);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token expired");
+        } catch (JwtException e) {
+            log.error("JWT token is invalid: ", e);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid token");
+        } catch (UsernameNotFoundException e) {
+            log.error("User not found during JWT authentication: ", e);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("User not found");
+        }
     }
 
     private String extractTokenFromCookie(Cookie[] cookies){

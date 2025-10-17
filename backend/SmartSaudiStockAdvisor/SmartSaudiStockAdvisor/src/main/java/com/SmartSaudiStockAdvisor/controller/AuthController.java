@@ -46,6 +46,7 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE, constructCookie(token))
+                .header("x-Access-Token", token)
                 .body(responseDTO);
     }
 
@@ -57,6 +58,7 @@ public class AuthController {
 
         return  ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, constructCookie(token))
+                .header("x-Access-Token", token)
                 .body(responseDTO);
     }
 
@@ -76,32 +78,32 @@ public class AuthController {
     }
 
     @PostMapping(value = "/refresh-token")
-    public ResponseEntity<HttpHeaders> refreshToken(
-            @CookieValue(name = "JWT-TOKEN", required = false) String cookieValue) {
+    public ResponseEntity<HttpHeaders> refreshToken(@RequestBody Map<String, String> body) {
+        String token = null;
 
-        log.info("====== REFRESH ENDPOINT CALLED ======");
-        log.info("=== Cookie value: {}", cookieValue);
+        if(body != null && body.containsKey("token")){
+            token = body.get("token");
+        }
 
-        if (cookieValue == null) {
-            log.warn("No token provided");
+        if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-
-        if (!jwtService.isTokenValidButExpired(cookieValue)) {
+        if (!jwtService.isTokenValidButExpired(token)) {
             log.warn("Token is still valid but expired or has invalid sig");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String email = jwtService.extractEmail(cookieValue);
-        String userRole = jwtService.extractUserRoleFromToken(cookieValue);
-
-        log.info("Refreshing token for user: {}", email);
+        String email = jwtService.extractEmail(token);
+        String userRole = jwtService.extractUserRoleFromToken(token);
 
         String newToken = jwtService.generateToken(email, userRole);
 
+        String cookie = constructCookie(newToken);
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, constructCookie(newToken))
+                .header(HttpHeaders.SET_COOKIE, cookie)
+                .header("x-Access-Token", cookie)
                 .build();
     }
 

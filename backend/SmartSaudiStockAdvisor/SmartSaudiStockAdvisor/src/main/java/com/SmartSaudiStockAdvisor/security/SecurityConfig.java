@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 @Slf4j
@@ -63,7 +64,6 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
         log.info("Bcrypt encoder has been created");
@@ -73,10 +73,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173/")); // react front end
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173")); // react front end
         corsConfiguration.setAllowedMethods(Arrays.asList("GET","POST","DELETE", "PATCH", "PUT", "OPTIONS"));
-
-        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+        corsConfiguration.setAllowedHeaders(List.of("*")); // reuest headers
+        corsConfiguration.setExposedHeaders(List.of("X-Access-Token"));
         corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
