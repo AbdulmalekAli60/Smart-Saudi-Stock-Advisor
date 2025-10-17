@@ -1,41 +1,47 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 export const axiosInstance = axios.create({
   baseURL: "http://localhost:8080",
   withCredentials: true,
 });
 
-let tokenInHeader: string[] | undefined = undefined;
-
-axiosInstance.interceptors.response.use(function (response: AxiosResponse) {
-  // take token and store it in varibale
-
-  tokenInHeader = response.headers["set-cookie"]; // use substring
-  console.log("Token in header: ", tokenInHeader);
-  return response;
-
-  //   if (tokenInHeader != undefined) return response;
-});
+let storedToken: string | undefined = undefined;
 
 axiosInstance.interceptors.response.use(
   function (response: AxiosResponse) {
-    if (response.status != 401) {
-      console.log("Response object: ", response);
-      return response;
+    const token = response.headers["x-access-token"];
+
+    if (token) {
+      storedToken = token;
     }
-    throw AxiosError.ERR_BAD_RESPONSE;
+    return response;
   },
 
   async function (error: AxiosError) {
-    // const originalRequest = error.config;
+    try {
+      const originalRequest: AxiosRequestConfig =
+        error.config as AxiosRequestConfig & { _retry?: boolean };
 
-    if (error.response?.status === 401) {
-      console.log("Token expired : ");
-      const req = axiosInstance.post("/refresh-token", undefined, {
-        headers: { Authorization: `Bearer ${tokenInHeader}` },
-      });
-      console.log("Query result: ", (await req).data);
-      //   originalRequest "make orginal request again"
+      if (error.response?.status === 401 && storedToken) {
+        const req = await axiosInstance.post("/auth/refresh-token", {
+          token: storedToken,
+        });
+
+        const newToken = req.headers["x-access-token"];
+
+        if (newToken) {
+          storedToken = newToken;
+        }
+
+        return axiosInstance(originalRequest);
+      }
+    } catch (err) {
+      storedToken = undefined;
+      window.location.href = "/";
+      console.log(err);
+      return Promise.reject(err);
     }
+
+    return Promise.reject(error);
   }
 );
