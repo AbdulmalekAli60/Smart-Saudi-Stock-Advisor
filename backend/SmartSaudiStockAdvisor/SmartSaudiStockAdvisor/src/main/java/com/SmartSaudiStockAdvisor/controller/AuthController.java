@@ -100,7 +100,7 @@ public class AuthController {
         String newToken = jwtService.generateToken(email, userRole);
 
         String cookie = constructCookie(newToken);
-
+        log.info("======= token refreshed =======");
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie)
                 .header("x-Access-Token", cookie)
