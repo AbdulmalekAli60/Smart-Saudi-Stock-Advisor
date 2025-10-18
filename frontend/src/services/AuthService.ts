@@ -8,11 +8,9 @@ import UserResponseInterface from "../Interfaces/UserResponseInterface";
 import { mutationOptions } from "@tanstack/react-query";
 import { axiosInstance } from "../utils/AxiosInstance";
 
-// const BASE_URL = "http://localhost:8080/auth";
 const LOGIN_URL = "/log-in";
 const SIGNUP_URL = "/sign-up";
 const LOGOUT_URL = "/logout";
-// const REFRESH_TOKEN = "/refresh-token";
 
 export function signUpMutationOptions(signUpFormData: SignUp) {
   return mutationOptions({
@@ -68,14 +66,3 @@ export function LogoutMutationOptions() {
 const logout = (): Promise<AxiosResponse<logoutInterface>> => {
   return axiosInstance.post(`/auth${LOGOUT_URL}`);
 };
-
-// export function refreshTokenQueryOptions() {
-//   return queryOptions({
-//     queryKey: ["refresh-token"],
-//     queryFn: refreshToken,
-//   });
-// }
-
-// const refreshToken = (): Promise<AxiosResponse<AxiosHeaders>> => {
-//   return axiosInstance.post(`/auth${REFRESH_TOKEN}`);
-// };

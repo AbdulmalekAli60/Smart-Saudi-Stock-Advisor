@@ -23,7 +23,10 @@ export default function MainNav() {
     })) || [];
 
   return (
-    <nav className="shadow-lg bg-background fixed w-full h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 flex items-center justify-between z-50">
+    <nav
+      style={{ background: "var(--gradient-hero)" }}
+      className=" bg-background fixed w-full h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 flex items-center justify-between z-50"
+    >
       <div className="flex-shrink-0 min-w-0">
         <Link to={"/home"}>
           <Logo />

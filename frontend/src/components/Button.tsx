@@ -12,7 +12,7 @@ export default function Button({ color, children }: ButtonProps) {
          font-p
          cursor-pointer 
          rounded-3xl 
-         p-1.5 
+         p-2
          w-28 
          whitespace-nowrap`}
       style={{ background: `var(--color-${color})` }}

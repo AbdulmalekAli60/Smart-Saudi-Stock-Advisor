@@ -53,15 +53,16 @@ export default function DashBoaredPage() {
       deleteuserMutation.reset();
     } catch (error) {
       if (isAxiosError(error)) {
-        console.log(error.response?.data);
+        // console.log(error.response?.data);
       } else {
-        console.log("error happend in catch block", error);
+        // console.log("error happend in catch block", error);
       }
     }
   }
 
   return (
     <>
+    <title>صفحة التحكم</title>
       <MainNav />
       <div className="pt-14 h-screen w-full bg-background">
         <div className=" p-4">

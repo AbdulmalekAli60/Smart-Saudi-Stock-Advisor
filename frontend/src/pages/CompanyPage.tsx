@@ -89,6 +89,7 @@ export default function CompanyPage() {
 
   return (
     <>
+      <title>{company?.companyArabicName}</title>
       <HomePageNav />
 
       <main

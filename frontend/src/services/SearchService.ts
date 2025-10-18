@@ -3,7 +3,6 @@ import { AxiosResponse } from "axios";
 import SearchResponse from "../Interfaces/SearchInterface";
 import { axiosInstance } from "../utils/AxiosInstance";
 
-// const BASE_URL = "http://localhost:8080";
 const SEARCH_URL = "/companies/search-company";
 
 export function searchQueryOptions(searchTerm: string) {

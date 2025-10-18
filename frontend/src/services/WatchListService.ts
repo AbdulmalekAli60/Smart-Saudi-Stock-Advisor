@@ -3,7 +3,6 @@ import { AxiosError, AxiosResponse } from "axios";
 import WatchListResponseInterface from "../Interfaces/WatchListResponseInterface";
 import { axiosInstance } from "../utils/AxiosInstance";
 
-// const BASE_URL = "http://localhost:8080/watch-list";
 const all = "/all";
 const deleteUrl = "/delete";
 const add = "/add";

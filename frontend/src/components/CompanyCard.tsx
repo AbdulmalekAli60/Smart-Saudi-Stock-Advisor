@@ -34,7 +34,7 @@ export default function CompanyCard({
   );
 
   async function handleSaveClick() {
-    console.log("the company id is: ", compnayData.companyId);
+    // console.log("the company id is: ", compnayData.companyId);
 
     try {
       if (isBookmarked && watchListId) {
@@ -48,14 +48,14 @@ export default function CompanyCard({
       onBookMarkChange();
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log(error.message);
+        // console.log(error.message);
         showToast("fail", error.message);
       }
     }
   }
 
   return (
-    <div className="w-full h-full p-6 bg-background text-center space-y-6 rounded-3xl shadow-lg">
+    <div className="w-full h-full p-6 bg-gray-300 text-center space-y-6 rounded-3xl shadow-lg">
       <div className="w-full flex justify-between">
         <div></div>
         <img

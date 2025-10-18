@@ -28,7 +28,7 @@ export default function SignUpPage() {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     e.preventDefault();
-    console.log(signUpFormData);
+    // console.log(signUpFormData);
 
     try {
       const response = await mutation.mutateAsync();
@@ -42,9 +42,9 @@ export default function SignUpPage() {
       }, 500);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log(error.response?.data);
+        // console.log(error.response?.data);
       }
-      console.log(error);
+      // console.log(error);
     }
   }
 
@@ -77,6 +77,7 @@ export default function SignUpPage() {
   }
   return (
     <>
+      <title>إنشاء حساب</title>
       <main className="flex flex-col lg:flex-row min-h-screen">
         {/* Form Section */}
         <section className="w-full lg:w-3/5 flex items-center justify-center p-4 lg:p-8">

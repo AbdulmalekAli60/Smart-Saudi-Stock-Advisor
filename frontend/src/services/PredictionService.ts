@@ -3,7 +3,6 @@ import { AxiosResponse } from "axios";
 import PredictionInterface from "../Interfaces/PredictionInterface";
 import { axiosInstance } from "../utils/AxiosInstance";
 
-// const BASE_URL = "http://localhost:8080/predictions";
 const all = "/all";
 const latest = "latest/";
 

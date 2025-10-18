@@ -47,78 +47,81 @@ export default function HomePage() {
   });
 
   return (
-    <main>
-      {/* nav */}
-      <div className="h-12 md:h-14 lg:h-16">
-        <MainNav />
-      </div>
-      {/* nav */}
-
-      {/* welcome section */}
-      <div className=" h-32 p-6 mt-4">
-        <h1 className="font-primary-thin sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
-          اهلا {currentUserData.name}
-        </h1>
-      </div>
-      {/* welcome section */}
-
-      {/* sectors */}
-      <section className="min-h-56 max-h-fit p-6">
-        <h1 className="font-primary-bold mb-8 sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
-          الأقسام
-        </h1>
-        <div className="flex shrink-0 gap-3 flex-1 flex-wrap grow">
-          <Badge
-            key="all"
-            sectorId={0}
-            arabicName="الكل"
-            isSelected={selectedSector === null}
-            onSelect={() => setSelectedSector(null)}
-          />
-          {!isLoading &&
-            sectorData?.data.map(({ sectorId, sectorArabicName }) => {
-              return (
-                <Badge
-                  key={sectorId}
-                  sectorId={sectorId}
-                  arabicName={sectorArabicName}
-                  isSelected={selectedSector === sectorId}
-                  onSelect={setSelectedSector}
-                />
-              );
-            })}
+    <>
+    <title>الرئيسة</title>
+      <main style={{ background: "var(--gradient-hero)" }}>
+        {/* nav */}
+        <div className="h-12 md:h-14 lg:h-16">
+          <MainNav />
         </div>
-      </section>
-      {/* sectors */}
+        {/* nav */}
 
-      {/* companies */}
-      <section className="h-fit p-6 pb-8">
-        <h1 className="font-primary-bold mb-6 sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
-          الشركات
-        </h1>
-
-        <div className="grid gap-7 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-          {!isLoading &&
-            filteredData?.map((company) => {
-              const isBookmarked = bookmarkedCompanies.has(company.companyId);
-              const watchListId = bookmarkedCompanies.get(company.companyId);
-              return (
-                <CompanyCard
-                  key={company.companyId}
-                  compnayData={company}
-                  isBookmarked={isBookmarked}
-                  watchListId={watchListId}
-                  onBookMarkChange={watchlists.refetch}
-                />
-              );
-            })}
+        {/* welcome section */}
+        <div className=" h-32 p-6 mt-4">
+          <h1 className="font-primary-thin text-secondary sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
+            اهلا {currentUserData.name}
+          </h1>
         </div>
-      </section>
-      {/* companies */}
+        {/* welcome section */}
 
-      <Footer />
+        {/* sectors */}
+        <section className="min-h-56 max-h-fit p-6">
+          <h1 className="font-primary-bold text-secondary mb-8 sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
+            الأقسام
+          </h1>
+          <div className="flex shrink-0 gap-3 flex-1 flex-wrap grow">
+            <Badge
+              key="all"
+              sectorId={0}
+              arabicName="الكل"
+              isSelected={selectedSector === null}
+              onSelect={() => setSelectedSector(null)}
+            />
+            {!isLoading &&
+              sectorData?.data.map(({ sectorId, sectorArabicName }) => {
+                return (
+                  <Badge
+                    key={sectorId}
+                    sectorId={sectorId}
+                    arabicName={sectorArabicName}
+                    isSelected={selectedSector === sectorId}
+                    onSelect={setSelectedSector}
+                  />
+                );
+              })}
+          </div>
+        </section>
+        {/* sectors */}
 
-      {isLoading && <Loader />}
-    </main>
+        {/* companies */}
+        <section className="h-fit p-6 pb-8">
+          <h1 className="font-primary-bold text-secondary mb-6 sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
+            الشركات
+          </h1>
+
+          <div className="grid gap-7 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+            {!isLoading &&
+              filteredData?.map((company) => {
+                const isBookmarked = bookmarkedCompanies.has(company.companyId);
+                const watchListId = bookmarkedCompanies.get(company.companyId);
+                return (
+                  <CompanyCard
+                    key={company.companyId}
+                    compnayData={company}
+                    isBookmarked={isBookmarked}
+                    watchListId={watchListId}
+                    onBookMarkChange={watchlists.refetch}
+                  />
+                );
+              })}
+          </div>
+        </section>
+        {/* companies */}
+
+        <Footer />
+
+        {isLoading && <Loader />}
+      </main>
+    </>
   );
 }

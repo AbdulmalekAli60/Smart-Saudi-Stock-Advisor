@@ -42,9 +42,9 @@ export default function LogInPage() {
       }, 500);
     } catch (error) {
       if (isAxiosError(error)) {
-        console.log(error.response?.data);
+        // console.log(error.response?.data);
       } else {
-        console.log("error happend in catch block", error);
+        // console.log("error happend in catch block", error);
       }
     }
   }
@@ -78,6 +78,7 @@ export default function LogInPage() {
   }
   return (
     <>
+      <title>تسجيل الدخول</title>
       <main className="flex flex-col lg:flex-row min-h-screen">
         {/* Form Section */}
         <section className="w-full lg:w-3/5 flex items-center justify-center p-4 lg:p-8">

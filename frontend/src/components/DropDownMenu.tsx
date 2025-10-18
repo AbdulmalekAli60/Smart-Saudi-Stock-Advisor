@@ -13,7 +13,7 @@ export default function DropDownMenu() {
     const response = await mutation.mutateAsync();
 
     sessionStorage.removeItem("user");
-    console.log("the message is: ", response.data.message);
+    // console.log("the message is: ", response.data.message);
     showToast("success", response.data.message);
 
     setTimeout(() => {

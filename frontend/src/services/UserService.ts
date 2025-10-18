@@ -4,7 +4,6 @@ import UserResponseInterface from "../Interfaces/UserResponseInterface";
 import { UpdateInfo } from "../Interfaces/UpdateInfoInterface";
 import { axiosInstance } from "../utils/AxiosInstance";
 
-// const BASE_URL = "http://localhost:8080/user";
 const userData = "/personal";
 const updateEndpoint = "/update";
 const deleteAccountEndpoint = "/delete";

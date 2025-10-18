@@ -3,7 +3,6 @@ import { AxiosResponse } from "axios";
 import { CompanyResponse } from "../Interfaces/CompanyResponseInterface";
 import { axiosInstance } from "../utils/AxiosInstance";
 
-// const BASE_URL = "http://localhost:8080";
 const ALL_COMPANIES_URL = "/companies/all";
 const SPECIFIC_COMPANY = "/companies";
 

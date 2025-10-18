@@ -39,7 +39,7 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav
         style={{ background: "var(--gradient-hero)" }}
-        className=" w-4/5 fixed left-1/2 z-50 -translate-x-1/2 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 shadow-lg flex items-center justify-between rounded-bl-xl rounded-br-xl md:rounded-bl-2xl md:rounded-br-2xl"
+        className=" w-full fixed left-1/2 z-50  -translate-x-1/2 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 shadow-lg flex items-center justify-between  md:rounded-bl-2xl md:rounded-br-2xl"
       >
         <div className="flex items-center">
           <Logo />
@@ -48,11 +48,11 @@ export default function LandingPage() {
         {/* Navigation Buttons */}
         <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
           <Link to={"/sign-up"}>
-            <Button color="primary">إنشاء حساب</Button>
+            <Button color="text-primary">إنشاء حساب</Button>
           </Link>
 
           <Link to={"/log-in"}>
-            <Button color="primary">تسجيل الدخول</Button>
+            <Button color="text-primary">تسجيل الدخول</Button>
           </Link>
         </div>
       </nav>
@@ -70,7 +70,7 @@ export default function LandingPage() {
             <h1 className="font-primary-bold text-white text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight">
               تنبؤات الأسهم بالذكاء الاصطناعي
             </h1>
-            <p className="font-primary-regular text-accent text-base md:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
+            <p className="font-primary-regular text-secondary text-base md:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
               احصل على تنبؤات دقيقة لحركة الأسهم باستخدام أحدث تقنيات الذكاء
               الاصطناعي
             </p>
