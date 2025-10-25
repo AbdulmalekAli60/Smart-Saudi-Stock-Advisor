@@ -1,12 +1,11 @@
 import yfinance as yf
 import pandas as pd
 from curl_cffi import requests
-from datetime import  timedelta
 import logging
 from config.companies_list import companies
 import psycopg2
 from config.connect_to_database import connect_to_database
-
+from utills import get_date
 logger = logging.getLogger('yfinance_saver module')
 logger.setLevel(logging.INFO)
 
@@ -33,16 +32,9 @@ class SavingDataFromYf:
         else:
             logger.error("Failed to establish database connection")
 
-    def get_date(self) -> tuple[str, str, str]:
-        today:pd.Timestamp = pd.Timestamp.today().normalize()
-        today_date:str = today.strftime('%Y-%m-%d')
-        yesterday_date:str = (today - timedelta(days=1)).strftime('%Y-%m-%d')
-        tomorrow_date:str = (today + timedelta(days=1)).strftime('%Y-%m-%d')
-
-        return today_date, yesterday_date, tomorrow_date
+    today_date, yesterday_date, tomorrow_date, _, _, _, _ = get_date()
 
     def saving_yf_data_in_db(self) -> None:
-        today_date, yesterday_date, tomorrow_date = self.get_date()
         logger.info("Starting data fetching process...")
         
         if not self.conn:
@@ -51,8 +43,8 @@ class SavingDataFromYf:
         
         session = requests.Session(impersonate="chrome")
         
-        logger.info(f"Fetching today's data for date: {today_date}")
-        logger.info(f"Fetching today's data for date: {today_date} tomorrow: {tomorrow_date}")
+        logger.info(f"Fetching today's data for date: {self.today_date}")
+        logger.info(f"Fetching today's data for date: {self.today_date} tomorrow: {self.tomorrow_date}")
         
         inserted_tickers:list[str] = []
         failed_inserted_tickers:list[str] = []
@@ -65,8 +57,8 @@ class SavingDataFromYf:
                     stock_data: pd.DataFrame = yf.download(
                         tickers=ticker,
                         interval="1d",
-                        start= today_date,
-                        end= tomorrow_date,
+                        start= self.today_date,
+                        end= self.tomorrow_date,
                         progress=False,
                         session=session,
                         auto_adjust=True

@@ -2,14 +2,10 @@ import pandas as pd
 import numpy as np
 import logging
 from xgboost import XGBRegressor
-from config.companies_list import companies
 import matplotlib.pyplot as plt
 from stock_indicators import StockIndicators
-import psycopg2
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from datetime import  timedelta
-from config.connect_to_database import connect_to_database
-
+from save_predictions import SavePredictions
 logger = logging.getLogger("Xgboost model module")
 logger.setLevel(logging.INFO)
 
@@ -30,11 +26,6 @@ class XgBoostModel:
         self.original_dataframe = data.copy()
         self.last_rows:dict = {}
         
-        self.conn = connect_to_database()
-        self.cur:psycopg2.extensions.cursor = None
-        self.connect_to_db()
-        
-        
         self.preprocessing_data()
 
     def preprocessing_data(self) -> None:
@@ -42,17 +33,6 @@ class XgBoostModel:
         self.dataframe = self.dataframe.dropna(subset=['tomorrow_close'])
         # self.dataframe = self.dataframe[self.dataframe['volume'] > 0]
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
-
-    def connect_to_db(self) -> None:
-        if self.conn:
-            try:
-                self.cur = self.conn.cursor()
-                logger.info("Database connected and cursor created successfully")
-            except Exception as e:
-                logger.error(f"Failed to create cursor: {str(e)}")
-                self.conn = None
-        else:
-            logger.error("Failed to establish database connection")
 
     def data_split(self, train_percentage:float = 0.70, validation_percentage:float = 0.15, test_percentage:float = 0.15) -> dict[int, dict[str,pd.DataFrame]]:
         companies_sets:dict = {}
@@ -182,131 +162,7 @@ class XgBoostModel:
         prediction_row:pd.DataFrame = last_row[x_train_columns]
         logger.info(f"Prediction row columns: {list(prediction_row.columns)}")
         return prediction_row
-    
-    def get_date(self) -> tuple[str,str,str,str,bool,bool,str]:
-        today:pd.Timestamp = pd.Timestamp.today().normalize()
-        today_date:str = today.strftime('%Y-%m-%d')
-        yesterday_date:str = (today - timedelta(days=1)).strftime('%Y-%m-%d')
-        tomorrow_date:str = (today + timedelta(days=1)).strftime('%Y-%m-%d')
-        thursday_date:str = (today - timedelta(days=3)).strftime('%Y-%m-%d')  
-        sunday_date:str = (today + timedelta(days=3)).strftime('%Y-%m-%d')     
-        is_thursday:bool = today.weekday() == 3 
-        is_sunday:bool = today.weekday() == 6    
-    
-        return today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date
-
-    def insert_prediction(self, predictions_dict:dict[int, dict[str, bool | float]]) -> None:
-        if not predictions_dict:
-            logger.info("There is no prediction dict")
-            return
         
-        successfully_inserted_predictions:list[int] = []
-        failed_inserted_predictions:list[int] = []
-        successfully_updated_predictions:list[int] = []
-        failed_updates_predictions:list[int] = []
-        
-        try:
-            for company_id, prediction_set in predictions_dict.items():
-                insert_success = self.handle_insert(company_id, prediction_set)
-                if insert_success:
-                    successfully_inserted_predictions.append(company_id)
-                else:
-                    failed_inserted_predictions.append(company_id)
-                
-                update_success = self.handle_update(company_id)
-                if update_success:
-                    successfully_updated_predictions.append(company_id)
-                else:
-                    failed_updates_predictions.append(company_id)
-            
-            self.handle_db_commit()
-            
-        except Exception as e:
-            logger.exception(f"Transaction failed: {str(e)}")
-            self.conn.rollback()
-        finally:
-            self.close_db()
-
-        logger.info(f"Successfully inserted predictions: {len(successfully_inserted_predictions)}")
-        logger.info(f"Failed to insert predictions: {len(failed_inserted_predictions)}")
-        logger.info(f"Successfully updated predictions: {len(successfully_updated_predictions)}")
-        logger.info(f"Failed to update predictions: {len(failed_updates_predictions)}")
-
-
-    def close_db(self) -> None:
-        if self.cur is not None:
-            self.cur.close()
-            logger.info("Cursor is closed")
-        if self.conn is not None:
-            self.conn.close()
-            logger.info("Connection is closed")
-
-    def handle_db_commit(self) -> bool:
-        try:
-            self.conn.commit()
-            logger.info("Transaction Done")
-            return True
-        except Exception as e:
-            logger.exception(f"Transaction Failed: {str(e)}")
-            self.conn.rollback()
-            return False
-
-    def handle_insert(self, company_id:int, pred_data:dict[str, bool | float]) -> bool:
-        today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date = self.get_date()
-        insert_query:str = """
-            INSERT INTO prediction 
-            (actual_result, direction, expiration_date, prediction_date, company_id, prediction)
-            VALUES (%s, %s, %s, %s, %s, %s);
-            """
-        
-        insert_values:tuple[None, bool, str, str, int, float] = (
-            None,
-            bool(pred_data['direction']),
-            sunday_date if is_thursday else tomorrow_date,
-            today_date,
-            int(company_id),
-            float(pred_data['prediction'])
-        )
-        
-        try:
-            self.cur.execute(insert_query, insert_values)
-            logger.info(f"Successfully inserted prediction for company {company_id}")
-            return True
-        except Exception as e:
-            logger.exception(f'Failed to insert prediction. Company id: {company_id} Error: {str(e)}')
-            return False
-
-    def handle_update(self, company_id:int) -> bool:
-        today_date, yesterday_date, tomorrow_date, thursday_date, is_thursday, is_sunday, sunday_date = self.get_date()
-        update_query:str = """
-            UPDATE prediction
-            SET actual_result = %s
-            WHERE prediction_date = %s 
-            AND company_id = %s
-            AND actual_result IS NULL
-            AND expiration_date = %s
-            """
-        
-        update_values:tuple[float, str, int, str] = (
-            float(self.last_rows[company_id]['close'].iloc[0]),
-            thursday_date if is_sunday else yesterday_date,
-            int(company_id),
-            today_date
-        )
-        
-        try:
-            self.cur.execute(update_query, update_values)
-            if self.cur.rowcount > 0:
-                logger.info(f"Successfully updated prediction for company {company_id}")
-                return True
-            else:
-                logger.info(f"No previous prediction found to update for company {company_id}")
-                return True
-        except Exception as e:
-            logger.exception(f"Failed to update previous prediction for company: {company_id}")
-            return False
-        
-    
     def save_sets_to_excel(self) ->None:
         companies_sets_dict = self.data_split()
         
@@ -323,6 +179,8 @@ class XgBoostModel:
             print(f"Train, validation, test, Excel file saved for company: {company_id}")  
 
 if __name__ == "__main__":
-    obj = XgBoostModel()
-    pred = obj.xgboost_model()
-    obj.insert_prediction(predictions_dict=pred)
+    model_obj = XgBoostModel()
+    pred = model_obj.xgboost_model()
+    
+    db_saver = SavePredictions()
+    db_saver.insert_prediction(predictions_dict = pred, last_rows= model_obj.last_rows)
