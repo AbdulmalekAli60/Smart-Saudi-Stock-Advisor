@@ -5,7 +5,7 @@ import logging
 from config.companies_list import companies
 import psycopg2
 from config.connect_to_database import connect_to_database
-from utills import get_date
+from utills.get_date import get_date
 logger = logging.getLogger('yfinance_saver module')
 logger.setLevel(logging.INFO)
 
