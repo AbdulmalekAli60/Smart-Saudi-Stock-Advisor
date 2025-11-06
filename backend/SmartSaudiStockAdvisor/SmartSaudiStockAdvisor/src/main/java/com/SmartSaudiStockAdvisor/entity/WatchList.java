@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "watch_list")
-// bookmark
 public class WatchList {
 
     @Id

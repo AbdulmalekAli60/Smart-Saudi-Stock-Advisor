@@ -41,8 +41,6 @@ class AuthServiceImplTest {
 
     @BeforeEach
     void setUp(){
-        // We tell Mockito: "When getMessage() is called with any string,
-        // just return that string (the key) as the message."
         when(mockMessageSource.getMessage(anyString(), any(), any()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
     }
@@ -61,7 +59,7 @@ class AuthServiceImplTest {
         when(mockPasswordEncoder.encode(signUpDTO.getPassword()))
                 .thenReturn("Password hashed");
 
-        when(mockUserRepo.save(any(User.class))) // what is this
+        when(mockUserRepo.save(any(User.class)))
                 .thenReturn(newUser);
 
         UserResponseDTO responseDTO = authService.signUp(signUpDTO);
@@ -140,7 +138,6 @@ class AuthServiceImplTest {
 
         User foundUser = new User("Test User", "testuser", "hashed_password", "test@example.com", "USER");
 
-        // Define mock behavior
         when(mockUserRepo.findByEmailIgnoreCase("test@example.com"))
                 .thenReturn(Optional.of(foundUser));
         when(mockPasswordEncoder.matches("wrong_password", "hashed_password"))

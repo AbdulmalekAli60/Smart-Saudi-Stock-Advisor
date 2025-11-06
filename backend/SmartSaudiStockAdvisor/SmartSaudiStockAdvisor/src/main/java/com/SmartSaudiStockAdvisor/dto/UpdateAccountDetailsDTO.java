@@ -30,7 +30,6 @@ public class UpdateAccountDetailsDTO {
     @Email(message = "{validation.update-account.email.email}")
     private String email;
 
-//    @NotNull(message = "{validation.not-null.invest-amount}")
     @DecimalMax(value = "99999999.99", message = "{validation.max-decimal.invest-amount}")
     @DecimalMin(value = "0", message = "{validation.min-decimal.invest-amount}")
     private BigDecimal investAmount;

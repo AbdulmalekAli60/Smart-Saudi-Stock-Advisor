@@ -77,13 +77,4 @@ public class SignUpDTO {
         this.username = username;
     }
 
-    @Override
-    public String toString() {
-        return "SignUpDTO{" +
-                ", email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", username='" + username + '\'' +
-                '}';
-    }
 }
