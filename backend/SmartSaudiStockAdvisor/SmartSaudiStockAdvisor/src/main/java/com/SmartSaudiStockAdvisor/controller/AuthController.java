@@ -90,7 +90,7 @@ public class AuthController {
         }
 
         if (!jwtService.isTokenValidButExpired(token)) {
-            log.warn("Token is still valid but expired or has invalid sig");
+            log.warn("Token is still valid but expired");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
