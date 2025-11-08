@@ -31,7 +31,7 @@ class XgBoostModel:
     def preprocessing_data(self) -> None:
         self.dataframe['tomorrow_close'] = self.dataframe.groupby('company_id')['close'].shift(-1)
         self.dataframe = self.dataframe.dropna(subset=['tomorrow_close'])
-        # self.dataframe = self.dataframe[self.dataframe['volume'] > 0]
+        self.dataframe = self.dataframe[self.dataframe['volume'] > 0]
         self.dataframe = self.dataframe.sort_values(['company_id', 'data_date']).reset_index(drop=True)
 
     def data_split(self, train_percentage:float = 0.70, validation_percentage:float = 0.15, test_percentage:float = 0.15) -> dict[int, dict[str,pd.DataFrame]]:
@@ -82,12 +82,12 @@ class XgBoostModel:
             logger.info(f"Training for company: {company_id} Training with: {x_train.shape[1]} features and with {x_train.shape[0]} samples")
             logger.info(f"Company: {company_id}")
             reg = XGBRegressor(    
-                n_estimators=75, 
+                n_estimators=50, 
                 learning_rate=0.1,     
-                max_depth=4,            
-                min_child_weight=20,    
-                reg_alpha=20.0,         
-                reg_lambda=30.0,        
+                max_depth=3,            
+                min_child_weight=25,    
+                reg_alpha=100,         
+                reg_lambda=200,        
                 subsample=0.6,         
                 colsample_bytree=0.6,   
                 early_stopping_rounds=5,
@@ -144,7 +144,7 @@ class XgBoostModel:
                 'direction': direction,
                 'prediction' : tomorrow_prediction
             }
-                                    
+                   
             logger.info(f"XGBoost model training completed for company: {company_id}")
         
         return predictions_dict 
@@ -167,6 +167,8 @@ class XgBoostModel:
         companies_sets_dict = self.data_split()
         
         for company_id, company_set in companies_sets_dict.items():
+            if company_id != 2:
+                continue
             train_data = company_set['train']
             validation_data = company_set['validation']
             test_data = company_set['test']
@@ -181,6 +183,8 @@ class XgBoostModel:
 if __name__ == "__main__":
     model_obj = XgBoostModel()
     pred = model_obj.xgboost_model()
-    
+    # model_obj.save_sets_to_excel()
+
+
     db_saver = SavePredictions()
     db_saver.insert_prediction(predictions_dict = pred, last_rows= model_obj.last_rows)
