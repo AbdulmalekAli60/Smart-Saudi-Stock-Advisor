@@ -36,10 +36,9 @@ export default function PredictionsChart({
   predections,
   limits,
 }: PredictionsChartProps) {
+
   const [dataPoints, setDataPoints] = useState<number>(0);
-  const [filteredPredections, setFilteredPredections] = useState<
-    PredictionInterface[] | undefined
-  >(undefined);
+  const [filteredPredections, setFilteredPredections] = useState<PredictionInterface[] | undefined>(undefined);
 
   useEffect(() => {
     const handleResize = () => {
@@ -51,7 +50,7 @@ export default function PredictionsChart({
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [dataPoints]);
 
   useEffect(() => {
     const filteredDates = predections?.filter((predecion) => {

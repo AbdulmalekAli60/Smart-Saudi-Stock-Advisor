@@ -163,10 +163,10 @@ export default function AccountPage() {
 
   return (
     <>
-    <title>إدارة الحساب</title>
+      <title>إدارة الحساب</title>
       <MainNav />
 
-      <main className="max-w-4xl mx-auto p-6 bg-white">
+      <main className="max-w-4xl mx-auto p-6 bg-white  min-h-screen">
         <div className="bg-offwhite p-4 rounded-2xl">
           {/* Header Section */}
           <div className="mb-8 mt-14">
