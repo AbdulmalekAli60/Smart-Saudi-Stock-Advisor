@@ -5,6 +5,7 @@ from xgboost import XGBRegressor
 import matplotlib.pyplot as plt
 from stock_indicators import StockIndicators
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from save_predictions import SavePredictions
 logger = logging.getLogger("Xgboost model module")
 logger.setLevel(logging.INFO)
@@ -68,43 +69,72 @@ class XgBoostModel:
         companies_sets_dict:dict[int, dict[str,pd.DataFrame]] = self.data_split()
         reg = None
         predictions_dict:dict[int, dict[str, bool | float]]  = {}
+
         for company_id, company_set in companies_sets_dict.items():
             # if company_id != 4:
             #     continue
             train_data:pd.DataFrame = company_set['train']
             validation_data:pd.DataFrame = company_set['validation']
             test_data:pd.DataFrame = company_set['test']
-            
+
+            # for grid saerch
+            # full_train_data = pd.concat([train_data, validation_data])
+            # x_full_train, y_full_train = full_train_data.iloc[:, :-1], full_train_data.iloc[:, -1]
+
             x_train, y_train = train_data.iloc[:, :-1], train_data.iloc[:, -1]
             x_validation, y_validation = validation_data.iloc[:, :-1], validation_data.iloc[:, -1]
             x_test, y_test = test_data.iloc[:, :-1], test_data.iloc[:, -1]
             
             logger.info(f"Training for company: {company_id} Training with: {x_train.shape[1]} features and with {x_train.shape[0]} samples")
             logger.info(f"Company: {company_id}")
+
             reg = XGBRegressor(    
-                n_estimators=50, 
-                learning_rate=0.1,     
-                max_depth=3,            
-                min_child_weight=25,    
-                reg_alpha=100,         
-                reg_lambda=200,        
+                n_estimators=1000, 
+                # learning_rate=0.1,     
+                # max_depth=3,            
+                # min_child_weight=25,    
+                # reg_alpha=100,         
+                # reg_lambda=200,        
                 subsample=0.6,         
                 colsample_bytree=0.6,   
-                early_stopping_rounds=5,
+                early_stopping_rounds=10,
                 random_state=42,
                 enable_categorical=True
             )
             
+            grid_params = {
+                'max_depth': [3, 5, 7],        
+                'learning_rate': [0.1, 0.2],  
+                'reg_alpha': [0, 5, 10, 30],     
+                'reg_lambda': [50, 100, 150, 200], 
+                'min_child_weight': [5, 15, 25] 
+            }
+            
+            tscv = TimeSeriesSplit(n_splits=3)
+
+            fit_params = {
+                'eval_set': [(x_validation, y_validation)]
+            }
+
+            gsc = GridSearchCV(estimator=reg, param_grid=grid_params, verbose=1, n_jobs=-1, cv=tscv, scoring='neg_mean_squared_error')
             logger.info("Training XGBoost model...")
             
-            reg.fit(
-                x_train, y_train,
-                eval_set=[(x_validation, y_validation)]
-            )
-            
-            train_pred:np.ndarray = reg.predict(x_train)
-            val_pred:np.ndarray = reg.predict(x_validation)
-            test_pred:np.ndarray = reg.predict(x_test)
+            # reg.fit(
+            #     x_train, y_train,
+            #     eval_set=[(x_validation, y_validation)]
+            # )
+
+            gsc.fit(x_train, y_train, **fit_params)
+
+            logger.info(f"GridSearchCV complete for company: {company_id}")
+            logger.info(f"Best parameters found: {gsc.best_params_}")
+            logger.info(f"Best CV score (neg_mean_squared_error): {gsc.best_score_:.4f}")
+
+            best_model = gsc.best_estimator_
+
+            train_pred:np.ndarray = best_model.predict(x_train)
+            val_pred:np.ndarray = best_model.predict(x_validation)
+            test_pred:np.ndarray = best_model.predict(x_test)
 
             train_rmse:float = np.sqrt(mean_squared_error(y_train, train_pred))
             train_mae:float = mean_absolute_error(y_train, train_pred)
@@ -135,7 +165,7 @@ class XgBoostModel:
 
             self.last_rows[company_id] = self.get_last_row(company_id=company_id)
             prediction_row:pd.Series = self.get_prediction_row(company_id=company_id, x_train_columns=x_train.columns)
-            tomorrow_prediction:float = reg.predict(prediction_row)[0]
+            tomorrow_prediction:float = best_model.predict(prediction_row)[0]
 
             current_price:float = self.last_rows[company_id]['close'].iloc[0]
             direction:bool = tomorrow_prediction > current_price
@@ -185,6 +215,5 @@ if __name__ == "__main__":
     pred = model_obj.xgboost_model()
     # model_obj.save_sets_to_excel()
 
-
-    db_saver = SavePredictions()
-    db_saver.insert_prediction(predictions_dict = pred, last_rows= model_obj.last_rows)
+    # db_saver = SavePredictions()
+    # db_saver.insert_prediction(predictions_dict = pred, last_rows= model_obj.last_rows)
