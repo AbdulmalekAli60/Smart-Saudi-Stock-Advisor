@@ -103,11 +103,11 @@ class XgBoostModel:
             )
             
             grid_params = {
-                'max_depth': [3, 5, 7],        
-                'learning_rate': [0.1, 0.2],  
-                'reg_alpha': [0, 5, 10, 30],     
-                'reg_lambda': [50, 100, 150, 200], 
-                'min_child_weight': [5, 15, 25] 
+                'max_depth': [2, 5], # done        
+                'learning_rate': [0.1, 0.2, 0.3, 0.4, 0.5],  
+                'reg_alpha': [0,5, 10, 15],     
+                'reg_lambda': [25, 100], # done 
+                'min_child_weight': [5, 10] # done 
             }
             
             tscv = TimeSeriesSplit(n_splits=3)
