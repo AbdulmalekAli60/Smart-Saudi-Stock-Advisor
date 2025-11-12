@@ -103,11 +103,11 @@ class XgBoostModel:
             )
             
             grid_params = {
-                'max_depth': [2, 5], # done        
-                'learning_rate': [0.1, 0.2, 0.3, 0.4, 0.5],  
-                'reg_alpha': [0,5, 10, 15],     
-                'reg_lambda': [25, 100], # done 
-                'min_child_weight': [5, 10] # done 
+                'max_depth': [2, 3],        
+                'learning_rate': [0.05, 0.1],  
+                'reg_alpha': [0, 10, 50],     
+                'reg_lambda': [25, 100, 200],  
+                'min_child_weight': [5, 10, 15] 
             }
             
             tscv = TimeSeriesSplit(n_splits=3)
@@ -163,6 +163,12 @@ class XgBoostModel:
             logger.info(f"Test R²: {test_r2:.4f}")
             logger.info("=" * 50)
 
+            # importance_df = pd.DataFrame({
+            #     'features_name': best_model.feature_names_in_,
+            #     'importance': best_model.feature_importances_
+            # })
+
+            # logger.info(importance_df)
             self.last_rows[company_id] = self.get_last_row(company_id=company_id)
             prediction_row:pd.Series = self.get_prediction_row(company_id=company_id, x_train_columns=x_train.columns)
             tomorrow_prediction:float = best_model.predict(prediction_row)[0]
@@ -176,7 +182,8 @@ class XgBoostModel:
             }
                    
             logger.info(f"XGBoost model training completed for company: {company_id}")
-        
+            logger.info("=" * 50)
+
         return predictions_dict 
             
     def get_last_row(self, company_id:int) -> pd.DataFrame:
@@ -215,5 +222,5 @@ if __name__ == "__main__":
     pred = model_obj.xgboost_model()
     # model_obj.save_sets_to_excel()
 
-    # db_saver = SavePredictions()
-    # db_saver.insert_prediction(predictions_dict = pred, last_rows= model_obj.last_rows)
+    db_saver = SavePredictions()
+    db_saver.insert_prediction(predictions_dict = pred, last_rows= model_obj.last_rows)

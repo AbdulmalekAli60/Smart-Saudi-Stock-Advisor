@@ -26,7 +26,8 @@ class StockIndicators:
     # Trend Indicators    
     def sma(self) -> pd.DataFrame:
         #time_periods = [5 ,10, 12, 20, 26, 50] # original
-        time_periods:list[int] = [5 ,15, 30]
+        # time_periods:list[int] = [5 ,15, 30]
+        time_periods:list[int] = [20]
 
         for time_period in time_periods:
             self.dataframe[f'SMA_{time_period}'] = (
@@ -397,10 +398,9 @@ class StockIndicators:
         print("Excel file saved")
 
     def calculate_all_indicators(self) ->  pd.DataFrame:
-        try:
-            
+        try:  
             self.ema()
-            # self.sma()
+            self.sma()
             self.macd()
             self.roc()
             self.rsi()
@@ -415,7 +415,6 @@ class StockIndicators:
             # self.ma_crossover()
             # self.high_low_range_ratio()
             
-            # self.dataframe = self.dataframe[self.dataframe['volume'] > 0]
             return self.dataframe
         
         except Exception as e:
