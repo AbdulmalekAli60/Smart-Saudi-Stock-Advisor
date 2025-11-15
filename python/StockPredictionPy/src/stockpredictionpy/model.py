@@ -2,11 +2,9 @@ import pandas as pd
 import numpy as np
 import logging
 from xgboost import XGBRegressor
-import matplotlib.pyplot as plt
 from stock_indicators import StockIndicators
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
-from save_predictions import SavePredictions
 logger = logging.getLogger("Xgboost model module")
 logger.setLevel(logging.INFO)
 
@@ -77,10 +75,6 @@ class XgBoostModel:
             validation_data:pd.DataFrame = company_set['validation']
             test_data:pd.DataFrame = company_set['test']
 
-            # for grid saerch
-            # full_train_data = pd.concat([train_data, validation_data])
-            # x_full_train, y_full_train = full_train_data.iloc[:, :-1], full_train_data.iloc[:, -1]
-
             x_train, y_train = train_data.iloc[:, :-1], train_data.iloc[:, -1]
             x_validation, y_validation = validation_data.iloc[:, :-1], validation_data.iloc[:, -1]
             x_test, y_test = test_data.iloc[:, :-1], test_data.iloc[:, -1]
@@ -89,12 +83,7 @@ class XgBoostModel:
             logger.info(f"Company: {company_id}")
 
             reg = XGBRegressor(    
-                n_estimators=1000, 
-                # learning_rate=0.1,     
-                # max_depth=3,            
-                # min_child_weight=25,    
-                # reg_alpha=100,         
-                # reg_lambda=200,        
+                n_estimators=1000,    
                 subsample=0.6,         
                 colsample_bytree=0.6,   
                 early_stopping_rounds=10,
@@ -222,5 +211,5 @@ if __name__ == "__main__":
     pred = model_obj.xgboost_model()
     # model_obj.save_sets_to_excel()
 
-    db_saver = SavePredictions()
-    db_saver.insert_prediction(predictions_dict = pred, last_rows= model_obj.last_rows)
+    # db_saver = SavePredictions()
+    # db_saver.insert_prediction(predictions_dict = pred, last_rows= model_obj.last_rows)
