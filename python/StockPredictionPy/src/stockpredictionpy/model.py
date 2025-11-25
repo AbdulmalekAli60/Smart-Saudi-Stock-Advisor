@@ -69,8 +69,7 @@ class XgBoostModel:
         predictions_dict:dict[int, dict[str, bool | float]]  = {}
 
         for company_id, company_set in companies_sets_dict.items():
-            # if company_id != 4:
-            #     continue
+
             train_data:pd.DataFrame = company_set['train']
             validation_data:pd.DataFrame = company_set['validation']
             test_data:pd.DataFrame = company_set['test']
@@ -108,11 +107,6 @@ class XgBoostModel:
             gsc = GridSearchCV(estimator=reg, param_grid=grid_params, verbose=1, n_jobs=-1, cv=tscv, scoring='neg_mean_squared_error')
             logger.info("Training XGBoost model...")
             
-            # reg.fit(
-            #     x_train, y_train,
-            #     eval_set=[(x_validation, y_validation)]
-            # )
-
             gsc.fit(x_train, y_train, **fit_params)
 
             logger.info(f"GridSearchCV complete for company: {company_id}")
@@ -152,12 +146,7 @@ class XgBoostModel:
             logger.info(f"Test R²: {test_r2:.4f}")
             logger.info("=" * 50)
 
-            # importance_df = pd.DataFrame({
-            #     'features_name': best_model.feature_names_in_,
-            #     'importance': best_model.feature_importances_
-            # })
 
-            # logger.info(importance_df)
             self.last_rows[company_id] = self.get_last_row(company_id=company_id)
             prediction_row:pd.Series = self.get_prediction_row(company_id=company_id, x_train_columns=x_train.columns)
             tomorrow_prediction:float = best_model.predict(prediction_row)[0]
