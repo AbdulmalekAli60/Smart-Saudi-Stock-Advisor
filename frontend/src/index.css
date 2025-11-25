@@ -28,21 +28,26 @@
   --font-primary-bold: Noto-Sans-bold, "sans-serif";
 
   --color-primary: #1b4332;
-  --color-primary-light: #2d5a3d;
+  --color-primary-light: #245741;
   --color-secondary: #d4af37;
-  --color-background: #f6f5f9;
-  --color-accent: #6b7280;
 
-  --color-text-primary: #050316;
+  --color-primary: #1b4332;
+  --color-secondary: #d4af37;
+  --color-background: #f3f4f6;
+  --color-surface: #ffffff;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+
+  --color-background: #f3f4f6;
+  --color-surface: #ffffff;
+  --color-hero-bg: #1b4332;
+
+  --color-text-primary: #111827;
   --color-text-secondary: #6b7280;
 
-  --color-offwhite: #F5F5DC;
   --color-success: #059669;
-  --color-warning: #f59e0b;
+  --color-warning: #d97706;
   --color-fail: #dc2626;
   --color-border: #e5e7eb;
-  --color-white: #ffffff;
-  --gradient-hero: linear-gradient(90deg,rgba(94, 88, 140, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(57, 169, 191, 1) 100%);
 }
-
-/* linear-gradient(135deg, #22c55e 0%, #3b82f6 100%); */

@@ -1,5 +1,5 @@
 import { useQueries } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { companyById } from "../services/CompanyService";
 import Loader from "../components/Loader";
 import {
@@ -32,6 +32,14 @@ import Footer from "../components/Footer";
 import calculateROI from "../utils/CalculateROI";
 
 export default function CompanyPage() {
+  const navigaet = useNavigate();
+
+  // check if user data in storgae or back no landing page
+  useEffect(() => {
+    if (!sessionStorage.getItem("user")) {
+      navigaet("/");
+    }
+  }, [navigaet]);
   const { companyId } = useParams();
   const { currentUserData } = useUserInfo();
   const [roiResult, setRoiResult] = useState<{
@@ -54,7 +62,6 @@ export default function CompanyPage() {
       allPredictionsQueryOptions(companyId),
       latestPredictionsQueryOptions(companyId),
       getHistoricalDataQueryOptions(companyId),
-      // WatchListQueryOptions(),
     ],
   });
 
@@ -63,7 +70,6 @@ export default function CompanyPage() {
     predictionsQuery,
     latestPredictionQuery,
     historicalDataQuery,
-    // watchListQuery,
   ] = result;
 
   const company = companyQuery.data?.data;
@@ -92,251 +98,227 @@ export default function CompanyPage() {
       <title>{company?.companyArabicName}</title>
       <HomePageNav />
 
-      <main
-        className="w-full flex pt-14"
-        style={{ height: "calc(100vh - 3.5rem)" }}
-      >
-        {/* side */}
-
+      <main className="w-full flex pt-14 h-screen overflow-hidden bg-background">
+        {/* small size bg */}
         {isAside && (
           <div
-            className="fixed h-screen w-screen bg-gray-500 opacity-50 z-40 md:hidden lg:hidden"
+            className="fixed inset-0 bg-gray-900/50 z-40 md:hidden"
             onClick={() => setIsAside(false)}
           />
         )}
-        {isAside && (
-          <aside
-            className={`
-              fixed md:relative top-14 md:top-0 m-auto z-50 md:z-0
+
+        {/* sidbar */}
+        <aside
+          className={`
+              fixed md:relative top-14 md:top-0 bottom-0 z-50 md:z-0
               bg-white 
               w-80 md:w-72 lg:w-1/4 xl:w-1/5 
-              border-r border-gray-200 
-              sm:w-full
-              p-3 md:p-4 lg:p-6
+              border-l border-[var(--color-border)]
+              p-4 md:p-6
               flex flex-col 
               overflow-y-auto
-              transform transition-all duration-300
-              translate-x-0
+              transition-transform duration-300 ease-in-out
+              ${isAside ? "translate-x-0" : "translate-x-full md:hidden"}
             `}
-            style={{ height: "calc(100vh - 3.5rem)" }}
-          >
-            <div className="flex justify-between items-start mb-4 md:mb-6">
-              <button
-                onClick={() => setIsAside(false)}
-                className="md:hidden bg-gray-100 cursor-pointer hover:bg-red-100 text-gray-600 hover:text-red-600 p-2 rounded-full transition-colors "
-              >
-                <X size={20} />
-              </button>
+        >
+          <div className="flex justify-between items-start mb-6">
+            <button
+              onClick={() => setIsAside(false)}
+              className="md:hidden bg-gray-100 p-2 rounded-full"
+            >
+              <X size={20} />
+            </button>
 
-              <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 bg-gray-50 rounded-lg flex items-center justify-center border p-2 mx-auto">
-                <img
-                  className="max-w-full max-h-full object-contain"
-                  src={company?.companyLogo}
-                  alt="company logo"
-                />
-              </div>
-
-              <button
-                onClick={() => setIsAside(false)}
-                className="hidden md:block bg-gray-100 hover:bg-red-100 text-gray-600 hover:text-red-600 p-2 rounded-full transition-colors cursor-pointer"
-              >
-                <X size={20} />
-              </button>
+            <div className="w-24 h-24 bg-gray-50 rounded-xl border p-2 mx-auto flex items-center justify-center">
+              <img
+                className="max-w-full max-h-full object-contain"
+                src={company?.companyLogo}
+                alt="company logo"
+              />
             </div>
 
-            <div className="space-y-3 md:space-y-4">
-              <div className="text-center border-b border-gray-100 pb-3 md:pb-4">
-                <h1 className="font-bold text-base md:text-lg lg:text-xl text-gray-900 mb-1 md:mb-2">
-                  {company?.companyArabicName}
-                </h1>
-                <h2 className="text-xs md:text-sm text-gray-600">
-                  {company?.companyEnglishName}
-                </h2>
-              </div>
+            <button
+              onClick={() => setIsAside(false)}
+              className="hidden md:block p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors"
+            >
+              <X size={20} className="text-gray-500 cursor-pointer" />
+            </button>
+          </div>
 
-              <div className="space-y-2 md:space-y-3">
-                <StatCard
-                  Icon={CandlestickChart}
-                  body={company?.tickerName?.split(".")[0]}
-                  title="رمز التداول"
-                  color="text-blue-600"
-                />
-
-                <StatCard
-                  Icon={Factory}
-                  body={company?.sectorArabicName}
-                  title="القطاع"
-                  color="text-green-600"
-                />
-
-                <StatCard
-                  Icon={TrendingUpDown}
-                  body={latestPredction?.prediction.toFixed(2)}
-                  title={`توقع سعر اليوم التالي ${
-                    latestPredction?.expirationDate.split("T")[0]
-                  }`}
-                  color="text-blue-600"
-                />
-
-                <StatCard
-                  Icon={Database}
-                  body={historical?.length.toString()}
-                  title="عدد البيانات التي تم استخدامها للتحليل"
-                  color="text-black"
-                />
-
-                <StatCard
-                  Icon={Database}
-                  body={historical?.length.toString()}
-                  title="عدد البيانات التي تم استخدامها للتحليل"
-                  color="text-black"
-                />
-                <StatCard
-                  Icon={SaudiRiyal}
-                  body={
-                    latestPredction?.prediction
-                      ? roiResult.value.toFixed(2)
-                      : "لايوجد"
-                  }
-                  title="الأرباح المتوقعة بناءا على مبلغ الإستثمار"
-                  color="text-green-700"
-                />
-
-                <StatCard
-                  Icon={Clock}
-                  body={latestPredction?.expirationDate.split("T")[0]}
-                  title="نهاية تاريخ الصلاحية"
-                  color="text-black"
-                />
-
-                <StatCard
-                  Icon={SignpostBig}
-                  body={
-                    latestPredction?.direction ? (
-                      <TrendingUp className="text-success" />
-                    ) : (
-                      <TrendingDown className="text-fail" />
-                    )
-                  }
-                  title="الإتجاة"
-                  color="text-amber-400"
-                />
-              </div>
+          <div className="space-y-4">
+            <div className="text-center border-b border-gray-100 pb-4">
+              <h1 className="font-bold text-lg text-text-primary">
+                {company?.companyArabicName}
+              </h1>
+              <h2 className="text-sm text-text-secondary">
+                {company?.companyEnglishName}
+              </h2>
             </div>
-          </aside>
-        )}
+
+            <div className="space-y-3">
+              <StatCard
+                Icon={CandlestickChart}
+                body={company?.tickerName?.split(".")[0]}
+                title="رمز التداول"
+                color="text-blue-600"
+              />
+              <StatCard
+                Icon={Factory}
+                body={company?.sectorArabicName}
+                title="القطاع"
+                color="text-green-600"
+              />
+              <StatCard
+                Icon={TrendingUpDown}
+                body={latestPredction?.prediction.toFixed(2)}
+                title={`توقع سعر الغد`}
+                color="text-blue-600"
+              />
+              <StatCard
+                Icon={Database}
+                body={historical?.length.toString()}
+                title="بيانات التحليل"
+                color="text-black"
+              />
+              <StatCard
+                Icon={SaudiRiyal}
+                body={
+                  latestPredction?.prediction
+                    ? roiResult.value.toFixed(2)
+                    : "لايوجد"
+                }
+                title="الأرباح المتوقعة"
+                color="text-green-700"
+              />
+              <StatCard
+                Icon={Clock}
+                body={latestPredction?.expirationDate.split("T")[0]}
+                title="تاريخ الصلاحية"
+                color="text-black"
+              />
+              <StatCard
+                Icon={SignpostBig}
+                body={
+                  latestPredction?.direction ? (
+                    <TrendingUp className="text-success" />
+                  ) : (
+                    <TrendingDown className="text-fail" />
+                  )
+                }
+                title="الإتجاة"
+                color="text-amber-400"
+              />
+            </div>
+          </div>
+        </aside>
 
         <section
           className={`
-          bg-gray-50 p-3 md:p-4 lg:p-6 transition-all duration-300 overflow-y-auto
-          ${isAside ? "w-full md:w-3/4 lg:w-3/4 xl:w-4/5" : "w-full"}
-        `}
-          style={{ height: "calc(100vh - 3.5rem)" }}
+             flex-1 flex flex-col h-full overflow-y-auto overflow-x-hidden relative
+             transition-all duration-300
+          `}
         >
-          <div className="flex justify-between items-center">
-            <button
-              onClick={() => setIsAside(!isAside)}
-              className="bg-primary text-white sm:px-3 whitespace-nowrap px-4 py-2 cursor-pointer rounded-lg hover:bg-primary-dark transition-colors duration-200 font-medium"
-            >
-              {isAside ? "إخفاء المعلومات" : "إظهار المعلومات"}
-            </button>
+          <div className="p-4 md:p-6 flex-grow flex flex-col ">
+            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+              {!isAside && (
+                <button
+                  onClick={() => setIsAside(true)}
+                  className="bg-primary text-white px-4 cursor-pointer py-2 rounded-lg hover:bg-primary-light transition-colors"
+                >
+                  إظهار المعلومات
+                </button>
+              )}
 
-            <div className="gap-1 text-center flex w-fit p-1 bg-gray-100 rounded-full mb-3 border border-gray-200">
+              <div className="flex  gap-1 bg-white p-1 rounded-lg border border-border">
+                <button
+                  onClick={() => setIsHistricalData(true)}
+                  className={`px-4 py-2 rounded-md text-sm cursor-pointer font-medium transition-all ${
+                    isHistoricalData
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  البيانات التاريخية
+                </button>
+                <button
+                  onClick={() => setIsHistricalData(false)}
+                  className={`px-4 py-2 rounded-md text-sm font-medium cursor-pointer transition-all ${
+                    !isHistoricalData
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  التوقعات
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-white border border-border rounded-xl p-4 mb-4 flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2 border-l pl-4 ml-2">
+                <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
+                <h1 className="font-bold text-gray-800">التاريخ</h1>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500 font-bold">من</span>
+                <SelectComponent
+                  options={options}
+                  placeholder="البداية"
+                  field="from"
+                  setValeu={setSelectedValue}
+                  value={selectedValue.from}
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500 font-bold">إلى</span>
+                <SelectComponent
+                  options={options}
+                  placeholder="النهاية"
+                  field="to"
+                  setValeu={setSelectedValue}
+                  value={selectedValue.to}
+                />
+              </div>
+
               <button
-                onClick={() => setIsHistricalData(true)}
-                className={`px-6 py-2 rounded-full transition-all duration-200 font-medium cursor-pointer ${
-                  isHistoricalData
-                    ? "bg-blue-600 text-white shadow-md"
-                    : "bg-transparent text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-                }`}
+                className="mr-auto p-2 bg-gray-100 rounded-lg hover:text-blue-600 hover:rotate-180 transition-all duration-300"
+                onClick={() =>
+                  setSelectedValue({
+                    from: { value: "", label: "" },
+                    to: { value: "", label: "" },
+                  })
+                }
               >
-                البيانات التاريخية
-              </button>
-              <button
-                onClick={() => setIsHistricalData(false)}
-                className={`sm:px-2 sm:py-1  lg:px-6 lg:py-2 rounded-full transition-all duration-200 font-medium cursor-pointer ${
-                  !isHistoricalData
-                    ? "bg-blue-600 text-white shadow-md"
-                    : "bg-transparent text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-                }`}
-              >
-                التوقعات
+                <RotateCcw size={18} />
               </button>
             </div>
-            <div></div>
+
+            <div className="w-full h-[500px] mb-8">
+              {isHistoricalData ? (
+                <HistoricalDataChart
+                  historicalData={historical}
+                  limits={selectedValue}
+                />
+              ) : (
+                <PredictionsChart
+                  predections={predctions}
+                  limits={selectedValue}
+                />
+              )}
+            </div>
           </div>
 
-          <div className="w-full flex flex-wrap items-center gap-4 bg-white border border-gray-200 rounded-2xl shadow-sm p-4 mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-8 bg-blue-500 rounded-full"></div>
-              <h1 className="font-primary-bold text-lg text-gray-800">
-                إختر التاريخ
-              </h1>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label className="font-primary-bold text-gray-700 text-sm">
-                من
-              </label>
-              <SelectComponent
-                options={options}
-                placeholder="حدد تاريخ البداية"
-                field="from"
-                setValeu={setSelectedValue}
-                value={selectedValue.from}
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label className="font-primary-bold text-gray-700 text-sm">
-                إلى
-              </label>
-              <SelectComponent
-                options={options}
-                field="to"
-                placeholder="حدد تاريخ النهاية"
-                setValeu={setSelectedValue}
-                value={selectedValue.to}
-              />
-            </div>
-
-            <button
-              className="mr-auto bg-gray-100 rounded-xl cursor-pointer hover:bg-blue-50 hover:text-blue-600 p-2.5 transition-all duration-200 group"
-              onClick={() =>
-                setSelectedValue({
-                  from: { value: "", label: "" },
-                  to: { value: "", label: "" },
-                })
-              }
-            >
-              <RotateCcw className="w-5 h-5 hover:rotate-180 duration-300" />
-            </button>
-          </div>
-
-          <div className="bg-white w-full h-full rounded-xl shadow-sm border border-gray-200 p-4">
-            {isHistoricalData ? (
-              <HistoricalDataChart
-                historicalData={historical}
-                limits={selectedValue}
-              />
-            ) : (
-              <PredictionsChart
-                predections={predctions}
-                limits={selectedValue}
-              />
-            )}
+          <div className="mt-auto">
+            <Footer />
           </div>
         </section>
 
         {(companyQuery.isLoading ||
           predictionsQuery.isLoading ||
           latestPredictionQuery.isLoading ||
-          historicalDataQuery.isLoading) && (
-          // watchListQuery.isLoading
-          <Loader />
-        )}
+          historicalDataQuery.isLoading) && <Loader />}
       </main>
-      <Footer />
     </>
   );
 }

@@ -13,6 +13,14 @@ import { useToast } from "../contexts/ToastContext";
 import Footer from "../components/Footer";
 
 export default function DashBoaredPage() {
+  const navigaet = useNavigate();
+
+  // check if user data in storgae or back no landing page
+  useEffect(() => {
+    if (!sessionStorage.getItem("user")) {
+      navigaet("/");
+    }
+  }, [navigaet]);
   const { showToast } = useToast();
   const navigate = useNavigate();
 
@@ -62,7 +70,7 @@ export default function DashBoaredPage() {
 
   return (
     <>
-    <title>صفحة التحكم</title>
+      <title>صفحة التحكم</title>
       <MainNav />
       <div className="pt-14 h-screen w-full bg-background">
         <div className=" p-4">

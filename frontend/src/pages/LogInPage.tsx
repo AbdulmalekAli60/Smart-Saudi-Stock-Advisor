@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import LogInAnimation from "../animations/LogInAnimation";
-import Footer from "../components/Footer";
 import { Loader, LogIn } from "lucide-react";
 import React, { useState } from "react";
 import { LogInState } from "../Interfaces/AuthInterfaces";
@@ -27,7 +26,7 @@ export default function LogInPage() {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     e.preventDefault();
-    console.log("Log in Data", logInFormData);
+    // console.log("Log in Data", logInFormData);
 
     try {
       const response = await mutation.mutateAsync();
@@ -87,7 +86,7 @@ export default function LogInPage() {
               {/* Icon */}
               <div className="text-center space-y-2">
                 <div className="w-16 h-16 lg:w-20 lg:h-20 bg-accent shadow-lg inline-flex items-center justify-center rounded-full mb-3">
-                  <LogIn className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
+                  <LogIn className="h-8 w-8 lg:h-10 lg:w-10 text-text-secondary" />
                 </div>
                 <h1 className="font-primary-bold text-xl lg:text-2xl">
                   تسجيل الدخول
@@ -165,15 +164,12 @@ export default function LogInPage() {
 
         <section
           className="hidden lg:flex lg:w-2/5 items-center justify-center"
-          style={{ background: "var(--gradient-hero)" }}
         >
-          <div className="w-full h-full flex items-center justify-center p-8">
+          <div className="w-full h-full flex bg-primary-light items-center justify-center p-8">
             <LogInAnimation />
           </div>
         </section>
       </main>
-
-      <Footer />
     </>
   );
 }

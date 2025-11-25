@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import SignUpAnimation from "../animations/SignUpAnimation";
 import { Loader, UserPlus } from "lucide-react";
-import Footer from "../components/Footer";
 import Input from "../components/Input";
 import { useState } from "react";
 import { SignUp } from "../Interfaces/AuthInterfaces";
@@ -86,7 +85,7 @@ export default function SignUpPage() {
               {/* Logo */}
               <div className="text-center">
                 <div className="w-16 h-16 lg:w-20 lg:h-20 bg-accent shadow-lg inline-flex items-center justify-center rounded-full mb-3">
-                  <UserPlus className="h-8 w-8 lg:h-10 lg:w-10 text-white" />
+                  <UserPlus className="h-8 w-8 lg:h-10 lg:w-10 text-text-secondary" />
                 </div>
                 <h1 className="font-primary-bold text-xl lg:text-2xl">
                   إنشاء حساب جديد
@@ -202,17 +201,12 @@ export default function SignUpPage() {
           </div>
         </section>
 
-        <section
-          className="hidden lg:flex lg:w-2/5 items-center justify-center"
-          style={{ background: "var(--gradient-hero)" }}
-        >
-          <div className="w-full h-full flex items-center justify-center p-8">
+        <section className="hidden lg:flex lg:w-2/5 items-center justify-center">
+          <div className="w-full h-full bg-primary-light flex items-center justify-center p-8">
             <SignUpAnimation />
           </div>
         </section>
       </main>
-
-      <Footer />
     </>
   );
 }

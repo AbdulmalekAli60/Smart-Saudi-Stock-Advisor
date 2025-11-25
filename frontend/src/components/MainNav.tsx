@@ -24,8 +24,7 @@ export default function MainNav() {
 
   return (
     <nav
-      style={{ background: "var(--gradient-hero)" }}
-      className=" bg-background fixed w-full h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 flex items-center justify-between z-50"
+      className="bg-primary fixed w-full h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 flex items-center justify-between z-50"
     >
       <div className="flex-shrink-0 min-w-0">
         <Link to={"/home"}>
@@ -117,14 +116,14 @@ export default function MainNav() {
         <div id="menu-container" className="relative space-x-2">
           {currentUserData.role === "ADMIN" && (
             <Link to={"/dashboared"}>
-              <button className="rounded-full mb-2 cursor-pointer bg-primary hover:bg-primary-light hover:scale-105 transition-all font-medium text-white h-7 px-2 text-xs md:h-8 md:px-3 md:text-xs lg:h-10 lg:px-4 lg:text-sm whitespace-nowrap">
+              <button className="rounded-full mb-2 cursor-pointer bg-text-primary hover:bg-text-secondary hover:scale-105 transition-all font-medium text-white h-7 px-2 text-xs md:h-8 md:px-3 md:text-xs lg:h-10 lg:px-4 lg:text-sm whitespace-nowrap">
                 التحكم
               </button>
             </Link>
           )}
           <button
             onClick={() => setIsMenueActive(!isMenueActive)}
-            className="rounded-full mb-2 cursor-pointer bg-primary hover:bg-primary-light hover:scale-105 transition-all font-medium text-white h-7 px-2 text-xs md:h-8 md:px-3 md:text-xs lg:h-10 lg:px-4 lg:text-sm whitespace-nowrap"
+            className="rounded-full bg-text-primary mb-2 cursor-pointer  hover:opacity-80 hover:scale-105 transition-all font-medium text-white h-7 px-2 text-xs md:h-8 md:px-3 md:text-xs lg:h-10 lg:px-4 lg:text-sm whitespace-nowrap"
           >
             <span className="hidden sm:inline">الحساب </span>
             <User className="inline w-3 h-3 md:w-4 md:h-4" />

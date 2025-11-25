@@ -22,7 +22,7 @@ export default function DropDownMenu() {
   }
 
   return (
-    <div className="fixed top-12 left-2 sm:left-7 md:left-4 lg:left-5 xl:left-5 2xl:left-5 shadow-lg bg-gray-400 rounded-lg z-50">
+    <div className="fixed top-12 left-2 sm:left-7 md:left-4 lg:left-5 xl:left-5 2xl:left-5 shadow-lg bg-text-secondary rounded-lg z-50">
       <ul className=" w-fit p-2 whitespace-nowrap  space-y-3 ">
         <Link to={"/account"}>
           <li className="font-primary-regular p-3 cursor-pointer hover:bg-gray-500  hover:shadow-lg hover:rounded-full text-white">

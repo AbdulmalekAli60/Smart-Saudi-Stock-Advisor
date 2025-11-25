@@ -10,6 +10,7 @@ import Footer from "../components/Footer";
 import { getAllCompaniesQueryOptions } from "../services/CompanyService";
 import { useNavigate } from "react-router-dom";
 import { WatchListQueryOptions } from "../services/WatchListService";
+
 export default function HomePage() {
   const [selectedSector, setSelectedSector] = useState<number | null>(null);
   const navigaet = useNavigate();
@@ -19,7 +20,7 @@ export default function HomePage() {
     if (!sessionStorage.getItem("user")) {
       navigaet("/");
     }
-  }, []);
+  }, [navigaet]);
 
   const { currentUserData } = useUserInfo();
   const results = useQueries({
@@ -48,78 +49,78 @@ export default function HomePage() {
 
   return (
     <>
-    <title>الرئيسة</title>
-      <main style={{ background: "var(--gradient-hero)" }}>
-        {/* nav */}
-        <div className="h-12 md:h-14 lg:h-16">
-          <MainNav />
+      <title>الرئيسة</title>
+
+      <main className="min-h-screen flex flex-col bg-background">
+        
+        <div className="bg-primary pb-12">
+            <div className="h-12 md:h-14 lg:h-16">
+              <MainNav />
+            </div>
+
+            <div className="container mx-auto px-6 mt-8 mb-4">
+              <h1 className="font-primary-thin text-white text-3xl md:text-4xl lg:text-5xl">
+                اهلا، <span className="font-primary-bold text-[var(--color-secondary)]">{currentUserData.name}</span>
+              </h1>
+              <p className="text-gray-300 mt-2 font-primary-thin">تابع أحدث تحليلات السوق السعودي بالذكاء الاصطناعي</p>
+            </div>
         </div>
-        {/* nav */}
 
-        {/* welcome section */}
-        <div className=" h-32 p-6 mt-4">
-          <h1 className="font-primary-thin text-secondary sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
-            اهلا {currentUserData.name}
-          </h1>
+        <div className="container mx-auto px-6 -mt-8 flex-grow">
+            
+            <section className="bg-white rounded-xl shadow-sm border border-border p-6 mb-8 mt-12">
+              <h1 className="font-primary-bold text-text-primary mb-6 text-xl md:text-2xl">
+                الأقسام
+              </h1>
+              <div className="flex flex-wrap gap-3">
+                <Badge
+                  key="all"
+                  sectorId={0}
+                  arabicName="الكل"
+                  isSelected={selectedSector === null}
+                  onSelect={() => setSelectedSector(null)}
+                />
+                {!isLoading &&
+                  sectorData?.data.map(({ sectorId, sectorArabicName }) => {
+                    return (
+                      <Badge
+                        key={sectorId}
+                        sectorId={sectorId}
+                        arabicName={sectorArabicName}
+                        isSelected={selectedSector === sectorId}
+                        onSelect={setSelectedSector}
+                      />
+                    );
+                  })}
+              </div>
+            </section>
+
+            {/* Companies */}
+            <section className="h-fit pb-12">
+              <h1 className="font-primary-bold text-text-primary mb-6 text-xl md:text-2xl">
+                الشركات
+              </h1>
+
+              <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {!isLoading &&
+                  filteredData?.map((company) => {
+                    const isBookmarked = bookmarkedCompanies.has(company.companyId);
+                    const watchListId = bookmarkedCompanies.get(company.companyId);
+                    return (
+                      <CompanyCard
+                        key={company.companyId}
+                        compnayData={company}
+                        isBookmarked={isBookmarked}
+                        watchListId={watchListId}
+                        onBookMarkChange={watchlists.refetch}
+                      />
+                    );
+                  })}
+              </div>
+            </section>
         </div>
-        {/* welcome section */}
-
-        {/* sectors */}
-        <section className="min-h-56 max-h-fit p-6">
-          <h1 className="font-primary-bold text-secondary mb-8 sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
-            الأقسام
-          </h1>
-          <div className="flex shrink-0 gap-3 flex-1 flex-wrap grow">
-            <Badge
-              key="all"
-              sectorId={0}
-              arabicName="الكل"
-              isSelected={selectedSector === null}
-              onSelect={() => setSelectedSector(null)}
-            />
-            {!isLoading &&
-              sectorData?.data.map(({ sectorId, sectorArabicName }) => {
-                return (
-                  <Badge
-                    key={sectorId}
-                    sectorId={sectorId}
-                    arabicName={sectorArabicName}
-                    isSelected={selectedSector === sectorId}
-                    onSelect={setSelectedSector}
-                  />
-                );
-              })}
-          </div>
-        </section>
-        {/* sectors */}
-
-        {/* companies */}
-        <section className="h-fit p-6 pb-8">
-          <h1 className="font-primary-bold text-secondary mb-6 sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
-            الشركات
-          </h1>
-
-          <div className="grid gap-7 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-            {!isLoading &&
-              filteredData?.map((company) => {
-                const isBookmarked = bookmarkedCompanies.has(company.companyId);
-                const watchListId = bookmarkedCompanies.get(company.companyId);
-                return (
-                  <CompanyCard
-                    key={company.companyId}
-                    compnayData={company}
-                    isBookmarked={isBookmarked}
-                    watchListId={watchListId}
-                    onBookMarkChange={watchlists.refetch}
-                  />
-                );
-              })}
-          </div>
-        </section>
-        {/* companies */}
 
         <Footer />
-
         {isLoading && <Loader />}
       </main>
     </>

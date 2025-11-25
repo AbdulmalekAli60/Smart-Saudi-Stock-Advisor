@@ -2,9 +2,9 @@ import Logo from "./Logo";
 
 export default function Footer() {
   return (
-    <footer className="bg-text-primary h-40 flex items-center flex-1 justify-around">
-      <span className="whitespace-nowrap text-white">
-        {new Date().getFullYear()}
+    <footer className="bg-primary h-40 w-full flex items-center justify-around mt-auto">
+      <span className="text-white font-primary-regular">
+        © {new Date().getFullYear()} جميع الحقوق محفوظة
       </span>
 
       <Logo />

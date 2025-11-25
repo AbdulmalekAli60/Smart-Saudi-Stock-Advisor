@@ -14,6 +14,7 @@ import PredictionInterface from "../Interfaces/PredictionInterface";
 import { useEffect, useState } from "react";
 import getNumberOfDataPointsBasedOnWidth from "../utils/GetNumberOfDataPointsBasedOnWidth";
 import { SelectedValue } from "../Interfaces/SelectedValueInterface";
+import zoomPlugin from "chartjs-plugin-zoom";
 
 ChartJS.register(
   CategoryScale,
@@ -22,7 +23,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Zoom
+  Zoom,
+  zoomPlugin
 );
 
 ChartJS.defaults.font.family = "var(--font-primary-regular)";
@@ -36,9 +38,10 @@ export default function PredictionsChart({
   predections,
   limits,
 }: PredictionsChartProps) {
-
   const [dataPoints, setDataPoints] = useState<number>(0);
-  const [filteredPredections, setFilteredPredections] = useState<PredictionInterface[] | undefined>(undefined);
+  const [filteredPredections, setFilteredPredections] = useState<
+    PredictionInterface[] | undefined
+  >(undefined);
 
   useEffect(() => {
     const handleResize = () => {

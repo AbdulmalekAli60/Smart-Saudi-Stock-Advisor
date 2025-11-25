@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../components/Input";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -20,6 +20,16 @@ import { useUserInfo } from "../contexts/UserContext";
 import Footer from "../components/Footer";
 
 export default function AccountPage() {
+
+  const navigaet = useNavigate();
+
+  // check if user data in storgae or back no landing page
+  useEffect(() => {
+    if (!sessionStorage.getItem("user")) {
+      navigaet("/");
+    }
+  }, [navigaet]);
+    
   const [updateData, setUpdateData] = useState<boolean>(false);
   const [updatedInfo, setUpdatedInfo] = useState<UpdateInfo>({
     email: null,

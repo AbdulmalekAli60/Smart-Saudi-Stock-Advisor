@@ -8,7 +8,6 @@ import {
 } from "../services/WatchListService";
 import axios from "axios";
 import { useToast } from "../contexts/ToastContext";
-import StatCard from "./StatCard";
 
 interface compnayCardProps {
   compnayData: CompanyResponse;
@@ -33,9 +32,8 @@ export default function CompanyCard({
     deleteWatchListMutationOptions(watchListId)
   );
 
-  async function handleSaveClick() {
-    // console.log("the company id is: ", compnayData.companyId);
-
+  async function handleSaveClick(e: React.MouseEvent) {
+    e.stopPropagation(); 
     try {
       if (isBookmarked && watchListId) {
         const response = await deleteMutation.mutateAsync();
@@ -44,62 +42,63 @@ export default function CompanyCard({
         const response = await mutation.mutateAsync();
         showToast("success", response.data);
       }
-
       onBookMarkChange();
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        // console.log(error.message);
         showToast("fail", error.message);
       }
     }
   }
 
   return (
-    <div className="w-full h-full p-6 bg-gray-300 text-center space-y-6 rounded-3xl shadow-lg">
-      <div className="w-full flex justify-between">
-        <div></div>
-        <img
-          className="w-1/2 h-1/2"
-          src={compnayData.companyLogo}
-          alt="company logo"
-        />
-
-        <div onClick={handleSaveClick}>
-          <Star
-            fill={isBookmarked ? "black" : "white"}
-            className="cursor-pointer"
+    <div
+      onClick={() => navigate(`/companies/${compnayData.companyId}`)}
+      className="group relative w-full bg-white rounded-xl border border-border p-5 
+                 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
+    >
+      <div className="flex justify-between items-start mb-4">
+        <div className="h-14 w-14 p-1 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center">
+          <img
+            className="w-full h-full object-contain"
+            src={compnayData.companyLogo}
+            alt="company logo"
           />
         </div>
+
+        <button
+          onClick={handleSaveClick}
+          className="p-2 rounded-full hover:bg-gray-50 cursor-pointer transition-colors"
+        >
+          <Star
+            size={22}
+            className={
+              isBookmarked ? "fill-secondary text-secondary" : "text-gray-400"
+            }
+          />
+        </button>
       </div>
 
-      <div
-        onClick={() => navigate(`/companies/${compnayData.companyId}`)}
-        className=" text-start font-primary-regular p-2 cursor-pointer"
-      >
-        <div className=" flex justify-between">
-          <h1 className="mb-3 sm:text-base md:text-3xl lg:text-4xl">
-            {compnayData.companyArabicName}
-          </h1>
+      <div className="text-start font-primary-regular mb-4">
+        <h1 className="font-primary-bold text-text-primary text-lg line-clamp-1 mb-1">
+          {compnayData.companyArabicName}
+        </h1>
+        <h2 className="text-text-secondary text-sm font-primary-thin mb-3">
+          {compnayData.companyEnglishName}
+        </h2>
 
-          <div className="space-x-2 whitespace-nowrap">
-            <StatCard
-              bodyClassName="font-primary-bold sm:text-sm md:text-base lg:text-lg"
-              Icon={ChartCandlestick}
-              body={compnayData.tickerName.split(".")[0]}
-              color="text-green-600"
-              title="رمز التداول"
-            />
-          </div>
-        </div>
+        <span className="inline-block bg-gray-100 text-text-secondary text-xs px-2 py-1 rounded-md">
+          {compnayData.sectorArabicName}
+        </span>
+      </div>
 
-        <div className="flex justify-between">
-          <h2 className="font-primary-regular sm:text-sm md:text-base lg:text-lg">
-            {compnayData.companyEnglishName}
-          </h2>
-          <h2 className="font-primary-bold sm:text-sm md:text-base lg:text-lg">
-            {compnayData.sectorArabicName}
-          </h2>
+      <div className="pt-4 border-t border-border flex justify-between items-center mt-auto">
+        <div className="flex items-center gap-2 text-secondary">
+          <ChartCandlestick size={16} />
+          <span className="text-sm font-primary-bold">
+            {compnayData.tickerName.split(".")[0]}
+          </span>
         </div>
+        <span className="text-xs text-gray-400">تداول</span>
       </div>
     </div>
   );

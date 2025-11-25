@@ -38,8 +38,7 @@ export default function LandingPage() {
     <>
       {/* Navigation */}
       <nav
-        style={{ background: "var(--gradient-hero)" }}
-        className=" w-full fixed left-1/2 z-50  -translate-x-1/2 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 shadow-lg flex items-center justify-between  md:rounded-bl-2xl md:rounded-br-2xl"
+        className=" w-full fixed left-1/2 z-50 bg-primary  -translate-x-1/2 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 shadow-lg flex items-center justify-between  "
       >
         <div className="flex items-center">
           <Logo />
@@ -59,10 +58,9 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section
-        className="grid grid-cols-3"
-        style={{ background: "var(--gradient-hero)" }}
+        className="grid grid-cols-3 bg-hero-bg"
       >
-        <div className="min-h-[400px] col-span-2 sm:h-dvh md:min-h-[500px] lg:min-h-[600px] xl:min-h-[700px] relative flex flex-col justify-center items-center px-4 md:px-6 lg:px-8">
+        <div className="min-h-[400px]  col-span-2 sm:h-dvh md:min-h-[500px] lg:min-h-[600px] xl:min-h-[700px] relative flex flex-col justify-center items-center px-4 md:px-6 lg:px-8">
           <div
             ref={heroSectionRef}
             className="text-center max-w-4xl mx-auto space-y-4 md:space-y-6 lg:space-y-8"
@@ -109,8 +107,8 @@ export default function LandingPage() {
           <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-primary-bold text-gray-800">
             كيف نعمل؟
           </h2>
-          <div className="bg-accent shadow-xl/30 rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8">
-            <p className="text-white text-justify text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed">
+          <div className="bg-surface border-border shadow-xl/30 rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8">
+            <p className="text-primary text-justify text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed">
               نقوم بجمع البيانات التاريخية الشاملة للشركات المختارة من مصادر
               موثوقة, ثم نستخدم نموذج XGBoost المتقدم في التعلم الآلي لتحليل هذه
               البيانات وإنتاج تنبؤات دقيقة لحركة الأسهم. يعتمد نموذجنا على
