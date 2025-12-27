@@ -1,14 +1,14 @@
 from saving_data_from_yf import SavingDataFromYf 
 from model import XgBoostModel
 from save_predictions import SavePredictions
-
+ 
 import logging
 
 logger = logging.getLogger('main module')
 logger.setLevel(logging.INFO)
 
 file_handler = logging.FileHandler("main.log", mode="w")
-
+  
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 file_handler.setFormatter(formatter)
 
