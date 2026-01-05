@@ -31,6 +31,7 @@ export default function AccountPage() {
   }, [navigaet]);
     
   const [updateData, setUpdateData] = useState<boolean>(false);
+
   const [updatedInfo, setUpdatedInfo] = useState<UpdateInfo>({
     email: null,
     name: null,
@@ -40,6 +41,7 @@ export default function AccountPage() {
   });
 
   const { setCurrentUserData } = useUserInfo();
+
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -47,11 +49,7 @@ export default function AccountPage() {
 
   const { data, isLoading, refetch } = useQuery(userDataQueryOptions());
 
-  const {
-    data: watchListData,
-    isLoading: watchListLoading,
-    refetch: watchListRefetch,
-  } = useQuery(WatchListQueryOptions());
+  const { data: watchListData,isLoading: watchListLoading, refetch: watchListRefetch,} = useQuery(WatchListQueryOptions());
 
   const mutation = useMutation(updateUserDataMutationOptions(updatedInfo));
 
@@ -149,6 +147,7 @@ export default function AccountPage() {
       <li key={key}>{message}</li>
     ));
   }
+
   async function handleDeleteAccountClick() {
     try {
       const userChoice = confirm(

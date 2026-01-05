@@ -6,6 +6,7 @@ import { axiosInstance } from "../utils/AxiosInstance";
 const isAdminEndpoint = "/dashboard";
 const allUsers = "/all-users";
 const deleteUser = "/delete-user";
+
 export function isAdminQueryOptions() {
   return queryOptions({
     queryKey: ["isAdmin"],

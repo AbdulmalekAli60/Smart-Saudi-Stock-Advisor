@@ -16,9 +16,7 @@ export default function DropDownMenu() {
     // console.log("the message is: ", response.data.message);
     showToast("success", response.data.message);
 
-    setTimeout(() => {
       navigate("/");
-    }, 500);
   }
 
   return (

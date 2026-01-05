@@ -39,6 +39,7 @@ export default function PredictionsChart({
   limits,
 }: PredictionsChartProps) {
   const [dataPoints, setDataPoints] = useState<number>(0);
+  
   const [filteredPredections, setFilteredPredections] = useState<
     PredictionInterface[] | undefined
   >(undefined);
@@ -59,7 +60,7 @@ export default function PredictionsChart({
     const filteredDates = predections?.filter((predecion) => {
       const predDate = predecion.predictionDate.split("T")[0];
 
-      if (!limits?.from.value || !limits?.to.value) return true;
+      if (!limits?.from.value && !limits?.to.value) return true;
 
       if (limits.from.value && !limits.to.value) {
         return predDate >= limits.from.value;

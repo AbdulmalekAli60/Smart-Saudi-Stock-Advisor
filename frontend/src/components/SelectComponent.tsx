@@ -42,6 +42,7 @@ export default function SelectComponent({
           "&:hover": {
             borderColor: "#3b82f6",
           },
+          
         }),
         menu: (base) => ({
           ...base,

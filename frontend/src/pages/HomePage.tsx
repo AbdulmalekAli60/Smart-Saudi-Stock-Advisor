@@ -15,7 +15,6 @@ export default function HomePage() {
   const [selectedSector, setSelectedSector] = useState<number | null>(null);
   const navigaet = useNavigate();
 
-  // check if user data in storgae or back no landing page
   useEffect(() => {
     if (!sessionStorage.getItem("user")) {
       navigaet("/");
@@ -31,22 +30,23 @@ export default function HomePage() {
     ],
   });
   const [sectorQuery, companiesQuery, watchlists] = results;
+
   const sectorData = sectorQuery.data;
   const companiesData = companiesQuery.data;
   const watchlistsData = watchlists.data;
 
-  const isLoading =
-    sectorQuery.isLoading || companiesQuery.isLoading || watchlists.isLoading;
+  const isLoading = sectorQuery.isLoading || companiesQuery.isLoading || watchlists.isLoading;
 
-  const filteredData = companiesData?.data.filter(({ sectorId }) => {
+  const filteredData = companiesData?.data.filter(({sectorId}) => {
     return selectedSector === sectorId || selectedSector === null;
   });
 
   const bookmarkedCompanies = new Map();
+
   watchlistsData?.data.forEach((item) => {
     bookmarkedCompanies.set(item.companyId, item.watchListId);
   });
-
+  
   return (
     <>
       <title>الرئيسة</title>

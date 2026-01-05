@@ -15,7 +15,6 @@ import Footer from "../components/Footer";
 export default function DashBoaredPage() {
   const navigaet = useNavigate();
 
-  // check if user data in storgae or back no landing page
   useEffect(() => {
     if (!sessionStorage.getItem("user")) {
       navigaet("/");

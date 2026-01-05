@@ -32,14 +32,15 @@ import Footer from "../components/Footer";
 import calculateROI from "../utils/CalculateROI";
 
 export default function CompanyPage() {
+
   const navigaet = useNavigate();
 
-  // check if user data in storgae or back no landing page
   useEffect(() => {
     if (!sessionStorage.getItem("user")) {
       navigaet("/");
     }
   }, [navigaet]);
+
   const { companyId } = useParams();
   const { currentUserData } = useUserInfo();
   const [roiResult, setRoiResult] = useState<{
@@ -51,6 +52,7 @@ export default function CompanyPage() {
   });
   const [isHistoricalData, setIsHistricalData] = useState<boolean>(false);
   const [isAside, setIsAside] = useState<boolean>(true);
+  
   const [selectedValue, setSelectedValue] = useState<SelectedValue>({
     from: { value: "", label: "" },
     to: { value: "", label: "" },

@@ -36,9 +36,9 @@ export default function LogInPage() {
       sessionStorage.setItem("user", JSON.stringify(response.data));
       showToast("success", response.data.message as string);
 
-      setTimeout(() => {
+      // setTimeout(() => {
         navigate("/home");
-      }, 500);
+      // }, 500);
     } catch (error) {
       if (isAxiosError(error)) {
         // console.log(error.response?.data);

@@ -6,9 +6,9 @@ import { useRef } from "react";
 import useAnimations from "../hooks/useAnimation";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
-import { useToast } from "../contexts/ToastContext";
 
 export default function LandingPage() {
+
   const cardsContent = [
     {
       id: 1,
@@ -27,7 +27,6 @@ export default function LandingPage() {
     },
   ];
 
-  const { showToast } = useToast();
 
   const heroSectionRef = useRef<HTMLDivElement>(null);
   const aboutUsSectionRef = useRef<HTMLDivElement>(null);
@@ -36,7 +35,7 @@ export default function LandingPage() {
   useAnimations({ heroSectionRef, aboutUsSectionRef, cardsSectionRef });
   return (
     <>
-      {/* Navigation */}
+      {/* navigation */}
       <nav
         className=" w-full fixed left-1/2 z-50 bg-primary  -translate-x-1/2 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 py-2 md:py-3 shadow-lg flex items-center justify-between  "
       >
@@ -44,7 +43,7 @@ export default function LandingPage() {
           <Logo />
         </div>
 
-        {/* Navigation Buttons */}
+        {/* navigaton buttons */}
         <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
           <Link to={"/sign-up"}>
             <Button color="text-primary">إنشاء حساب</Button>
@@ -56,11 +55,11 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* hero sect */}
       <section
         className="grid grid-cols-3 bg-hero-bg"
       >
-        <div className="min-h-[400px]  col-span-2 sm:h-dvh md:min-h-[500px] lg:min-h-[600px] xl:min-h-[700px] relative flex flex-col justify-center items-center px-4 md:px-6 lg:px-8">
+        <div className="min-h-[400px] col-span-2 sm:h-dvh md:min-h-[500px] lg:min-h-[600px] xl:min-h-[700px] relative flex flex-col justify-center items-center px-4 md:px-6 lg:px-8">
           <div
             ref={heroSectionRef}
             className="text-center max-w-4xl mx-auto space-y-4 md:space-y-6 lg:space-y-8"
@@ -81,7 +80,6 @@ export default function LandingPage() {
 
         <div className="col-span-3 text-center mt-2 md:-mt-6 lg:-mt-8 pb-6 md:pb-8 lg:pb-10 space-y-4 md:space-y-5">
           <p
-            onClick={() => showToast("success", "Hiiiiii")}
             className="font-primary-bold text-secondary text-2xl md:text-3xl lg:text-4xl"
           >
             إبدأ الان

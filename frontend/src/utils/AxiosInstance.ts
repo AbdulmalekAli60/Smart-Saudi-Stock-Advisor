@@ -1,19 +1,19 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
+
+
+
 export const axiosInstance = axios.create({
   baseURL: "http://localhost:8080",
   withCredentials: true,
 });
+
 
 let storedToken: string | undefined = undefined;
 
 axiosInstance.interceptors.response.use(
   function (response: AxiosResponse) {
     const token = response.headers["x-access-token"];
-    console.log(
-      "==== Storaed token in each request: ",
-      storedToken
-    );
 
     if (token) {
       storedToken = token;
@@ -27,10 +27,7 @@ axiosInstance.interceptors.response.use(
         error.config as AxiosRequestConfig & { _retry?: boolean };
 
       if (error.response?.status === 401 && storedToken) {
-        console.log(
-          "==== Storaed token before making refresh request: ",
-          storedToken
-        );
+
         const req = await axiosInstance.post("/auth/refresh-token", {
           token: storedToken,
         });

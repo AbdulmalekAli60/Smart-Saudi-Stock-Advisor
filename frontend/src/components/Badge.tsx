@@ -17,7 +17,7 @@ export default function Badge({
       onClick={() => onSelect(isSelected ? null : sectorId)}
       className={`${
         isSelected
-          ? "bg-white text-black border border-primary"
+          ? "bg-white border border-primary"
           : "bg-primary-light text-white hover:bg-primary"
       }
          whitespace-nowrap  cursor-pointer font-primary-bold rounded-full p-3 w-fit  hover:scale-105 transition-all`}

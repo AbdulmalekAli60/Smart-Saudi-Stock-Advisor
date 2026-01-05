@@ -17,7 +17,7 @@ import zoomPlugin from "chartjs-plugin-zoom";
 
 
 ChartJS.register(
-  CategoryScale,
+  CategoryScale,  
   LinearScale,
   BarElement,
   Title,
@@ -35,6 +35,7 @@ export default function HistoricalDataChart({
   historicalData,
   limits,
 }: HistoricalDataChartProps) {
+
   const [dataPoints, setDataPoints] = useState<number>(0);
   const [filteredHistoricalData, setFilteredHistoricalData] = useState<
     HistoricalDataInterface[] | undefined
@@ -52,11 +53,15 @@ export default function HistoricalDataChart({
   useEffect(() => {
     const filteredDates = historicalData?.filter((data) => {
       const dataDate = data.dataDate.split("T")[0];
-      if (!limits?.from.value || !limits?.to.value) return true;
+      
+      if (!limits?.from.value && !limits?.to.value) return true;
+
       if (limits.from.value && !limits.to.value)
         return dataDate >= limits.from.value;
+
       if (!limits?.from.value && limits?.to.value)
         return dataDate <= limits.to.value;
+
       return dataDate >= limits.from.value && dataDate <= limits.to.value;
     });
     setFilteredHistoricalData(filteredDates);
@@ -142,6 +147,8 @@ export default function HistoricalDataChart({
       }
     },
   }), [filteredHistoricalData, dataPoints]);
+
+
 
   const dataObj = {
     labels: filteredHistoricalData?.map((item) => item.dataDate.split("T")[0]),
