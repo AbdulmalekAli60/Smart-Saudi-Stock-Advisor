@@ -66,7 +66,7 @@ public class AuthController {
     public ResponseEntity<?> logout() {
         ResponseCookie cookie = ResponseCookie.from("JWT-TOKEN", "")
                 .httpOnly(true)
-                .secure(false) // change it in prod
+                .secure(true) // change it in prod
                 .sameSite("Strict")
                 .maxAge(0)
                 .path("/")
@@ -110,7 +110,7 @@ public class AuthController {
     private String constructCookie(String token){
         ResponseCookie cookie = ResponseCookie.from("JWT-TOKEN", token)
                 .httpOnly(true)
-                .secure(false) // change it in prod
+                .secure(true) // change it in prod
                 .sameSite("Strict")
                 .maxAge(Duration.ofMillis(expirationDuration))
                 .path("/")
