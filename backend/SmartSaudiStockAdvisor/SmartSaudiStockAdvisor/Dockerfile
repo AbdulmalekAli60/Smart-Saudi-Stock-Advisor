@@ -17,7 +17,7 @@ RUN ./mvnw clean package -DskipTests
 
 
 # 2. RUNTIME STAGE
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:24-jdk
 ARG PROFILE=prod
 
 WORKDIR /app
