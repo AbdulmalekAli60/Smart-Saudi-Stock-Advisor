@@ -1,0 +1,42 @@
+services:
+  # 1.Database Service
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: SmartSaudiStockAdvisor
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. Backend
+  backend:
+    build: ./backend/SmartSaudiStockAdvisor/SmartSaudiStockAdvisor
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRETE=${JWT_SECRETE}
+      - JWT_EXPIRATION_TIME=${JWT_EXPIRATION_TIME}
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - db
+
+  # 3. Python Service
+  python-service:
+    build: ./python/StockPredictionPy
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=SmartSaudiStockAdvisor
+      - DB_USER=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+volumes:
+  postgres_data:
