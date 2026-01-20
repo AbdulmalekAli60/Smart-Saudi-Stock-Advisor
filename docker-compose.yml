@@ -15,16 +15,16 @@ services:
 
   # 2. Backend
   backend:
-    image: ${{DOCKER_USERNAME}}/smartsaudistockadvisor-backend:latest
+    image: ${DOCKER_USERNAME}/smartsaudistockadvisor-backend:latest
     build: ./backend/SmartSaudiStockAdvisor/SmartSaudiStockAdvisor
     ports:
       - "8080:8080"
     environment:
-      - DB_URL=${DB_URL}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - JWT_SECRETE=${JWT_SECRETE}
-      - JWT_EXPIRATION_TIME=${JWT_EXPIRATION_TIME}
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - app.JWT_SECRETE=${JWT_SECRETE}
+      - app.JWT_EXPIRATION_TIME=${JWT_EXPIRATION_TIME}
       - SPRING_PROFILES_ACTIVE=prod
     depends_on:
       - db
@@ -33,9 +33,10 @@ services:
 
   # 3. Python Service
   python-service:
-    image: ${{DOCKER_USERNAME}}/smartsaudistockadvisor-python:latest
+    image: ${DOCKER_USERNAME}/smartsaudistockadvisor-python:latest
     build: ./python/StockPredictionPy
     profiles: ["job"]
+    shm_size: "1gb"
     depends_on:
       - db
     environment:
