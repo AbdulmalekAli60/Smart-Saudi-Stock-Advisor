@@ -51,6 +51,3 @@ if __name__ == "__main__":
     df = reader.read_data()
 
     print("\n=== Testing StockIndicators ===")
-    # stock_indicators = stock_indicators.StockIndicators()
-    # stock_indicators.sma_5()
-
