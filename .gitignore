@@ -1,6 +1,7 @@
 node_modules/
 .env
 .next/
+full_backup.sql
 
 # Java
 *.class

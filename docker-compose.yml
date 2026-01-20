@@ -1,5 +1,5 @@
 services:
-  # 1.Database Service
+  # 1. Database Service
   db:
     image: postgres:15
     environment:
@@ -10,9 +10,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
   # 2. Backend
   backend:
+    image: ${{DOCKER_USERNAME}}/smartsaudistockadvisor-backend:latest
     build: ./backend/SmartSaudiStockAdvisor/SmartSaudiStockAdvisor
     ports:
       - "8080:8080"
@@ -25,9 +28,12 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
     depends_on:
       - db
+    networks:
+      - app-network
 
   # 3. Python Service
   python-service:
+    image: ${{DOCKER_USERNAME}}/smartsaudistockadvisor-python:latest
     build: ./python/StockPredictionPy
     depends_on:
       - db
@@ -37,6 +43,11 @@ services:
       - DB_NAME=SmartSaudiStockAdvisor
       - DB_USER=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+
+networks:
+  app-network:
