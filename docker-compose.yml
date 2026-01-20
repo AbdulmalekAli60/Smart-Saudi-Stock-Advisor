@@ -35,6 +35,7 @@ services:
   python-service:
     image: ${{DOCKER_USERNAME}}/smartsaudistockadvisor-python:latest
     build: ./python/StockPredictionPy
+    profiles: ["job"]
     depends_on:
       - db
     environment:
