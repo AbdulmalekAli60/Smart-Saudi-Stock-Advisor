@@ -74,7 +74,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173", "http://72.62.133.36/log-in")); // react front end
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000",
+                                                          "http://localhost:5173", // react front end
+                                                           "http://72.62.133.36")); // vps
         corsConfiguration.setAllowedMethods(Arrays.asList("GET","POST","DELETE", "PATCH", "PUT", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*")); // reuest headers
         corsConfiguration.setExposedHeaders(List.of("X-Access-Token"));
