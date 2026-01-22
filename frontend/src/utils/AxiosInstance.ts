@@ -1,6 +1,10 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+
+const prodcution_url = "http://72.62.133.36:8080"
+// const development_url  = "http://localhost:8080"
+
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: prodcution_url,
   withCredentials: true,
 });
 
