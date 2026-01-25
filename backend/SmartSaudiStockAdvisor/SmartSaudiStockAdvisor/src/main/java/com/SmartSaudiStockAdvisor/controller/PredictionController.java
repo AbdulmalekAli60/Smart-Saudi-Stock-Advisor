@@ -47,7 +47,7 @@ public class PredictionController {
 
     @GetMapping(value = "/latest/{company-id}")
     public ResponseEntity<PredictionResponseDTO> getLatestPrediction(@PathVariable(value = "company-id") Long companyId,
-                                                                                 HttpServletRequest httpServletRequest){
+                                                                     HttpServletRequest httpServletRequest){
         PredictionResponseDTO responseDTO = predictionService.getLatestPredictionByCompanyId(companyId);
         String currentETag = eTagService.generateETag(responseDTO);
         String clientETag = httpServletRequest.getHeader("If-None-Match");

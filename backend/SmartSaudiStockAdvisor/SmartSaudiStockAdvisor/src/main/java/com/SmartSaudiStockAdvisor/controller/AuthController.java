@@ -15,7 +15,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.util.Map;
@@ -42,7 +45,7 @@ public class AuthController {
     @PostMapping(value = "/sign-up")
     public ResponseEntity<UserResponseDTO> signUp(@RequestBody @Valid SignUpDTO signUpDTO){
         UserResponseDTO responseDTO = authService.signUp(signUpDTO);
-        String token = jwtService.generateToken(responseDTO.getEmail(), responseDTO.getRole());
+        String token = jwtService.generateToken(responseDTO.role(), responseDTO.role());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE, constructCookie(token))
@@ -51,10 +54,10 @@ public class AuthController {
     }
 
     @PostMapping(value = "/log-in")
-    public ResponseEntity<UserResponseDTO> login(@RequestBody @Valid  LogInDTO logInDTO){
+    public ResponseEntity<UserResponseDTO> login(@RequestBody @Valid LogInDTO logInDTO){
         UserResponseDTO responseDTO = authService.logIn(logInDTO);
 
-        String token = jwtService.generateToken(responseDTO.getEmail(), responseDTO.getRole());
+        String token = jwtService.generateToken(responseDTO.email(), responseDTO.role());
 
         return  ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, constructCookie(token))

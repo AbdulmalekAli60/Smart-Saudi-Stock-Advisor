@@ -53,10 +53,10 @@ class AuthServiceImplTest {
         User newUser = new User("teest!!!", "MyNameIsTest", "test1234@", "test@gmail.com", "USER");
         newUser.setUserId(1L);
 
-        when(mockUserRepo.findByEmailOrUsername(signUpDTO.getEmail(), signUpDTO.getUsername()))
+        when(mockUserRepo.findByEmailOrUsername(signUpDTO.email(), signUpDTO.username()))
                 .thenReturn(Optional.empty());
 
-        when(mockPasswordEncoder.encode(signUpDTO.getPassword()))
+        when(mockPasswordEncoder.encode(signUpDTO.password()))
                 .thenReturn("Password hashed");
 
         when(mockUserRepo.save(any(User.class)))
@@ -65,8 +65,8 @@ class AuthServiceImplTest {
         UserResponseDTO responseDTO = authService.signUp(signUpDTO);
 
         assertNotNull(responseDTO);
-        assertEquals(1L, responseDTO.getUserId());
-        assertEquals("auth-service.register-successfully.message", responseDTO.getMessage());
+        assertEquals(1L, responseDTO.userId());
+        assertEquals("auth-service.register-successfully.message", responseDTO.message());
 
         verify(mockUserRepo, times(1)).save(any(User.class));
     }
@@ -78,7 +78,7 @@ class AuthServiceImplTest {
 
         User existingUser = new User("Existing!!!", "ty", "test1234@", "exist@gmail.com", "USER");
 
-        when(mockUserRepo.findByEmailOrUsername(signUpDTO.getEmail(), signUpDTO.getUsername()))
+        when(mockUserRepo.findByEmailOrUsername(signUpDTO.email(), signUpDTO.username()))
                 .thenReturn(Optional.of(existingUser));
 
         AlreadyExistsException existsException  = assertThrows(AlreadyExistsException.class, () -> {
@@ -97,7 +97,7 @@ class AuthServiceImplTest {
 
         User existingUser = new User("Existing!!!", "MyNameIsExist", "test1234@", "exist@gmail.com", "USER");
 
-        when(mockUserRepo.findByEmailOrUsername(signUpDTO.getEmail(), signUpDTO.getUsername()))
+        when(mockUserRepo.findByEmailOrUsername(signUpDTO.email(), signUpDTO.username()))
                 .thenReturn(Optional.of(existingUser));
 
         AlreadyExistsException existsException  = assertThrows(AlreadyExistsException.class, () -> {
@@ -118,7 +118,7 @@ class AuthServiceImplTest {
         User existingUser = new User("Here!!!", "Iamfound", "1234fgy@", "hi@gmail.com", "USER");
         existingUser.setUserId(2L);
 
-        when(mockUserRepo.findByEmailIgnoreCase(logInDTO.getEmail()))
+        when(mockUserRepo.findByEmailIgnoreCase(logInDTO.email()))
                 .thenReturn(Optional.of(existingUser));
 
         when(mockPasswordEncoder.matches("1234fgy@", "1234fgy@"))
@@ -127,8 +127,8 @@ class AuthServiceImplTest {
         UserResponseDTO responseDTO = authService.logIn(logInDTO);
 
         assertNotNull(responseDTO);
-        assertEquals(2L, responseDTO.getUserId());
-        assertEquals("auth-service.log-in.successfully.message", responseDTO.getMessage());
+        assertEquals(2L, responseDTO.userId());
+        assertEquals("auth-service.log-in.successfully.message", responseDTO.message());
     }
 
     @Test

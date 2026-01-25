@@ -39,11 +39,11 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserResponseDTO signUp(SignUpDTO signUpDTO) {
 
-        Optional<User> existingUser = userRepo.findByEmailOrUsername(signUpDTO.getEmail(), signUpDTO.getUsername());
+        Optional<User> existingUser = userRepo.findByEmailOrUsername(signUpDTO.email(), signUpDTO.username());
 
         if (existingUser.isPresent()) {
             User user = existingUser.get();
-            if (user.getEmail().equals(signUpDTO.getEmail())) {
+            if (user.getEmail().equals(signUpDTO.email())) {
                 throw new AlreadyExistsException(getMessage("auth-service.email.already-used"));
             } else {
                 throw new AlreadyExistsException(getMessage("auth-service.username.already-used"));
@@ -51,10 +51,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User newUser = new User(
-                signUpDTO.getName().trim(),
-                signUpDTO.getUsername().trim(),
-                passwordEncoder.encode(signUpDTO.getPassword()),
-                signUpDTO.getEmail().trim(),
+                signUpDTO.name().trim(),
+                signUpDTO.username().trim(),
+                passwordEncoder.encode(signUpDTO.password()),
+                signUpDTO.email().trim(),
                 "USER" // by default all have the role user
         );
 
@@ -62,16 +62,16 @@ public class AuthServiceImpl implements AuthService {
             User savedUser = userRepo.save(newUser);
             log.info("User successfully joined with id: {}", savedUser.getUserId());
 
-            return new  UserResponseDTO(savedUser, getMessage("auth-service.register-successfully.message"));
+            return new UserResponseDTO(savedUser, getMessage("auth-service.register-successfully.message"));
         }catch (DataAccessException e){
-            log.error("Database error during signup for email: {}", signUpDTO.getEmail(), e);
+            log.error("Database error during signup for email: {}", signUpDTO.email(), e);
             throw new UserRegistrationException(getMessage("auth-service.register-failed.message"));
         }
     }
 
     @Override
     public UserResponseDTO logIn(LogInDTO logInDTO) {
-        String email = logInDTO.getEmail().trim();
+        String email = logInDTO.email().trim();
 
         Optional<User> loggedInUser = userRepo.findByEmailIgnoreCase(email);
 
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
             User user = loggedInUser.get();
             log.info("User found with email: '{}'", user.getEmail());
 
-            boolean isPasswordValid = passwordEncoder.matches(logInDTO.getPassword(), user.getPassword());
+            boolean isPasswordValid = passwordEncoder.matches(logInDTO.password(), user.getPassword());
 
             if (isPasswordValid) {
                 log.info("User logged in successfully. Email: {}", email);

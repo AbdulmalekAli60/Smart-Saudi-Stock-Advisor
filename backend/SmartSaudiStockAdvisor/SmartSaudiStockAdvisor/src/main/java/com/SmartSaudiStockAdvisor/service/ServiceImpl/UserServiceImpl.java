@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -42,19 +41,22 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO freshUserInfo() {
         Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(user instanceof UserPrincipal){
-            Optional<User> currentUser = userRepo.findByUsername(((UserPrincipal) user).getUsername());
-            return new UserResponseDTO(currentUser.get(), "this is info");
+        if (user instanceof UserPrincipal) {
+            // It is safer to use orElseThrow here instead of .get() directly
+            User currentUser = userRepo.findByUsername(((UserPrincipal) user).getUsername())
+                    .orElseThrow(() -> new EntryNotFoundException("Current user not found in database"));
+
+            return new UserResponseDTO(currentUser, "this is info");
         }
 
-        throw new OperationFailedException("Error happened") ;
+        throw new OperationFailedException("Error happened");
     }
 
     @Override
     public List<UserResponseDTO> getAllUsers() { // for admin
         return userRepo.findAll()
                 .stream()
-                .map(UserResponseDTO::new)
+                .map(UserResponseDTO::new) // This works if your Record has the constructor (User user)
                 .toList();
     }
 
@@ -79,49 +81,52 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponseDTO updateUserInformation(UpdateAccountDetailsDTO updateAccountDetailsDTO) {
-        String username  = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        String[] usernameParam = {updateAccountDetailsDTO.getUsername()};
+        // Note: Using record accessor .username() instead of .getUsername()
+        String[] usernameParam = {updateAccountDetailsDTO.username()};
+
         User currentUser = userRepo.findByUsername(username)
                 .orElseThrow(() -> new EntryNotFoundException(getMessage("user-service.update-info.username.not-found-message", usernameParam)));
 
-        try{
-            if(updateAccountDetailsDTO.getName() != null){
-                currentUser.setName(updateAccountDetailsDTO.getName());
+        try {
+            if (updateAccountDetailsDTO.name() != null) {
+                currentUser.setName(updateAccountDetailsDTO.name());
             }
 
-            if(updateAccountDetailsDTO.getUsername() != null){
-                if(!updateAccountDetailsDTO.getUsername().equals(currentUser.getUsername())) {
-                    boolean isUsernameUsed = userRepo.existsByUsername(updateAccountDetailsDTO.getUsername());
-                    if(isUsernameUsed){
+            if (updateAccountDetailsDTO.username() != null) {
+                if (!updateAccountDetailsDTO.username().equals(currentUser.getUsername())) {
+                    boolean isUsernameUsed = userRepo.existsByUsername(updateAccountDetailsDTO.username());
+                    if (isUsernameUsed) {
                         throw new AlreadyExistsException(getMessage("user-service.update-info.username.already-taken", null));
                     }
                 }
-                currentUser.setUsername(updateAccountDetailsDTO.getUsername());
+                currentUser.setUsername(updateAccountDetailsDTO.username());
             }
 
-            if (updateAccountDetailsDTO.getEmail() != null){
-                if(!updateAccountDetailsDTO.getEmail().equals(currentUser.getEmail())){
-                    boolean isEmailUsed = userRepo.existsByEmail(updateAccountDetailsDTO.getEmail());
-                    if(isEmailUsed){
+            if (updateAccountDetailsDTO.email() != null) {
+                if (!updateAccountDetailsDTO.email().equals(currentUser.getEmail())) {
+                    boolean isEmailUsed = userRepo.existsByEmail(updateAccountDetailsDTO.email());
+                    if (isEmailUsed) {
                         throw new AlreadyExistsException(getMessage("user-service.update-info.email.already-taken", null));
                     }
                 }
-                currentUser.setEmail(updateAccountDetailsDTO.getEmail());
+                currentUser.setEmail(updateAccountDetailsDTO.email());
             }
 
-            if(updateAccountDetailsDTO.getPassword() != null){
-                currentUser.setPassword(passwordEncoder.encode(updateAccountDetailsDTO.getPassword()));
+            if (updateAccountDetailsDTO.password() != null) {
+                currentUser.setPassword(passwordEncoder.encode(updateAccountDetailsDTO.password()));
             }
 
-            if(updateAccountDetailsDTO.getInvestAmount() != null){
-                currentUser.setInvestAmount(updateAccountDetailsDTO.getInvestAmount());
+            if (updateAccountDetailsDTO.investAmount() != null) {
+                currentUser.setInvestAmount(updateAccountDetailsDTO.investAmount());
             }
 
             User updatedUser = userRepo.save(currentUser);
             log.info("User has been updated");
             return new UserResponseDTO(updatedUser, getMessage("user-service.update-info.success-message", null));
-        }catch (DataAccessException e){
+
+        } catch (DataAccessException e) {
             String[] errorParam = {e.getMessage()};
             throw new OperationFailedException(getMessage("user-service.update-info.fail-message", errorParam));
         }
@@ -132,16 +137,15 @@ public class UserServiceImpl implements UserService {
     public String deleteAccount() { // for user
         Object userPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(userPrincipal instanceof UserPrincipal){
+        if (userPrincipal instanceof UserPrincipal) {
             Long userId = ((UserPrincipal) userPrincipal).getUserId();
-
-                userRepo.deleteById(userId);
-                return getMessage("user-service.delete-account.success-message", null);
+            userRepo.deleteById(userId);
+            return getMessage("user-service.delete-account.success-message", null);
         }
         throw new OperationFailedException(getMessage("user-service.delete-account.fail-message", null));
     }
 
-    private String getMessage(String key, Object[] params){
+    private String getMessage(String key, Object[] params) {
         return messageSource.getMessage(key, params, LocaleContextHolder.getLocale());
     }
 }

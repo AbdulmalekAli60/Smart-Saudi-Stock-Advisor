@@ -45,12 +45,6 @@ public class WatchListController {
     @GetMapping(value = "/all")
     public ResponseEntity<List<WatchListResponseDTO>> watchListsForUser(HttpServletRequest httpServletRequest){
         List<WatchListResponseDTO> listResponseDTOS = watchListService.WatchListsForCurrentUser();
-//        String clinetETage = httpServletRequest.getHeader("If-None-Match");
-//        String currentETag = eTagService.generateETag(listResponseDTOS);
-//
-//        if(currentETag.equals(clinetETage)){
-//            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
-//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(listResponseDTOS);
     }

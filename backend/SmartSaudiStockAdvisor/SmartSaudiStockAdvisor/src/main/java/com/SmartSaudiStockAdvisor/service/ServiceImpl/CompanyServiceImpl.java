@@ -49,20 +49,20 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyInformationDTO createCompany(CreateCompanyDTO createCompanyDTO) { // for admin
 
-        if (companyRepo.existsByTickerName(createCompanyDTO.getTickerName())) {
-            String[] params = {createCompanyDTO.getTickerName()};
+        if (companyRepo.existsByTickerName(createCompanyDTO.tickerName())) {
+            String[] params = {createCompanyDTO.tickerName()};
             throw new AlreadyExistsException(getMessage("company-service.ticker-already-exist", params));
         }
 
-        Long[] params = {createCompanyDTO.getSectorId()};
-        Sector sector = sectorRepo.findById(createCompanyDTO.getSectorId())
+        Long[] params = {createCompanyDTO.sectorId()};
+        Sector sector = sectorRepo.findById(createCompanyDTO.sectorId())
                 .orElseThrow(() -> new EntityNotFoundException(getMessage("company-service.sector.not-found", params)));
 
             Company newCompany = new Company();
-            newCompany.setCompanyLogo(createCompanyDTO.getCompanyLogo());
-            newCompany.setCompanyArabicName(createCompanyDTO.getCompanyArabicName());
-            newCompany.setCompanyEnglishName(createCompanyDTO.getCompanyEnglishName());
-            newCompany.setTickerName(createCompanyDTO.getTickerName());
+            newCompany.setCompanyLogo(createCompanyDTO.companyLogo());
+            newCompany.setCompanyArabicName(createCompanyDTO.companyArabicName());
+            newCompany.setCompanyEnglishName(createCompanyDTO.companyEnglishName());
+            newCompany.setTickerName(createCompanyDTO.tickerName());
             newCompany.setSector(sector);
 
             Company savedNewCompany = companyRepo.save(newCompany);
