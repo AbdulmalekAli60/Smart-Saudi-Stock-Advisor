@@ -16,7 +16,7 @@ services:
   # 2. Backend
   backend:
     image: ${DOCKER_USERNAME}/smartsaudistockadvisor-backend:latest
-    build: ./backend/SmartSaudiStockAdvisor/SmartSaudiStockAdvisor
+    build: ./backend/
     ports:
       - "8080:8080"
     environment:
@@ -34,7 +34,7 @@ services:
   # 3. Python Service
   python-service:
     image: ${DOCKER_USERNAME}/smartsaudistockadvisor-python:latest
-    build: ./python/StockPredictionPy
+    build: ./python/
     profiles: ["job"]
     shm_size: "1gb"
     depends_on:
