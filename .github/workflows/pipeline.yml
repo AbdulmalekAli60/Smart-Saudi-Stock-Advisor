@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 env:
-  BACKEND_DIR: "backend/SmartSaudiStockAdvisor/SmartSaudiStockAdvisor"
-  PYTHON_DIR: "python/StockPredictionPy"
+  BACKEND_DIR: "backend"
+  PYTHON_DIR: "python"
 
 jobs:
 
